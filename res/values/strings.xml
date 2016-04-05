@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	
+    <string name="app_name">Searcher</string>
+    <string name="action_settings">Setting</string>
+    <string name="newBtn">New&#8230;</string>
+    <string name="refreshBtn">Refresh</string>
+    <string name="searchBtn">Search</string>
+    <string name="dirSelected">dirSelected</string>
+    <string name="refresh">Refresh</string>
+    <string name="search">Search</string>
+    <string name="new_">New&#8230;</string>
+    <string name="slash">/data/data/com.free.searcher/files/myfile.txt</string>
+    <string name="android"></string>
+    <string name="regex">Regex</string>
+    <string name="preview">Preview</string>
+    <string name="characters">characters</string>
+    <string name="charsPreview">Characters to be previewed</string>
+    <string name="status"></string>
+    <string name="MAX_PREVIEW">512</string>
+    <string name="show">Show</string>
+    <string name="hide">Hide</string>
+    <string name="back">&lt;-</string>
+    <string name="next">-></string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="title_activity_spinner">SpinnerActivity</string>
+    <string name="title_activity_folder_chooser">Searching In Files (*.htm, *.html, *.doc, *.pdf, *.txt)</string>
+    <string name="title_activity_zipfile_chooser">Zip file (.zip; .docx; pptx; .xlsx; .jar; .apk)</string>
+	
+	<string name="cancel_label">Cancel</string>
+    <string name="confirm_label">Confirm</string>
+    <string name="selected_folder_label">Selected folder:</string>
+    <string name="create_folder_label">Create folder</string>
+    <string name="create_folder_msg">Create new folder with name "%1$s"?</string>
+    <string name="create_folder_success">Created new folder</string>
+    <string name="create_folder_error_no_write_access">Cannot write to this folder</string>
+    <string name="create_folder_error_already_exists">Folder already exists</string>
+    <string name="create_folder_error">Could not create folder</string>
+    <string name="up_label">Up</string>
+    <string name="internal_label">Internal</string>
+    <string name="sdcard_label">SDcard</string>
+    
+    <string name="directory_selected_label">Directory selected:</string>
+    <string name="choose_directory">Choose Directory</string>
+    <string name="none">none</string>
+    <string name="btn_choose">Choose in Dialog</string>
+    <string name="btn_switch">Switch to Dialog Sample</string>
+
+    <string-array name="Planets">
+        <item>Mercury</item>
+        <item>Venus</item>
+        <item>Earth</item>
+        <item>Mars</item>
+        <item>Jupiter</item>
+        <item>Saturn</item>
+        <item>Uranus</item>
+        <item>Neptune</item>
+        <item>Pluto</item>
+    </string-array>
+
+    <string name="planet_prompt">Select a planet</string>
+    <string name="action_clearCache">Clear Cache</string>
+    <string name="action_viewMode">Day/Night Mode</string>
+    <string name="action_viewSource">View Source</string>
+    <string name="action_readZip">Read Zip</string>
+    <string name="action_refresh">Refresh</string>
+    <string name="action_preview">Preview</string>
+    <string name="action_regex">Regular Expressions</string>
+    <string name="action_back">Back</string>
+    <string name="action_next">Next</string>
+    <string name="action_new">New&#8230;</string>
+    <string name="title_activity_file">FileActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="empty"></string>
+    <string name="share">Share</string>
+    
+    
+	<string name="action_bar_search">Search</string>
+    <string name="action_bar_add">Add</string>
+    <string name="action_bar_edit">Edit</string>
+    <string name="action_bar_share">Share</string>
+    <string name="action_bar_sort">Sort</string>
+    <string name="action_bar_sort_alpha">Alphabetically</string>
+    <string name="action_bar_sort_size">By size</string>
+    <string name="action_bar_share_with">Share with&#8230;</string>
+    <string name="action_bar_settings">Settings</string>
+    <string name="up">&#160;&#160;&#160;Up&#160;&#160;&#160;</string>
+    
+    <string-array name="private_je_devices" translatable="false"></string-array>
+    
+    <string name="key_internal_uri_extsdcard" translatable="false">key_internal_uri_extsdcard</string>
+</resources>

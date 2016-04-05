@@ -1,0 +1,162 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+
+    <item android:id="@+id/action_search"
+		android:icon="@android:drawable/ic_menu_search"
+		android:title="@string/action_bar_search"
+		android:showAsAction="ifRoom|collapseActionView"
+		android:actionViewClass="android.widget.SearchView" />
+
+    <item
+        android:id="@+id/action_back"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:onClick="back"
+        android:title="@string/action_back"/>
+
+    <item
+        android:id="@+id/action_next"
+        android:orderInCategory="200"
+        android:showAsAction="ifRoom"
+        android:onClick="next"
+        android:title="@string/action_next"/>
+
+    <item
+        android:id="@+id/action_new"
+        android:orderInCategory="300"
+        android:showAsAction="ifRoom"
+        android:onClick="newSearch"
+        android:title="@string/action_new"/>
+
+    <item
+        android:id="@+id/action_zipReader"
+        android:orderInCategory="301"
+        android:showAsAction="ifRoom"
+        android:onClick="readZip"
+        android:title="@string/action_readZip"/>
+        
+    <item
+        android:id="@+id/action_compare"
+        android:orderInCategory="304"
+        android:showAsAction="ifRoom"
+        android:onClick="compare"
+        android:title="Compare Document..."/>
+
+	<item
+        android:id="@+id/action_dup_finder"
+        android:orderInCategory="305"
+        android:showAsAction="never"
+        android:onClick="dupFinder"
+        android:title="Duplicate Finder"/>
+
+	<item
+        android:id="@+id/action_home"
+        android:orderInCategory="308"
+        android:showAsAction="never"
+        android:onClick="home"
+        android:title="Home"/>
+
+	<item
+        android:id="@+id/action_showDict"
+        android:orderInCategory="315"
+        android:showAsAction="never"
+        android:onClick="showDict"
+        android:title="Translate"/>
+
+	<item
+        android:id="@+id/action_autoTranslate"
+        android:orderInCategory="318"
+        android:showAsAction="never"
+        android:onClick="autoTranslate"
+        android:title="Auto Translate"
+        android:checkable="true"
+        android:enabled="true"
+        android:checked="true"/>
+
+    <item
+        android:id="@+id/action_regex"
+        android:orderInCategory="319"
+        android:showAsAction="never"
+        android:checkable="true"
+        android:enabled="true"
+        android:onClick="regex"
+        android:title="@string/action_regex"
+        android:checked="false"/>
+
+	<item
+        android:id="@+id/action_popup"
+        android:orderInCategory="330"
+        android:showAsAction="never"
+        android:onClick="popup"
+        android:title="Popup Tab"
+        android:checkable="true"
+        android:enabled="true"
+        android:checked="false"/>
+
+    <item
+	android:id="@+id/action_genstardict"
+	android:orderInCategory="400"
+	android:showAsAction="ifRoom"
+	android:onClick="gen"
+	android:title="Generate Stardict files"/>
+
+    <item
+	android:id="@+id/action_restorestardict"
+	android:orderInCategory="410"
+	android:showAsAction="ifRoom"
+	android:onClick="restore"
+	android:title="Restore Dictionary text"/>
+
+    <item
+        android:id="@+id/action_preview"
+        android:orderInCategory="600"
+        android:showAsAction="never"
+        android:onClick="preview"
+        android:title="@string/action_preview"/>
+
+    <item
+        android:id="@+id/action_viewSource"
+        android:orderInCategory="660"
+        android:showAsAction="never"
+        android:onClick="viewSource"
+        android:title="@string/action_viewSource"/>
+
+<item
+        android:id="@+id/action_autoBackup"
+        android:orderInCategory="666"
+        android:showAsAction="never"
+        android:onClick="autoBackup"
+        android:title="Auto Backup  Folder"
+        android:checkable="true"
+        android:enabled="true"
+        android:checked="true"/>
+
+<item
+        android:id="@+id/action_batchConvert"
+        android:orderInCategory="676"
+        android:showAsAction="never"
+        android:onClick="batchConvert"
+        android:title="Media Batch Converter"
+    />
+<item
+        android:id="@+id/action_translate"
+        android:orderInCategory="690"
+        android:showAsAction="never"
+        android:onClick="translate"
+        android:title="English Translation 4 Fun"
+    />
+    <item
+        android:id="@+id/action_clearCache"
+        android:orderInCategory="700"
+        android:showAsAction="never"
+        android:onClick="clearCache"
+        android:title="@string/action_clearCache"/>
+
+	<item
+        android:id="@+id/action_about"
+        android:orderInCategory="800"
+        android:showAsAction="never"
+        android:onClick="about"
+        android:title="About"/>
+	
+</menu>

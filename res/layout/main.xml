@@ -1,0 +1,113 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/lightbrown"
+    tools:context=".SearchcStack" >
+
+    <FrameLayout android:id="@+id/fragment_content"
+		android:layout_width="match_parent"
+		android:layout_height="0dp"
+		android:layout_weight="1" >
+	</FrameLayout>
+
+	<TextView
+		android:id="@+id/statusView"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentRight="true"
+		android:maxLines="1"
+		android:text="@string/status"
+		android:textAppearance="?android:attr/textAppearanceSmall"
+		android:textColor="#000000"
+		android:textSize="12sp" />
+
+	<WebView
+		android:id="@+id/webView1"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_above="@+id/statusView"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentRight="true"
+		android:layout_alignParentTop="true"
+		android:background="@color/lightyellow" >
+	</WebView>
+
+	<RelativeLayout
+		android:id="@+id/layoutId"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentLeft="true"
+		android:layout_alignParentRight="true"
+		android:layout_marginTop="56dp"
+		android:background="#A0000000"
+		android:orientation="horizontal" >
+		
+		<EditText
+			android:id="@+id/findBox"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"
+			android:layout_toLeftOf="@+id/findRet"
+			android:layout_alignBaseline="@+id/backButton"
+			android:singleLine="true"
+			android:textSize="18sp"
+			android:text=""
+			android:textColor="#FFFFFF"
+			/>
+		<TextView
+			android:id="@+id/findRet"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_toLeftOf="@+id/backButton"
+			android:layout_alignBaseline="@+id/backButton"
+			android:singleLine="false"
+			android:minLines="1"
+			android:maxLines="2"
+			android:minEms="2"
+			android:maxEms="6"
+			android:textSize="14sp"
+			android:text=""
+			android:textColor="#FFFFFF"
+		/>
+		<Button
+			android:id="@+id/backButton"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_toLeftOf="@+id/nextButton"
+			android:textSize="14sp"
+			android:text="Back"
+			android:textColor="#FFFFFF"
+		/>
+		<Button
+			android:id="@+id/nextButton"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_toLeftOf="@+id/clearButton"
+			android:textSize="14sp"
+			android:text="Next"
+			android:textColor="#FFFFFF"
+		/>
+		<Button
+			android:id="@+id/clearButton"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_toLeftOf="@+id/closeButton"
+			android:textSize="14sp"
+			android:text="Clear"
+			android:textColor="#FFFFFF"
+		/>
+		<Button
+			android:id="@+id/closeButton"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true"
+			android:textSize="14sp"
+			android:text="Close"
+			android:textColor="#FFFFFF"
+		/>
+	</RelativeLayout>
+
+</RelativeLayout>

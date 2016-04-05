@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/lightyellow"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="50"
+        android:background="@color/lightyellow"
+        android:padding="0dp" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            tools:ignore="UselessParent" >
+
+			<RelativeLayout
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:background="?android:attr/dividerVertical"
+				android:orientation="horizontal"
+				 >
+
+	            <TextView
+	                android:id="@+id/dir"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:background="@color/lightyellow"
+	                android:clickable="true"
+	                android:enabled="true"
+	                android:focusable="true"
+	                android:gravity="center"
+	                android:keepScreenOn="true"
+	                android:onClick="up"
+	                android:text="@string/empty"
+	                android:textSize="28sp"
+	                android:textStyle="bold"
+					android:singleLine="true"
+					android:ellipsize="start"
+					android:padding="1dp"
+	                android:layout_alignParentLeft="true"
+       				android:layout_alignParentTop="true"
+	                android:layout_toLeftOf="@+id/horizontalDivideraa" />
+				
+				<TextView
+					android:id="@+id/horizontalDivideraa"
+					android:layout_width="1dp"
+					android:layout_height="wrap_content"
+					android:layout_toLeftOf="@+id/up"
+					android:textSize="28sp"
+	                android:textStyle="bold"
+					android:background="?android:attr/dividerVertical" />
+				
+	            <TextView
+	                android:id="@+id/up"
+	                android:background="@color/lightyellow"
+	                android:clickable="true"
+	                android:onClick="up"
+	                android:layout_alignParentRight="true"
+       				android:layout_alignParentTop="true"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:textSize="28sp"
+	                android:textStyle="bold"
+					android:padding="1dp"
+					android:paddingLeft="?android:attr/listPreferredItemPaddingLeft"
+	                android:text="  ⬆  " />
+
+				<View
+					android:id="@+id/horizontalDivider0"
+					android:layout_width="match_parent"
+					android:layout_height="1dp"
+					android:layout_alignBottom="@+id/up"
+					android:background="?android:attr/dividerVertical" />
+
+			</RelativeLayout>
+
+			<LinearLayout
+				android:layout_width="match_parent"
+				android:layout_height="0dp"
+				android:layout_weight="2"
+				android:orientation="vertical"
+				tools:ignore="UselessParent" >
+
+				<ListView
+					android:id="@+id/files"
+					android:layout_width="match_parent"
+					android:layout_height="0dp"
+					android:layout_weight="1"
+					android:background="@color/lightbrown"
+					android:clickable="true"
+					android:longClickable="true" />
+
+				<View
+					android:id="@+id/horizontalDivider1"
+					android:layout_width="fill_parent"
+					android:layout_height="2dp"
+					
+					android:layout_centerHorizontal="true"
+					android:layout_marginBottom="4dp"
+					android:layout_marginTop="4dp"
+					android:background="?android:attr/dividerVertical" />
+
+				<LinearLayout
+					android:layout_width="wrap_content"
+					android:layout_height="wrap_content"
+					android:orientation="horizontal"
+					android:layout_gravity="center_vertical|center_horizontal"
+					tools:ignore="UselessParent" >
+
+					<Button
+						android:id="@+id/add"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:minHeight="32dp"
+						android:maxHeight="48dp"
+						android:elevation="0dp"
+						android:textSize="28sp"
+						
+						android:layout_weight="1"
+						android:singleLine="true"
+						android:layout_gravity="center_horizontal"
+						android:background="@color/lightbrown"
+						android:onClick="addFiles"
+						android:padding="0dp"
+						android:text=">" />
+
+					<View
+						android:id="@+id/horizontalDivider2"
+						android:layout_width="1dp"
+						android:layout_height="fill_parent"
+						android:layout_alignParentTop="true"
+						android:layout_centerHorizontal="true"
+
+						android:background="?android:attr/dividerVertical" />
+					
+					<Button
+						android:id="@+id/remove"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:minHeight="32dp"
+						android:maxHeight="48dp"
+						android:elevation="0dp"
+						android:textSize="28sp"
+						
+						android:layout_weight="1"
+						android:singleLine="true"
+						android:layout_gravity="center_horizontal"
+						android:background="@color/lightbrown"
+						android:onClick="removeFiles"
+						android:padding="0dp"
+						android:text="&lt;" />
+
+					<View
+						android:id="@+id/horizontalDivider3"
+						android:layout_width="1dp"
+						android:layout_height="fill_parent"
+						android:layout_alignParentTop="true"
+						android:layout_centerHorizontal="true"
+
+						android:background="?android:attr/dividerVertical" />
+					
+					<Button
+						android:id="@+id/addAll"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:minHeight="32dp"
+						android:maxHeight="48dp"
+						android:elevation="0dp"
+						android:textSize="28sp"
+						
+						android:layout_weight="1"
+						android:singleLine="true"
+						android:layout_gravity="center_horizontal"
+						android:background="@color/lightbrown"
+						android:onClick="addAllFiles"
+						android:padding="0dp"
+						android:text=">>>" />
+
+					<View
+						android:id="@+id/horizontalDivider4"
+						android:layout_width="1dp"
+						android:layout_height="fill_parent"
+						android:layout_alignParentTop="true"
+						android:layout_centerHorizontal="true"
+
+						android:background="?android:attr/dividerVertical" />
+					
+					<Button
+						android:id="@+id/removeAll"
+						android:layout_width="wrap_content"
+						android:layout_height="wrap_content"
+						android:minHeight="32dp"
+						android:maxHeight="48dp"
+						android:elevation="0dp"
+						android:textSize="28sp"
+						
+						android:layout_weight="1"
+						android:singleLine="true"
+						android:layout_gravity="center_horizontal"
+						android:background="@color/lightbrown"
+						android:onClick="removeAllFiles"
+						android:padding="0dp"
+						android:text="&lt;&lt;&lt;" />
+
+				</LinearLayout>
+
+				<View
+					android:id="@+id/horizontalDivider5"
+					android:layout_width="fill_parent"
+					android:layout_height="2dp"
+					
+					android:layout_centerHorizontal="true"
+					android:layout_marginBottom="4dp"
+					android:layout_marginTop="4dp"
+					android:background="?android:attr/dividerVertical" />
+
+				<ListView
+					android:id="@+id/selectedFiles"
+					android:layout_width="match_parent"
+					android:layout_height="0dp"
+					android:layout_weight="1"
+					android:background="@color/lightyellow"
+					android:clickable="true"
+					android:longClickable="true" />
+
+			</LinearLayout>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@color/lightyellow"
+        android:padding="0dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@color/lightyellow"
+            android:layout_gravity="bottom|center_horizontal" >
+
+            <Button
+                android:id="@+id/cancelDir"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+				android:minHeight="32dp"
+				android:maxHeight="48dp"
+				android:elevation="0dp"
+                android:textSize="30sp"
+                android:layout_weight="1"
+				android:singleLine="true"
+				android:background="@color/lightbrown"
+                android:onClick="cancel"
+				android:padding="0dp"
+                android:text="@string/cancel" />
+
+			<View
+				android:id="@+id/horizontalDivider6"
+				android:layout_width="2dp"
+				android:layout_height="fill_parent"
+				android:layout_alignParentTop="true"
+				android:layout_centerHorizontal="true"
+
+				android:background="?android:attr/dividerVertical" />
+
+			<Button
+                android:id="@+id/okDir"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+				android:minHeight="32dp"
+				android:maxHeight="48dp"
+				android:elevation="0dp"
+                android:textSize="30sp"
+                android:layout_weight="1"
+				android:singleLine="true"
+				android:background="@color/lightbrown"
+                android:onClick="ok"
+				android:padding="0dp"
+                android:text="@string/ok" />
+
+        </LinearLayout>
+	</FrameLayout>
+</LinearLayout>

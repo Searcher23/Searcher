@@ -1,0 +1,14 @@
+<resources>
+
+    <color name="black_overlay">#A0000000</color>
+    <color name="black">#000000</color>
+    <color name="lightyellow">#FFFFFFF0</color>
+    <color name="lightbrown">#FFFFE6D9</color>
+	<color name="transparent">#FFFFFFF0</color>
+	
+	<color name="bright_blue">#33B5E5</color>
+
+    <!-- Use Gingerbread-orange -->
+    <color name="selection_background_color">#FEBB20</color>
+
+</resources>

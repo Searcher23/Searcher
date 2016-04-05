@@ -1,0 +1,23 @@
+<resources>
+
+    <!--
+	Base application theme for API 14+. This theme completely replaces
+	AppBaseTheme from BOTH res/values/styles.xml and
+	res/values-v11/styles.xml on API 14+ devices.
+    -->
+    <style name="AppBaseTheme" parent="android:Theme.Holo">
+        <!-- API 14 theme customizations can go here. -->
+		<item name="android:actionBarStyle">@style/FullscreenActionBarStyle</item>
+    </style>
+
+	<style name="FullscreenActionBarStyle" parent="android:Widget.Holo.ActionBar">
+		<item name="android:background">@color/black_overlay</item>
+    </style>
+<style name="FBReader.Dialog" parent="android:Theme.Dialog">
+</style>
+
+  <style name="FBReader.Transparent" parent="android:Theme.Translucent.NoTitleBar">
+    <item name="android:windowBackground">@color/transparent</item>
+  </style>
+
+</resources>
