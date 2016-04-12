@@ -100,7 +100,7 @@ public class HtmlSAXHandler extends DefaultHandler implements LexicalHandler {
     public void startElement(String uri, String localName, String qName,
             Attributes attributes) throws SAXException {
         LOG.log(Level.INFO, "start element    : {0}", qName);
-        if (TranslationApp.stopTranslate) {
+        if (TranslationSession.stopTranslate) {
 			throw new RuntimeException("Stop Translating");
 		}
         //

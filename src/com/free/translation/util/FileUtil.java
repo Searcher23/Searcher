@@ -203,7 +203,7 @@
 //	}
 //
 //	private static final String DOCTYPE_PATTERN = "<!DOCTYPE .+?>";
-//	private static final String DOCTYPE_WITH_DTD = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"dtds/xhtml1-transitional.dtd\">\r\n";
+//	private static final String DOCTYPE_WITH_DTD = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"data/xhtml1-transitional.dtd\">\r\n";
 //	public static String initStrictHtml(File oldFile, File newFile)
 //			throws FileNotFoundException, IOException {
 //		String wholeFile = FileUtil.readFileByMetaTag(oldFile);

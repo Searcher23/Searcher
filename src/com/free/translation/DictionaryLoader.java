@@ -58,8 +58,6 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 			
 //			LOG.info(Util.setToSlashString(IRREGULAR_VERBS));
 			
-		} catch (FileNotFoundException e) {
-			throw new RuntimeException(e);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -1774,11 +1772,11 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 		System.out.println(makeRegularPluralNounsForm("abbess"));
 		System.out.println(makeRegularPluralNounsForm("vertex"));
 		System.out.println(makeRegularPluralNounsForm("eighteens"));
-		Map<String, String[]> map = readIrregularPluralNoun(new File(Constants.PRIVATE_PATH + "/dtds/Irregular-Plural-Nouns.txt").getAbsolutePath());
+		Map<String, String[]> map = readIrregularPluralNoun(new File(Constants.PRIVATE_PATH + "/data/Irregular-Plural-Nouns.txt").getAbsolutePath());
 		System.out.println(map.get("index")[0]);
 		System.out.println(map.get("index")[1]);
 		
-		Map<String, String[]> map2 = readIrregularPluralNounFromTextDict(new File(Constants.PRIVATE_PATH + "/dtds/dictd_anh-viet.txt").getAbsolutePath());
+		Map<String, String[]> map2 = readIrregularPluralNounFromTextDict(new File(Constants.PRIVATE_PATH + "/data/dictd_anh-viet.txt").getAbsolutePath());
 		writePluralNounToTextFile(new File("dicts-parsers/Irregular-Plural-Nouns.txt").getAbsolutePath(), map2);
 		
 //		writeWorkBook(dr, NEW_EXCEL_FILE_NAME);

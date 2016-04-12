@@ -253,7 +253,7 @@ public class FileUtil {
 	}
 
 	private static final String DOCTYPE_PATTERN = "<!DOCTYPE .+?>";
-	private static final String DOCTYPE_WITH_DTD = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"dtds/xhtml1-transitional.dtd\">\r\n";
+	private static final String DOCTYPE_WITH_DTD = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"data/xhtml1-transitional.dtd\">\r\n";
 	public static String initStrictHtml(File oldFile, File newFile)
 	throws FileNotFoundException, IOException {
 		String wholeFile = FileUtil.readFileByMetaTag(oldFile);
@@ -1623,7 +1623,7 @@ public class FileUtil {
 		}
 		zf.close();
 	}
-
+	static NumberFormat nf = NumberFormat.getInstance();
 	public static void fastFileCopy(File source, File target) {
         FileChannel in = null;
         FileChannel out = null;
@@ -1651,7 +1651,7 @@ public class FileUtil {
             close(out);
         }
 		long end = System.currentTimeMillis();
-		NumberFormat nf = NumberFormat.getInstance();
+		
 		Log.d(target.getAbsolutePath(), 
 			  nf.format(source.length()) + "B: " + 
 			  ((end - start > 0) ? nf.format(source.length() / (end - start)) : 0) + " KB/s");
@@ -1684,7 +1684,7 @@ public class FileUtil {
             close(bos);
         }
 		long end = System.currentTimeMillis();
-		NumberFormat nf = NumberFormat.getInstance();
+		
 		String srcPath = source.getAbsolutePath();
 		Log.d("Copied " + srcPath + " to " + target, 
 			  ", took " + (end - start)/1000 + " ms, total size " + nf.format(size) + " Bytes, speed " + 

@@ -30,6 +30,7 @@ import android.util.*;
 import android.webkit.*;
 import java.net.*;
 import com.free.searcher.*;
+import java.text.*;
 //import android.util.*;
 
 public class Translator {
@@ -345,7 +346,7 @@ public class Translator {
 //		LOG.log(Level.INFO, "NEW_HTML_FILE_NAME: {0}", Constants.NEW_HTML_FILE_NAME);
 //		translateFromPlainTextFile(new File(Constants.ORI_TEXT_FILE_NAME), Constants.NEW_HTML_FILE_NAME);
 		
-		//translateFromParagraphList(sentenceList, "/storage/emulated/0/.com.free.translation/dtds/translateResult.html");
+		//translateFromParagraphList(sentenceList, "/storage/emulated/0/.com.free.translation/data/translateResult.html");
 //		openOfficeConvertFailed(new File("i:/dest/Breakthrought - Copy (3).docx"), "I:/dest/Breakthrought - Copy (3).docx.html");
 //		openOfficeConvertFailed(new File("i:/dest/simpledoc.doc"), "I:/dest/simpledoc.doc.html");
 	}
@@ -1645,6 +1646,7 @@ public class Translator {
 		}
 	}
 
+	static NumberFormat nf = NumberFormat.getInstance();
 	public static int currentPercent = 0;
 	private static String translateParsedWords(Object[] paragraphs, String htmlFileName, final SearchFragment searchFragment) {
 		List<String> sentencesList;
@@ -1659,7 +1661,7 @@ public class Translator {
 		int read = 0;
 		for (Object paragraph : paragraphs) {
 			//System.out.println(paragraph);
-			if (TranslationApp.stopTranslate) {
+			if (TranslationSession.stopTranslate) {
 				break;
 			}
 			read += paragraph.toString().length();
@@ -1672,7 +1674,8 @@ public class Translator {
 			createColumnHeader(translatedBuffer);
 			for (String sentence : sentencesList) {
 				//System.out.println(sentence);
-				final String sen = sentence;
+				TranslationSession.bytesRead += sentence.getBytes().length;
+				final String sen = "File " + TranslationSession.curFileNo + "/" + searchFragment.getSourceFileTask.convertedFileList.size() + ": " + nf.format((double)TranslationSession.bytesRead * 100/searchFragment.getSourceFileTask.totalSelectedSize) + "% (" + (TranslationSession.bytesRead + "/" + searchFragment.getSourceFileTask.totalSelectedSize) + "): " + sentence;
 				searchFragment.statusView.postDelayed(new  Runnable() {
 														  @Override
 														  public void run() {

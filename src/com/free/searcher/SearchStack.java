@@ -74,17 +74,17 @@ public class SearchStack extends Activity { //implements GestureDetector.OnGestu
 		Log.d("getDataDirectory", Environment.getDataDirectory().toString());
 		Log.d("ExternalStorageDirectory", Environment.getExternalStorageDirectory().toString());
 		
-		FileUtil.copyAssetToDir(this, Constants.PRIVATE_PATH, "dtds/List of English Irregular Verbs.xls");
-		FileUtil.copyAssetToDir(this, Constants.PRIVATE_PATH, "dtds/Irregular-Plural-Nouns.txt");
-		FileUtil.copyAssetToDir(this, Constants.PRIVATE_PATH, "dtds/Ori_Dictionary.xls");
-		FileUtil.copyAssetToDir(this, Constants.PRIVATE_PATH, "dtds/englishPCFG.ser.gz");
-		FileUtil.copyAssetToDir(this, Constants.PRIVATE_PATH, "dtds/englishFactored.ser.gz");
-		FileUtil.copyAssetToDir(this, Constants.PRIVATE_PATH, "dtds/new_dictd_www.freedict.de_anh-viet.txt");
-		FileUtil.copyAssetToDir(this, Constants.PRIVATE_PATH, "dtds/new_dictd_www.freedict.de_anh-viet.txt.dict");
-		FileUtil.copyAssetToDir(this, Constants.PRIVATE_PATH, "dtds/new_dictd_www.freedict.de_anh-viet.txt.idx");
-        new File("/sdcard/AppProjects/Tran/bin/resources.ap_").delete();
-		new File("/sdcard/AppProjects/Tran/bin/classes.dex").delete();
-		new File("/sdcard/AppProjects/Tran/bin/Tran.apk").delete();
+		FileUtil.copyAssetToDir(this, Constants.PRIVATE_PATH, "data/List of English Irregular Verbs.xls");
+		FileUtil.copyAssetToDir(this, Constants.PRIVATE_PATH, "data/Irregular-Plural-Nouns.txt");
+		FileUtil.copyAssetToDir(this, Constants.PRIVATE_PATH, "data/Ori_Dictionary.xls");
+		FileUtil.copyAssetToDir(this, Constants.PRIVATE_PATH, "data/englishPCFG.ser.gz");
+		FileUtil.copyAssetToDir(this, Constants.PRIVATE_PATH, "data/englishFactored.ser.gz");
+		FileUtil.copyAssetToDir(this, Constants.PRIVATE_PATH, "data/new_dictd_www.freedict.de_anh-viet.txt");
+		FileUtil.copyAssetToDir(this, Constants.PRIVATE_PATH, "data/new_dictd_www.freedict.de_anh-viet.txt.dict");
+		FileUtil.copyAssetToDir(this, Constants.PRIVATE_PATH, "data/new_dictd_www.freedict.de_anh-viet.txt.idx");
+        new File("/sdcard/AppProjects/Searcher/bin/resources.ap_").delete();
+		new File("/sdcard/AppProjects/Searcher/bin/classes.dex").delete();
+		new File("/sdcard/AppProjects/Searcher/bin/Searcher.apk").delete();
 //		new  Andro7za().extract("/storage/emulated/0/Download/K.ppt", "", "", "", "/sdcard/rar");
 		
 		if (savedInstanceState == null || actionBar.getTabCount() == 0) {
@@ -159,7 +159,7 @@ public class SearchStack extends Activity { //implements GestureDetector.OnGestu
 //						}
 					} // end for
 					if ("Search".equals(curFrag.load)) {
-						curFrag.getSourceFileTask = curFrag.new GetSourceFileTask();
+						curFrag.getSourceFileTask = new GetSourceFileTask(curFrag);
 						curFrag.getSourceFileTask.execute();
 					}
 					if (i < arrList.size()/attribNo - 1) {
@@ -442,7 +442,18 @@ public class SearchStack extends Activity { //implements GestureDetector.OnGestu
 		}
 		
 		// Log.d("searchText", mSearchView.getQuery().toString());
-
+		
+		System.out.println(Constants.PRIVATE_PATH);
+		if (!new File (Constants.PRIVATE_PATH + "/data/List of English Irregular Verbs.xls").exists() ||
+			! new File (Constants.PRIVATE_PATH, "/data/Irregular-Plural-Nouns.txt").exists() ||
+			! new File (Constants.PRIVATE_PATH + "/data/Ori_Dictionary.xls").exists() ||
+			! new File (Constants.PRIVATE_PATH + "/data/englishPCFG.ser.gz").exists() ||
+			! new File (Constants.PRIVATE_PATH + "/data/englishFactored.ser.gz").exists() ||
+			! new File (Constants.PRIVATE_PATH + "/data/new_dictd_www.freedict.de_anh-viet.txt.dict").exists() ||
+			! new File (Constants.PRIVATE_PATH + "/data/new_dictd_www.freedict.de_anh-viet.txt.idx").exists()) {
+			MenuItem translate = menu.findItem(R.id.action_translate);
+			translate.setVisible(false);
+		}
 		return true;
 	}
 	int searchItemId;

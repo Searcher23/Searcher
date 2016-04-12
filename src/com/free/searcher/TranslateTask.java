@@ -5,23 +5,46 @@ import android.content.*;
 import java.net.*;
 import java.io.*;
 import com.free.translation.*;
+import java.util.*;
 
 public class TranslateTask extends AsyncTask<Void, String, String> {
-	String fName;
+	List<File> fList;
 	SearchFragment searchFragment= null;
+	TranslationSession session;
 	
-	TranslateTask(SearchFragment ctx, String f) {
+	TranslateTask(SearchFragment ctx, List<File> f) {
 		this.searchFragment = ctx;
-		fName = f;
+		fList = f;
+		session = new TranslationSession();
 	}
 
 	@Override
 	protected String doInBackground(Void[] p1) {
 		try {
 			publishProgress("Translate files...");
-			//String dic2Text = 
-			new TranslationApp().translate(fName, searchFragment);
-			return Constants.PRIVATE_PATH + fName+".translated.html";
+			
+			for (File f : fList) {
+				final File ff = f;
+				if (!this.isCancelled()) {
+					session.translate(f.getAbsolutePath(), searchFragment);
+					searchFragment.statusView.postDelayed(new Runnable() {
+							@Override
+							public void run() {
+								searchFragment.showToast("Translate files " + ff + " successfully");
+								try {
+									searchFragment.locX = searchFragment.webView.getScrollX();
+									searchFragment.locY = searchFragment.webView.getScrollY();
+									searchFragment.currentUrl = new File(Constants.PRIVATE_PATH + ff + ".translated.html").toURL().toString();
+									searchFragment.home = searchFragment.currentUrl;
+									searchFragment.webView.loadUrl(searchFragment.currentUrl);
+								} catch (MalformedURLException e) {
+									e.printStackTrace();
+								}
+							} 
+					}, 0);
+				}
+			}
+			return Constants.PRIVATE_PATH + fList.get(fList.size() - 1) +".translated.html";
 		} catch (Throwable e) {
 			publishProgress(e.getMessage());
 			Log.e("Error Translate files", e.getMessage(),e);

@@ -297,10 +297,10 @@ public class Util {
 	// private static final String DOCTYPE_PATTERN = "<!DOCTYPE .+?>";
 
 	// cần uri để download dtd
-	public static final String DTD = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"file:dtds/xhtml1-transitional.dtd\">\r\n";
+	public static final String DTD = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"file:data/xhtml1-transitional.dtd\">\r\n";
 
 	// public static final String DTD =
-	// "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"dtds/xhtml1-transitional.dtd\">\r\n";
+	// "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"data/xhtml1-transitional.dtd\">\r\n";
 
 	public static String initOriHtml(File inFile, File newFile)
 			throws FileNotFoundException, IOException {
