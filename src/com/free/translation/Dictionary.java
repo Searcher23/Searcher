@@ -15,13 +15,14 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.Vector;
 import java.util.logging.Logger;
-import com.free.translation.util.*;
 
+import java.io.*;
+import android.util.*;
 
 public class Dictionary implements Iterable<ComplexWordDef>, Serializable {
 	private static final long serialVersionUID = -6438419426826900803L;
 
-	private transient static Logger LOG = Constants.LOGGER; //Logger.getLogger(Dictionary.class.getName());
+	//private transient static Logger LOG = Constants.LOGGER; //Logger.getLogger(Dictionary.class.getName());
 
 	private transient static final String SPLIT_CHAR = "/";
 
@@ -33,46 +34,46 @@ public class Dictionary implements Iterable<ComplexWordDef>, Serializable {
 		super();
 	}
 	
-	private int dictSize = 0;
-	private Object[] dictArr = null;
+//	private int dictSize = 0;
+//	private Object[] dictArr = null;
 	
-	public Object[] getDictArr() {
-		if (dictSize != dictionary.size()) {
-			dictArr = dictionary.toArray();
-			dictSize = dictionary.size();
-			return dictArr;
-		} else {
-			return dictArr;
-		}
-	}
+//	public Object[] getDictArr() {
+//		if (dictSize != dictionary.size()) {
+//			dictArr = dictionary.toArray();
+//			dictSize = dictionary.size();
+//			return dictArr;
+//		} else {
+//			return dictArr;
+//		}
+//	}
 	
-	public void appendDictionary(Dictionary dic) {
-		for (ComplexWordDef complexWordDef : dic) {
-			this.addAppend(complexWordDef);
-		}
-	}
+//	public void appendDictionary(Dictionary dic) {
+//		for (ComplexWordDef complexWordDef : dic) {
+//			this.addAppend(complexWordDef);
+//		}
+//	}
 	
-	public void addNewDictionary(Dictionary dic) {
-		for (ComplexWordDef complexWordDef : dic) {
-			this.addNewOnly(complexWordDef);
-		}
-	}
+//	public void addNewDictionary(Dictionary dic) {
+//		for (ComplexWordDef complexWordDef : dic) {
+//			this.addNewOnly(complexWordDef);
+//		}
+//	}
 	
-	public void addDictionary(TreeSet<ComplexWordDef> dic) {
-		dictionary.addAll(dic);
-	}
+//	public void addDictionary(TreeSet<ComplexWordDef> dic) {
+//		dictionary.addAll(dic);
+//	}
 	
-	public void setDictionary(TreeSet<ComplexWordDef> dic) {
-		this.dictionary = dic;
-		
-	}
+//	public void setDictionary(TreeSet<ComplexWordDef> dic) {
+//		this.dictionary = dic;
+//		
+//	}
 
-	public void addNewOnly(ComplexWordDef newWord) {
-		if (!dictionary.contains(newWord)) {
-			dictionary.add(newWord);
-			
-		}
-	}
+//	public void addNewOnly(ComplexWordDef newWord) {
+//		if (!dictionary.contains(newWord)) {
+//			dictionary.add(newWord);
+//			
+//		}
+//	}
 	
 	public void addAppend(ComplexWordDef newWord) {
 		if (dictionary.contains(newWord)) {
@@ -91,7 +92,7 @@ public class Dictionary implements Iterable<ComplexWordDef>, Serializable {
 						Collections.sort(oldList);
 //						Collections.sort(newList);
 
-						StringBuilder duplicateSB = new StringBuilder();
+//						StringBuilder duplicateSB = new StringBuilder();
 						StringBuilder addNewDefinitionSB = new StringBuilder();
 						String newString;
 						for (int i = 0; i < newSplit.length; i++) {
@@ -100,17 +101,17 @@ public class Dictionary implements Iterable<ComplexWordDef>, Serializable {
 								if (Collections.binarySearch(oldList, newString) < 0) {
 //									oldDefinitionSB.append(SPLIT_CHAR).append(newString);
 									addNewDefinitionSB.append(SPLIT_CHAR).append(newString);
-								} else {
-									duplicateSB.append(SPLIT_CHAR).append(newString);
+//								} else {
+//									duplicateSB.append(SPLIT_CHAR).append(newString);
 								}
 							}
 						}
-						if (duplicateSB.length() > 0) {
-//							log.info("Duplicate ["
-//									+ duplicateSB.append("] of origin word [")
-//									.append(oldWord).append("]")
-//									.substring(SPLIT_LENGTH));
-						}
+//						if (duplicateSB.length() > 0) {
+////							log.info("Duplicate ["
+////									+ duplicateSB.append("] of origin word [")
+////									.append(oldWord).append("]")
+////									.substring(SPLIT_LENGTH));
+//						}
 						if (addNewDefinitionSB.length() > 0) {
 //							log.info(addNewDefinitionSB.insert(
 //									SPLIT_LENGTH, "Add New [").append("] of origin word [").append(
@@ -127,30 +128,29 @@ public class Dictionary implements Iterable<ComplexWordDef>, Serializable {
 		} else {
 //			Constants.LOG.info("Add [" + newWord + "]");
 			dictionary.add(newWord);
-			
 		}
 	}
 
-	public void remove(ComplexWordDef word) {
-		dictionary.remove(word);
-		
-	}
+//	public void remove(ComplexWordDef word) {
+//		dictionary.remove(word);
+//		
+//	}
 
-	public void removeAll() {
-		Iterator<ComplexWordDef> iter = dictionary.iterator();
-		while (iter.hasNext()) {
-			iter.next();
-			iter.remove();
-		}
-		
-	}
+//	public void removeAll() {
+//		Iterator<ComplexWordDef> iter = dictionary.iterator();
+//		while (iter.hasNext()) {
+//			iter.next();
+//			iter.remove();
+//		}
+//		
+//	}
 
 	@Override
 	public Iterator<ComplexWordDef> iterator() {
 		return dictionary.iterator();
 	}
 
-	public ComplexWordDef getDefinition(String name) {
+	public ComplexWordDef getComplexWordDef(String name) {
 		if (name != null) {
 			ComplexWordDef e = new ComplexWordDef(name);
 			ComplexWordDef floor = dictionary.floor(e);
@@ -163,20 +163,19 @@ public class Dictionary implements Iterable<ComplexWordDef>, Serializable {
 
 	@Override
 	public String toString() {
-		ComplexWordDef wd;
+
 		StringBuilder sb = new StringBuilder();
 		sb.append("Dictionary:\n");
 		int counter = 0;
-		for (Iterator<ComplexWordDef> iterator = dictionary.iterator(); iterator.hasNext();) {
-			wd = iterator.next();
+		for (ComplexWordDef wd : dictionary) {
 			sb.append(++counter).append(": ");
 			sb.append(wd).append("\n");
 		}
+
 		sb.append("Duplicated Words:\n");
 		counter = 0;
 		if (duplicateList != null) {
-			for (Iterator<ComplexWordDef> iterator = duplicateList.iterator(); iterator.hasNext();) {
-				wd = iterator.next();
+			for (ComplexWordDef wd : duplicateList) {
 				sb.append(++counter).append(": ");
 				sb.append(wd).append("\n");
 			}
@@ -189,7 +188,7 @@ public class Dictionary implements Iterable<ComplexWordDef>, Serializable {
 	}
 
 	public void printContents() {
-		LOG.info(this.toString());
+		Log.i("Dictionary", this.toString());
 	}
 
 	public boolean contains(ComplexWordDef dword) {
@@ -209,11 +208,11 @@ public class Dictionary implements Iterable<ComplexWordDef>, Serializable {
 	public static final int VERB = 2;
 	public static final int ADJECTIVE = 3;
 	public static final int ADVERB = 4;
-	public static final int OTHER = 5;
+	public static final int OTHER = -1;
 	public static final int ADJECTIVE_COMPARATIVE = 6;
 
-	String[] columnNames = new String[]{"Word", "Noun", "Verb", "Adjective", "Adverb", "Other"};
-	String[] normalColumnNames = new String[]{"word", "noun", "verb", "adjective", "adverb", "other"};
+//	String[] columnNames = new String[]{"Word", "Noun", "Verb", "Adjective", "Adverb", "Other"};
+//	String[] normalColumnNames = new String[]{"word", "noun", "verb", "adjective", "adverb", "other"};
 	
 //	public void importFromModel(TableModel model) {
 //		dictionary.clear();
@@ -287,27 +286,35 @@ public class Dictionary implements Iterable<ComplexWordDef>, Serializable {
 
 	public void save(String filename) throws IOException {
 		FileOutputStream fos = new FileOutputStream(filename);
-		ObjectOutputStream out = new ObjectOutputStream(fos);
+		BufferedOutputStream bos = new BufferedOutputStream(fos);
+		ObjectOutputStream out = new ObjectOutputStream(bos);
 		out.writeObject(this);
 		out.flush();
 		out.close();
+		bos.close();
+		fos.close();
 	}
 
 	public static void save(Dictionary dictionary, String fileName) throws IOException {
 		FileOutputStream fos = new FileOutputStream(fileName);
-		ObjectOutputStream out = new ObjectOutputStream(fos);
+		BufferedOutputStream bos = new BufferedOutputStream(fos);
+		ObjectOutputStream out = new ObjectOutputStream(bos);
 		out.writeObject(dictionary);
 		out.flush();
 		out.close();
+		bos.close();
+		fos.close();
 	}
 	
 	public static Dictionary restore(String fileName) throws IOException, ClassNotFoundException {
-		LOG.info("processing: " + new File(fileName).getAbsolutePath());
+		Log.i("Dictionary", "processing: " + fileName);
 		FileInputStream fis = new FileInputStream(fileName);
-		fis.getFD().toString();
-		ObjectInputStream in = new ObjectInputStream(fis);
+		BufferedInputStream bis = new BufferedInputStream(fis);
+		ObjectInputStream in = new ObjectInputStream(bis);
 		Dictionary dic = (Dictionary) in.readObject();
 		in.close();
+		bis.close();
+		fis.close();
 		return dic;
 	}
 

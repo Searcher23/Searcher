@@ -7,9 +7,9 @@ import java.io.*;
 
 class RestoreStardictTask extends AsyncTask<Void, String, String> {
 	private String fName;
-	private SearchFragment s;
+	private MainFragment s;
 
-	RestoreStardictTask(SearchFragment s, String f) {
+	RestoreStardictTask(MainFragment s, String f) {
 		this.s = s;
 		fName = f;
 	}

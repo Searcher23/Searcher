@@ -5,9 +5,9 @@ import android.util.*;
 
 class GenStardictTask extends AsyncTask<Void, String, String> {
 	private String fName;
-	private SearchFragment s;
+	private MainFragment s;
 
-	GenStardictTask(SearchFragment s, String f) {
+	GenStardictTask(MainFragment s, String f) {
 		this.s = s;
 		fName = f;
 	}

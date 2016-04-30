@@ -33,6 +33,7 @@ public class FolderChooserActivity extends Activity {
 	ArrayAdapter srcAdapter;
 	ArrayAdapter destAdapter;
 //	Typeface tf;
+	FileObserver mFileObserver;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -72,10 +73,10 @@ public class FolderChooserActivity extends Activity {
 		
 //		tf = Typeface.createFromAsset(getAssets(), "fonts/DejaVuSerifCondensed.ttf");
 
-		setTitle(getIntent().getStringExtra(SearchFragment.CHOOSER_TITLE));
-		suffix = getIntent().getStringExtra(SearchFragment.SUFFIX);
+		setTitle(getIntent().getStringExtra(MainFragment.CHOOSER_TITLE));
+		suffix = getIntent().getStringExtra(MainFragment.SUFFIX);
 		Log.d("suffix", suffix);
-		multiFiles = getIntent().getBooleanExtra(SearchFragment.MODE, true);
+		multiFiles = getIntent().getBooleanExtra(MainFragment.MODE, true);
 		Log.d("multiFiles", multiFiles + "");
 		if (multiFiles) {
 			showToast("Long press to select folder.\nClick to select/unselect files or folders");
@@ -96,7 +97,7 @@ public class FolderChooserActivity extends Activity {
 			findViewById(R.id.removeAll).setVisibility(View.GONE);
 		}
 
-		previousSelectedStr = getIntent().getStringArrayExtra(SearchFragment.SELECTED_DIR);
+		previousSelectedStr = getIntent().getStringArrayExtra(MainFragment.SELECTED_DIR);
 		Log.d("Folder onCreate", Util.arrayToString(previousSelectedStr, true, "\r\n"));
 		if (previousSelectedStr != null) {
 			Arrays.sort(previousSelectedStr);
@@ -163,6 +164,54 @@ public class FolderChooserActivity extends Activity {
 		Toast.makeText(this, st, Toast.LENGTH_LONG).show();
 	}
 
+    /**
+     * Sets up a FileObserver to watch the current directory.
+     */
+    private FileObserver createFileObserver(String path) {
+        return new FileObserver(path, FileObserver.CREATE | FileObserver.DELETE
+								| FileObserver.MOVED_FROM | FileObserver.MOVED_TO) {
+
+            @Override
+            public void onEvent(int event, String path) {
+                debug("FileObserver received event %d", event);
+                final Activity activity = FolderChooserActivity.this;
+                if (activity != null) {
+                    activity.runOnUiThread(new Runnable() {
+							@Override
+							public void run() {
+								refreshDirectory();
+							}
+						});
+                }
+            }
+        };
+    }
+	private void debug(String message, Object... args) {
+        Log.d("FolderChooserActivity", String.format(message, args));
+    }
+	
+    /**
+     * Refresh the contents of the directory that is currently shown.
+     */
+    private void refreshDirectory() {
+        changeDir(new File(dir.getText().toString()));
+    }
+	
+	@Override
+    public void onPause() {
+        super.onPause();
+        if (mFileObserver != null) {
+            mFileObserver.stopWatching();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mFileObserver != null) {
+            mFileObserver.startWatching();
+        }
+    }
     /**
      * Lưu danh sách file và thư mục trong curDir vào list, allFiles để hiển thị trong TextView List
      * @param curDir

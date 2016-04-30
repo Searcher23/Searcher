@@ -15,8 +15,6 @@ import java.util.logging.SimpleFormatter;
 import java.util.logging.StreamHandler;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import com.free.translation.util.*;
-import android.os.*;
 
 public final class Constants {
 
@@ -27,10 +25,10 @@ public final class Constants {
 	
 //	public static final String DICTIONARY_BUNDLE = "com.translation.translation.resources.Dictionary";
 	//public static final ResourceBundle RB = ResourceBundle.getBundle(DICTIONARY_BUNDLE, Locale.US);
-	public static final Logger LOGGER = Logger.getLogger(Constants.class.getName());
+//	public static final Logger LOGGER = Logger.getLogger(Constants.class.getName());
 	
 	public static final String DOCTYPE_WITH_DTD = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"data/xhtml1-transitional.dtd\">\r\n";//RB.getString("doctype");
-	public static final String PRIVATE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + 
+	public static final String PRIVATE_PATH = "/sdcard" + //Environment.getExternalStorageDirectory().getAbsolutePath() + 
 	"/.com.free.translation";
 	public static final String ZIP_SUFFIX = "";
 	
@@ -117,19 +115,19 @@ public final class Constants {
 	@Override
 	protected void finalize() throws Throwable {
 		super.finalize();
-		Constants.LOGGER.getHandlers()[0].close();
+//		Constants.LOGGER.getHandlers()[0].close();
 	}
 
 	public static void main(String[] args) throws FileNotFoundException, IOException, InterruptedException {
 		System.out.println(System.getProperty("user.dir"));
-		LOGGER.info(new Date(System.currentTimeMillis()).toString());
-		LOGGER.setLevel(Level.OFF);
-		LOGGER.info(new Date(System.currentTimeMillis()).toString());
-		LOGGER.info(new Date(System.currentTimeMillis()).toString());
-		LOGGER.info(new Date(System.currentTimeMillis()).toString());
-		LOGGER.info(new Date(System.currentTimeMillis()).toString());
-		LOGGER.setLevel(Level.INFO);
-		LOGGER.info("helloworld");
-		LOGGER.info("helloworld2");
+//		LOGGER.info(new Date(System.currentTimeMillis()).toString());
+//		LOGGER.setLevel(Level.OFF);
+//		LOGGER.info(new Date(System.currentTimeMillis()).toString());
+//		LOGGER.info(new Date(System.currentTimeMillis()).toString());
+//		LOGGER.info(new Date(System.currentTimeMillis()).toString());
+//		LOGGER.info(new Date(System.currentTimeMillis()).toString());
+//		LOGGER.setLevel(Level.INFO);
+//		LOGGER.info("helloworld");
+//		LOGGER.info("helloworld2");
 	}
 }

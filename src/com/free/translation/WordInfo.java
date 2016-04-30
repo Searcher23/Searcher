@@ -6,6 +6,8 @@ import java.util.logging.Logger;
 import edu.stanford.nlp.ling.HasWord;
 import com.free.translation.*;
 import java.util.*;
+import android.util.*;
+
 
 public class WordInfo implements Comparable<WordInfo>, HasWord {
 	private static final long serialVersionUID = -8715402241741145825L;
@@ -17,14 +19,15 @@ public class WordInfo implements Comparable<WordInfo>, HasWord {
 	private String name = "";
 	private String definition = "";
 	private int type = Dictionary.OTHER;
-	private static final Logger log = Constants.LOGGER;	// Logger.getLogger(WordInfo.class.getName());
+	//private static final Logger log = Constants.LOGGER;	// Logger.getLogger(WordInfo.class.getName());
     private TreeSet<WordClass> definitions = new TreeSet<WordClass>();
 	
 	static TreeSet<String> notYetDefined = new TreeSet<String>();
 	
 	public WordInfo(int order, String name, String definition, String startSign, String endSign) {
 		if (name == null) {
-			throw new RuntimeException("Name cannot be null");
+			//name = "";
+			throw new NullPointerException("Name cannot be null");
 		}
 		if (startSign == null) {
 			startSign = "";
@@ -33,17 +36,18 @@ public class WordInfo implements Comparable<WordInfo>, HasWord {
 			endSign = "";
 		}
 		this.order = order;
-		this.name = name;
+		this.name = name.trim();
 		this.definition = definition;
-		this.startTag = "";
+		//this.startTag = "";
 		this.startSign = startSign;
-		this.endTag = "";
+		//this.endTag = "";
 		this.endSign = endSign;
 	}
 
 	public WordInfo(int order, String name, TreeSet<WordClass> definitions, String startSign, String endSign) {
 		if (name == null) {
-			throw new RuntimeException("Name cannot be null");
+			throw new NullPointerException("Name cannot be null");
+			//name = "";
 		}
 		if (startSign == null) {
 			startSign = "";
@@ -52,20 +56,20 @@ public class WordInfo implements Comparable<WordInfo>, HasWord {
 			endSign = "";
 		}
 		this.order = order;
-		this.name = name;
+		this.name = name.trim();
 		this.definitions = definitions;
 		this.definition = getDefinition(Dictionary.OTHER);
-		this.startTag = "";
+		//this.startTag = "";
 		this.startSign = startSign;
-		this.endTag = "";
+		//this.endTag = "";
 		this.endSign = endSign;
 	}
-	
 	
 	public WordInfo(int order, String startTag, String startSign, String name,
 			String definition, String endSign, String endTag) {
 		if (name == null) {
-			throw new RuntimeException("Name cannot be null");
+			//name = "";
+			throw new NullPointerException("Name cannot be null");
 		}
 		if (startTag == null) {
 			startTag = "";
@@ -82,7 +86,7 @@ public class WordInfo implements Comparable<WordInfo>, HasWord {
 		this.order = order;
 		this.startTag = startTag;
 		this.startSign = startSign;
-		this.name = name;
+		this.name = name.trim();
 		this.definition = definition;
 		this.endTag = endTag;
 		this.endSign = endSign;
@@ -108,9 +112,9 @@ public class WordInfo implements Comparable<WordInfo>, HasWord {
 
 	public void setName(String name) {
 		if (name == null) {
-			throw new RuntimeException("Name cannot be null");
+			throw new NullPointerException("Name cannot be null");
 		}
-		this.name = name;
+		this.name = name.trim();
 	}
 
 	public String getDefinition(int type) {
@@ -124,11 +128,12 @@ public class WordInfo implements Comparable<WordInfo>, HasWord {
 				sb.append("/");
 			}
 		}
-		String def = sb.toString();
-		if (def.length() > 0) {
-			return def.substring(0, def.length() - 1);
+		int length = sb.length();
+		if (length > 0) {
+			return sb.substring(0, --length);
+		} else {
+			return sb.toString();
 		}
-        return def;
 	}
 	
 	public String getDefinition() {
@@ -144,7 +149,7 @@ public class WordInfo implements Comparable<WordInfo>, HasWord {
 				String nameSubstring = name.substring(0, 1);
 				if (nameSubstring.toUpperCase().equals(nameSubstring)) {
 					return new StringBuilder(definition.substring(0, 1)
-							.toUpperCase()).append(definition.substring(1))
+											 .toUpperCase()).append(definition, 1, definition.length() - 1)
 							.toString();
 				} else {
 					return definition;
@@ -189,7 +194,6 @@ public class WordInfo implements Comparable<WordInfo>, HasWord {
 		return endTag;
 	}
 
-
 	public void setEndTag(String endTag) {
 		this.endTag = endTag;
 	}
@@ -222,10 +226,9 @@ public class WordInfo implements Comparable<WordInfo>, HasWord {
 
 	@Override
 	public boolean equals(Object wordInfo) {
-		if (wordInfo == null) {
+		if (wordInfo == null || !(wordInfo instanceof WordInfo)) {
 			return false;
-		} else if (!(wordInfo instanceof WordInfo)) {
-			throw new ClassCastException("not WordInfo class");
+			//throw new ClassCastException("not WordInfo class");
 		} else {
 			WordInfo wi = (WordInfo) wordInfo;
 			return (this.name.toLowerCase() + this.order).equals(
@@ -237,19 +240,18 @@ public class WordInfo implements Comparable<WordInfo>, HasWord {
     public int hashCode() {
         int hash = 3;
         hash = 37 * hash + this.order;
-        hash = 37 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 37 * hash + this.name.hashCode();
         return hash;
     }
 
 	public boolean isTheSame(WordInfo otherWord) {
 		return otherWord != null ? 
-				this.name.toLowerCase().equals(otherWord.getName().toLowerCase())
-				&& this.getDefinition().toLowerCase().equals(otherWord.getDefinition().toLowerCase())
-				&& this.order == otherWord.getOrder()
+			this.name.equalsIgnoreCase(otherWord.name)
+			&& this.getDefinition().equalsIgnoreCase(otherWord.getDefinition())
+			&& this.order == otherWord.order
 				: false;
 	}
 
-	
 	@Override
 	public String toString() {
 		return new StringBuilder(order).append(": ").append(startTag)
@@ -272,28 +274,27 @@ public class WordInfo implements Comparable<WordInfo>, HasWord {
 		if (definition != null && definition.length() > 0) {
 			if (definition.indexOf("/") > 0) {
 				return new StringBuilder(startTag).append(startSign)
-					.append(SPAN_TITLE_START).append(getName()).append("\">")
+					.append(SPAN_TITLE_START).append(name).append("\">")
 					.append("[").append(getDefinition()).append("]")
 					.append(SPAN_TITLE_END)
 					.append(endSign).append(endTag)
 					.toString();
 			} else {
 				return new StringBuilder(startTag).append(startSign)
-					.append(SPAN_TITLE_START).append(getName()).append("\">")
+					.append(SPAN_TITLE_START).append(name).append("\">")
 					.append(getDefinition())
 					.append(SPAN_TITLE_END)
 					.append(endSign).append(endTag)
 					.toString();
 			}
-			
 		} else if (name.trim().length() > 0) {
-			notYetDefined.add(name.trim());
+			notYetDefined.add(name);
 			return new StringBuilder(startTag).append(startSign)
 					//.append(SPAN_TITLE_START).append(getName()).append("\">")
 					.append(name)
 					//.append(SPAN_TITLE_END)
 					.append(endSign).append(endTag).toString();
-		} else if (name.trim().length() == 0) {
+		} else if (name.length() > 0) {
 			return new StringBuilder(startTag).append(startSign).append(name).append(endSign).append(endTag).toString();
 		} else {
 			return new StringBuilder(startTag).append(startSign).append(endSign).append(endTag).toString();
@@ -305,7 +306,7 @@ public class WordInfo implements Comparable<WordInfo>, HasWord {
 	}
 
 	public void printContent() {
-		log.info(this.toString());
+		Log.i("WordInfo", this.toString());
 	}
 
 	@Override

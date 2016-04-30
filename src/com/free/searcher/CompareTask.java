@@ -5,12 +5,12 @@ import android.util.*;
 
 class CompareTask extends AsyncTask<Void, String, String> {
 
-	private static final String COMPARE_TITLE = SearchFragment.HTML_STYLE
+	private static final String COMPARE_TITLE = MainFragment.HTML_STYLE
 	+ "<title>Document Compare Result</title>\r\n" 
-	+ SearchFragment.HEAD_TABLE;
-	private SearchFragment s;
+	+ MainFragment.HEAD_TABLE;
+	private MainFragment s;
 
-	public CompareTask(SearchFragment s) {
+	public CompareTask(MainFragment s) {
 		this.s = s;
 	}
 	
@@ -33,7 +33,7 @@ class CompareTask extends AsyncTask<Void, String, String> {
 			String oriStr = FileUtil.readFileAsCharset(f1, "utf-8");
 			String modiStr = FileUtil.readFileAsCharset(f2, "utf-8");
 			String compareText = DiffMatchPatch.compare(oriStr, modiStr);
-			File fret = new File(SearchFragment.PRIVATE_PATH + s.oriDoc + "_" + f2.getName() + ".html");
+			File fret = new File(MainFragment.PRIVATE_PATH + s.oriDoc + "_" + f2.getName() + ".html");
 			FileUtil.writeFileAsCharset(fret, compareText, "utf-8");
 
 			StringBuilder sb = new  StringBuilder(COMPARE_TITLE);
@@ -47,30 +47,30 @@ class CompareTask extends AsyncTask<Void, String, String> {
 				.append("</strong></td>\n</tr>\n");
 
 			sb.append("<tr>\n")
-				.append(SearchFragment.TD_COMPARE1)
-				.append("<a href=\"" + f1.toURL() + "\">" + f1.getName() + " [" + SearchFragment.nf.format(f1.length()) + " bytes]" + "</a>")
+				.append(MainFragment.TD_COMPARE1)
+				.append("<a href=\"" + f1.toURL() + "\">" + f1.getName() + " [" + MainFragment.nf.format(f1.length()) + " bytes]" + "</a>")
 				.append("\n</td>\n")
-				.append(SearchFragment.TD_COMPARE1)
-				.append("<a href=\"" + f2.toURL() + "\">" + f2.getName() + " [" + SearchFragment.nf.format(f2.length()) +" bytes]" + "</a>")
+				.append(MainFragment.TD_COMPARE1)
+				.append("<a href=\"" + f2.toURL() + "\">" + f2.getName() + " [" + MainFragment.nf.format(f2.length()) +" bytes]" + "</a>")
 				.append("\n</td>\n")
-				.append(SearchFragment.TD_COMPARE2)
-				.append("<a href=\"" + fret.toURL() + "\">" + fret.getName() + " [" + SearchFragment.nf.format(compareText.getBytes().length) +" bytes]" + "</a>")
+				.append(MainFragment.TD_COMPARE2)
+				.append("<a href=\"" + fret.toURL() + "\">" + fret.getName() + " [" + MainFragment.nf.format(compareText.getBytes().length) +" bytes]" + "</a>")
 				.append("\n</td>\n")
 				.append("</tr>");
 
 			sb.append("<tr>\n")
-				.append(SearchFragment.TD_COMPARE1)
+				.append(MainFragment.TD_COMPARE1)
 				.append(oriStr.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll("\n", "<br/>"))
 				.append("\n</td>\n")
-				.append(SearchFragment.TD_COMPARE1)
+				.append(MainFragment.TD_COMPARE1)
 				.append(modiStr.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll("\n", "<br/>"))
 				.append("\n</td>\n")
-				.append(SearchFragment.TD_COMPARE2)
+				.append(MainFragment.TD_COMPARE2)
 				.append(compareText)
 				.append("\n</td>\n")
 				.append("</tr></table>\n<strong><br/>")
 				.append("</strong></div>\n</body>\n</html>");
-			String name = SearchFragment.PRIVATE_PATH + s.oriDoc + "_" + f2.getName() + ".all.html";
+			String name = MainFragment.PRIVATE_PATH + s.oriDoc + "_" + f2.getName() + ".all.html";
 			FileUtil.writeContentToFile(name, sb.toString());
 
 			s.currentUrl = new File(name).toURL().toString();

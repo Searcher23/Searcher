@@ -1,7 +1,6 @@
 package com.free.translation;
 
 import java.io.Serializable;
-import com.free.translation.util.*;
 import com.free.searcher.*;
 
 /**
@@ -13,7 +12,7 @@ public class WordClass implements Serializable, Comparable<WordClass> {
 	private static final long serialVersionUID = 3179655625844316015L;
 	
 	private int type = Dictionary.OTHER;
-	private String profession = "";
+	//private String profession = "";
 	private String definitions = "";
 
 	public WordClass() {
@@ -24,11 +23,11 @@ public class WordClass implements Serializable, Comparable<WordClass> {
 		this.type = type;
 	}
 
-	public WordClass(int type, String profession) {
-		super();
-		this.type = type;
-		this.profession = Util.trim(profession);
-	}
+//	public WordClass(int type, String profession) {
+//		super();
+//		this.type = type;
+//		//this.profession = Util.trim(profession);
+//	}
 
 	public int getType() {
 		return type;
@@ -38,13 +37,13 @@ public class WordClass implements Serializable, Comparable<WordClass> {
 		this.type = type;
 	}
 
-	public String getProfession() {
-		return profession;
-	}
-
-	public void setProfession(String profession) {
-		this.profession = Util.trim(profession);
-	}
+//	public String getProfession() {
+//		return profession;
+//	}
+//
+//	public void setProfession(String profession) {
+//		this.profession = Util.trim(profession);
+//	}
 	
 	public String getDefinition() {
 		return definitions;
@@ -89,12 +88,12 @@ public class WordClass implements Serializable, Comparable<WordClass> {
 	
 	@Override
 	public String toString() {
-		return type + ": " + profession + ": [" + getDefinition() + "]";
+		return type + ": [" + getDefinition() + "]"; // + ": " + profession
 	}
 	
 	@Override
 	public int compareTo(WordClass o) {
-		return (this.type + this.profession).compareToIgnoreCase(o.getType() + o.getProfession());
+		return (this.type)-(o.type); // + this.profession + compareToIgnoreCase(o.getProfession()
 	}
 	
 	@Override
@@ -102,7 +101,7 @@ public class WordClass implements Serializable, Comparable<WordClass> {
 		if (obj == null || !(obj instanceof WordClass)) {
 			return false;
 		} else {
-			return (compareTo((WordClass)obj) == 0);
+			return (this.type) == ((WordClass)obj).type;
 		}
 	}
 
@@ -114,11 +113,11 @@ public class WordClass implements Serializable, Comparable<WordClass> {
     }
 
 	public static void main(String[] args) {
-		WordClass wc = new WordClass(Dictionary.NOUN, "math");
-		wc.addDefinition(",plus, Divide;");
-		wc.addDefinition("minus").addDefinition("multiply# test");
-		wc.addDefinition(",plus, Divide;");
-		
-		System.out.println(wc);
+//		WordClass wc = new WordClass(Dictionary.NOUN, "math");
+//		wc.addDefinition(",plus, Divide;");
+//		wc.addDefinition("minus").addDefinition("multiply# test");
+//		wc.addDefinition(",plus, Divide;");
+//		
+//		System.out.println(wc);
 	}
 }

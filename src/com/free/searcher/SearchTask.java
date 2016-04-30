@@ -15,15 +15,15 @@ import java.util.regex.*;
 	private static final String TD1 = "<td width='3%' valign='top' style='border:solid black 1.0pt; padding:0cm 1.4pt 0cm 1.4pt'>\r\n";
 	private static final String TD2 = "<td width='97%' valign='top' style='border:solid black 1.0pt; padding:0cm 1.4pt 0cm 1.4pt'>\r\n";
 	
-	private static final String SEARCH_TITLE = SearchFragment.HTML_STYLE
+	private static final String SEARCH_TITLE = MainFragment.HTML_STYLE
 	+ "<title>Search Result</title>\r\n" 
-	+ SearchFragment.HEAD_TABLE;
+	+ MainFragment.HEAD_TABLE;
 	private int matched = 0;
 	private int charsPreview = 512;
 	
-	private SearchFragment s;
+	private MainFragment s;
 
-	public SearchTask(SearchFragment s) {
+	public SearchTask(MainFragment s) {
 		this.s = s;
 	}
 
@@ -38,9 +38,9 @@ import java.util.regex.*;
 //				FileUtil.delete(s.searchFileResult);
 //			}
 //			if (s.searchFileResult == null || s.searchFileResult.length() == 0) {
-		s.searchFileResult = SearchFragment.PRIVATE_PATH +
+		s.searchFileResult = MainFragment.PRIVATE_PATH +
 			"/SearchResult_" 
-			+ SearchFragment.df.format(System.currentTimeMillis()).replaceAll("[/\\?<>\"':|]", "_") + ".html";
+			+ MainFragment.df.format(System.currentTimeMillis()).replaceAll("[/\\?<>\"':|]", "_") + ".html";
 //			}
 		File searchFile = new File(s.searchFileResult);
 //			searchFile.delete();
@@ -61,8 +61,8 @@ import java.util.regex.*;
 			// for DoubleCache
 			File f = null;
 			int numFileSearched = 0;
-			boolean checkRE2 = SearchStack.checkRE;
-			charsPreview = SearchStack.charsPreview;
+			boolean checkRE2 = MainActivity.checkRE;
+			charsPreview = MainActivity.charsPreview;
 			String query = search[0].toLowerCase();
 
 			while (s.cache.hasNext()) { // && isAlive
@@ -90,12 +90,12 @@ import java.util.regex.*;
 				}
 			}
 			resultStr = new StringBuilder(matched + "")
-				.append(" matches, result size ").append(SearchFragment.nf.format(searchFile.length() + sb.toString().getBytes().length + 180))
-				.append(" bytes, cached ").append(SearchFragment.nf.format(s.cache.cached())).append("/").append(count)
-				.append(" files, cached size ").append(SearchFragment.nf.format(s.cache.getCurrentSize())).append("/")
-				.append(SearchFragment.nf.format(s.cache.getTotalSize()))
+				.append(" matches, result size ").append(MainFragment.nf.format(searchFile.length() + sb.toString().getBytes().length + 180))
+				.append(" bytes, cached ").append(MainFragment.nf.format(s.cache.cached())).append("/").append(count)
+				.append(" files, cached size ").append(MainFragment.nf.format(s.cache.getCurrentSize())).append("/")
+				.append(MainFragment.nf.format(s.cache.getTotalSize()))
 				.append(" bytes, took ")
-				.append(SearchFragment.nf.format(System.currentTimeMillis() - timeMillis))
+				.append(MainFragment.nf.format(System.currentTimeMillis() - timeMillis))
 				.append(" milliseconds.").toString();
 			sb.append("</table>\r\n<strong><br/>")
 				.append(resultStr)
@@ -103,8 +103,8 @@ import java.util.regex.*;
 			FileUtil.writeAppendFileAsCharset(searchFile, sb.toString(), Util.UTF8);
 		} catch (Throwable e) {
 			publishProgress("Result length " + sb.length() + ", error: " + e.getMessage() 
-							+ ". Free memory is " + SearchFragment.nf.format(Runtime.getRuntime().freeMemory())
-							+ ". Max memory is " + SearchFragment.nf.format(Runtime.getRuntime().maxMemory()));
+							+ ". Free memory is " + MainFragment.nf.format(Runtime.getRuntime().freeMemory())
+							+ ". Max memory is " + MainFragment.nf.format(Runtime.getRuntime().maxMemory()));
 			Log.d("SearchTask.doInBackground", e.getMessage(), e);
 			return null;
 		}
@@ -170,7 +170,7 @@ import java.util.regex.*;
 						"<tr>\r\n<td width='100%' colspan='2' align='left' style='border:solid black 1.0pt; padding:1.4pt 1.4pt 1.4pt 1.4pt;'><strong>")
 						.append(inFile.getAbsolutePath())
 						.append(" [number of characters: ")
-						.append(SearchFragment.nf.format(contentLength))
+						.append(MainFragment.nf.format(contentLength))
 						.append("]</strong></td>\r\n</tr>\r\n");
 					found = true;
 				}
@@ -228,7 +228,7 @@ import java.util.regex.*;
 				sb.append("\n</td>\n</tr>\n");
 			}
 		} else {
-			Pattern pat = Pattern.compile(pattern, Pattern.UNICODE_CASE);
+			Pattern pat = Pattern.compile(pattern.replaceAll(Util.SPECIAL_CHAR_PATTERNSTR, "\\\\$1"), Pattern.UNICODE_CASE);
 			Matcher mat = pat.matcher(s.currentContent.toLowerCase()); 
 			int contentLength = s.currentContent.length();
 			while (mat.find(presentCursorPos)) { // && isAlive

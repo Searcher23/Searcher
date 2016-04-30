@@ -3,8 +3,6 @@ package com.free.translation;
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.TreeSet;
-import com.free.translation.util.*;
-import android.util.*;
 import com.free.searcher.*;
 
 
@@ -25,8 +23,8 @@ public class ComplexWordDef implements Comparable<ComplexWordDef>, Serializable 
         if (Util.isNotEmpty(name)) {
             this.name = name.trim().toLowerCase();
         } else {
-            Log.i("error", "name cannot be null");
-//			throw new NullPointerException("name cannot be null");
+            //Log.i("error", "name cannot be null");
+			throw new NullPointerException("name cannot be null");
         }
     }
 
@@ -43,17 +41,19 @@ public class ComplexWordDef implements Comparable<ComplexWordDef>, Serializable 
     }
 
     public ComplexWordDef add(WordClass wc) {
-        if (wc != null && definitions.contains(wc)) {
-            WordClass item = definitions.floor(wc);
-            item.addDefinition(wc.getDefinition());
-        } else if (wc != null) {
-            definitions.add(wc);
-        }
+        if (wc != null) {
+			if (definitions.contains(wc)) {
+				WordClass item = definitions.floor(wc);
+				item.addDefinition(wc.getDefinition());
+			} else {
+				definitions.add(wc);
+			}
+		} 
         return this;
     }
 
-    public ComplexWordDef add(int type, String profession, String def) {
-        add(new WordClass(type, profession).addDefinition(def));
+    public ComplexWordDef add(int type, String def) { //, String profession
+        add(new WordClass(type).addDefinition(def));//, profession
         return this;
     }
 
@@ -75,8 +75,9 @@ public class ComplexWordDef implements Comparable<ComplexWordDef>, Serializable 
     public String getCompactDefinitions() {
         StringBuilder sb = new StringBuilder();
         Iterator<WordClass> iter = definitions.iterator();
+		WordClass curWC;
         while (iter.hasNext()) {
-            WordClass curWC = iter.next();
+            curWC = iter.next();
             if (curWC.getDefinition().length() > 0) {
                 sb.append(curWC.getDefinition());
                 if (iter.hasNext()) {
@@ -89,10 +90,7 @@ public class ComplexWordDef implements Comparable<ComplexWordDef>, Serializable 
 
     @Override
     public boolean equals(Object dicWord) {
-        if (dicWord == null) {
-//            throw new NullPointerException("wordDefinition is Null");
-        	return false;
-        } else if (!(dicWord instanceof ComplexWordDef)) {
+        if (dicWord == null || !(dicWord instanceof ComplexWordDef)) {
 //            throw new ClassCastException("not WordDefinition Class");
         	return false;
         } else {
@@ -105,7 +103,7 @@ public class ComplexWordDef implements Comparable<ComplexWordDef>, Serializable 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 73 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 73 * hash + this.name.hashCode();
         return hash;
     }
 
@@ -116,13 +114,13 @@ public class ComplexWordDef implements Comparable<ComplexWordDef>, Serializable 
 
     @Override
     public int compareTo(ComplexWordDef o) {
-        return o == null ? -1 : this.name.compareTo(o.getName());
+        return o == null ? -1 : this.name.compareToIgnoreCase(o.getName());
     }
 
     public static void main(String[] args) {
         ComplexWordDef dw = new ComplexWordDef();
         dw.setName("abash");
-        dw.add(new WordClass(Dictionary.VERB, "").addDefinition("làm bối rối, làm lúng túng, làm luống cuống"));
+        dw.add(new WordClass(Dictionary.VERB).addDefinition("làm bối rối, làm lúng túng, làm luống cuống"));
         System.out.println(dw);
     }
 }

@@ -28,7 +28,6 @@ import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.DefaultHandler;
 
 import com.free.translation.*;
-import com.free.translation.util.*;
 import com.free.searcher.*;
 
 /**
@@ -55,7 +54,7 @@ public class HtmlSAXHandler extends DefaultHandler implements LexicalHandler {
 //    private List<String> structList = null;
 //    private List<String> dataList = null;
 //    private List<String> formatList = null;
-    private static final Logger LOG = Constants.LOGGER;
+    private static final Logger LOG = Logger.getLogger(HtmlSAXHandler.class.getName());
 
     public HtmlSAXHandler() {
 //        structList = Arrays.asList(new String[]{"head", "table", "col", "colgroup", "tr",
@@ -529,7 +528,7 @@ public class HtmlSAXHandler extends DefaultHandler implements LexicalHandler {
             String group2 = mat.group(2);
 //			LOG.info("group2: " + group2);
             if (group2.length() > 0) {
-                ComplexWordDef wordDefinition = DICTIONARY.getDefinition(group2);
+                ComplexWordDef wordDefinition = DICTIONARY.getComplexWordDef(group2);
 //				LOG.info("wordDefinition: " + wordDefinition);
                 if (wordDefinition != null) {
                     wordInfoList.add(new WordInfo(++order, group2, wordDefinition.getDefinitions(), mat.group(1), mat.group(3)));

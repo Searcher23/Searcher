@@ -23,7 +23,7 @@
     <string name="back">&lt;-</string>
     <string name="next">-></string>
     <string name="ok">OK</string>
-    <string name="cancel">Cancel</string>
+    <string name="cancel">CANCEL</string>
     <string name="title_activity_spinner">SpinnerActivity</string>
     <string name="title_activity_folder_chooser">Searching In Files (*.htm, *.html, *.doc, *.pdf, *.txt)</string>
     <string name="title_activity_zipfile_chooser">Zip file (.zip; .docx; pptx; .xlsx; .jar; .apk)</string>

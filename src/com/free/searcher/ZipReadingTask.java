@@ -5,9 +5,9 @@ import com.free.p7zip.*;
 import java.io.*;
 
 class ZipReadingTask extends AsyncTask<Void, String, String> {
-	private SearchFragment s;
+	private MainFragment s;
 
-	public ZipReadingTask(SearchFragment s) {
+	public ZipReadingTask(MainFragment s) {
 		this.s = s;
 	}
 	@Override
@@ -17,13 +17,13 @@ class ZipReadingTask extends AsyncTask<Void, String, String> {
 				Log.d("ZipReadingTask", "arc.close()");
 				s.extractFile.close();
 			}
-			s.extractFile = new ExtractFile(s.currentZipFileName, SearchFragment.PRIVATE_PATH + s.currentZipFileName);
+			s.extractFile = new ExtractFile(s.currentZipFileName, MainFragment.PRIVATE_PATH + s.currentZipFileName);
 			//arc.saveEntries(entryFileList);
 			String zipToUrlStr = s.extractFile.compressedFile2UrlStr("", true, "<br/>\r\n");
 			// Log.d("zipList", zipToUrlStr);
-			String tempFName = SearchFragment.PRIVATE_PATH + s.currentZipFileName + "/sourcelisting" /*+ dateInstance.format(System.currentTimeMillis())*/ + ".0000.html";
+			String tempFName = MainFragment.PRIVATE_PATH + s.currentZipFileName + "/sourcelisting" /*+ dateInstance.format(System.currentTimeMillis())*/ + ".0000.html";
 			//tempFList.add(tempFName);
-			FileUtil.writeContentToFile(tempFName, SearchFragment.EMPTY_HEAD + zipToUrlStr + SearchFragment.END_BODY_HTML);
+			FileUtil.writeContentToFile(tempFName, MainFragment.EMPTY_HEAD + zipToUrlStr + MainFragment.END_BODY_HTML);
 			s.currentUrl = new File(tempFName).toURI().toURL().toString();
 			s.home = s.currentUrl;
 			publishProgress(s.currentZipFileName);

@@ -7,9 +7,9 @@ import android.util.*;
 class ZipExtractionTask extends AsyncTask<Void, String, String> {
 	Collection<String> urls;
 	
-	private SearchFragment s;
+	private MainFragment s;
 
-	ZipExtractionTask(SearchFragment s, final Collection<String> urls) {
+	ZipExtractionTask(MainFragment s, final Collection<String> urls) {
 		this.s = s;
 		this.urls = urls;
 	}
@@ -36,7 +36,7 @@ class ZipExtractionTask extends AsyncTask<Void, String, String> {
 	@Override
 	protected void onPostExecute(String result) {
 		if (s.currentUrl.length() > 0) {
-			if (s.webView.getUrl().equals(s.currentUrl)) {
+			if (s.currentUrl.equals(s.webView.getUrl())) {
 				s.locX = s.webView.getScrollX();
 				s.locY = s.webView.getScrollY();
 			}

@@ -22,16 +22,16 @@ class DupFinderTask extends AsyncTask<Void, String, String> {
 	File fret;
 
 	private static final String DUP_TITLE = 
-	SearchFragment.HTML_STYLE
+	MainFragment.HTML_STYLE
 	+ "<title>Duplicate Finding Result</title>\r\n" 
-	+ SearchFragment.HEAD_TABLE;
+	+ MainFragment.HEAD_TABLE;
 
-	private SearchFragment s;
+	private MainFragment s;
 
-	public DupFinderTask(SearchFragment s) {
+	public DupFinderTask(MainFragment s) {
 		this.s = s;
 	}
-	public DupFinderTask(SearchFragment s, String[] fs) {
+	public DupFinderTask(MainFragment s, String[] fs) {
 		this.s = s;
 		this.fileNames = fs;
 	}
@@ -44,7 +44,7 @@ class DupFinderTask extends AsyncTask<Void, String, String> {
 		} else {
 			statusDel = "Cannot delete file \"" + selectedPath + "\"";
 		}
-		Log.d("deleteFile", statusDel + SearchFragment.df.format(System.currentTimeMillis()));
+		Log.d("deleteFile", statusDel + MainFragment.df.format(System.currentTimeMillis()));
 		s.showToast(statusDel);
 		return genFile(groupList);
 	}
@@ -69,7 +69,7 @@ class DupFinderTask extends AsyncTask<Void, String, String> {
 					} else {
 						statusDel = "Cannot delete group " + group + ", \"" + ff.path + "\"";
 					}
-					Log.d("deleteGroup", statusDel + SearchFragment.df.format(System.currentTimeMillis()));
+					Log.d("deleteGroup", statusDel + MainFragment.df.format(System.currentTimeMillis()));
 					s.statusView.setText(statusDel);
 				}
 			} else if (ff.file.exists()) {
@@ -93,7 +93,7 @@ class DupFinderTask extends AsyncTask<Void, String, String> {
 						} else {
 							statusDel = "Cannot delete \"" + ff.path + "\". ";
 						}
-						Log.d("deleteFolder", statusDel + SearchFragment.df.format(System.currentTimeMillis()));
+						Log.d("deleteFolder", statusDel + MainFragment.df.format(System.currentTimeMillis()));
 						s.statusView.setText(statusDel);
 					} 
 				}
@@ -116,7 +116,7 @@ class DupFinderTask extends AsyncTask<Void, String, String> {
 						} else {
 							statusDel = "Cannot delete \"" + ff.path + "\"";
 						}
-						Log.d("deleteSubFolder", statusDel + SearchFragment.df.format(System.currentTimeMillis()));
+						Log.d("deleteSubFolder", statusDel + MainFragment.df.format(System.currentTimeMillis()));
 						s.statusView.setText(statusDel);
 					}
 				} 
@@ -184,8 +184,8 @@ class DupFinderTask extends AsyncTask<Void, String, String> {
 
 	public String duplicateFinder(File[] files) throws IOException {
 		start =  System.currentTimeMillis();
-		fret = new File(SearchFragment.PRIVATE_PATH + "/" + "Duplicate finder result_"
-						+ SearchFragment.df.format(System.currentTimeMillis()).replaceAll("[/\\?<>\"':|]", "_") + ".html");
+		fret = new File(MainFragment.PRIVATE_PATH + "/" + "Duplicate finder result_"
+						+ MainFragment.df.format(System.currentTimeMillis()).replaceAll("[/\\?<>\"':|]", "_") + ".html");
 		publishProgress("Getting file list...");
 		List<File> lf = FileUtil.getFiles(files);
 		groupList = dupFinder(lf);
@@ -295,25 +295,25 @@ class DupFinderTask extends AsyncTask<Void, String, String> {
 		if (lset != null && lset.size() > 0) {
 			//String findRet = new File(SearchFragment.SearchFragment.PRIVATE_DIR + "/" + "Duplicate finder result.html").toURI().toURL().toString();
 			sb.append("<tr bgcolor=\"#FCCC74\">\r\n")
-				.append(SearchFragment.TD1_CENTER)
+				.append(MainFragment.TD1_CENTER)
 				.append("<b>No.</b></td>\n")
-				.append(SearchFragment.TD1_CENTER)
+				.append(MainFragment.TD1_CENTER)
 				.append("<a href=\"").append(fret)
 				.append("?viewGroup\">")
 				.append("<b>Group</b></a>\n</td>\n")
-				.append(SearchFragment.TD2_CENTER)
+				.append(MainFragment.TD2_CENTER)
 				.append("<a href=\"").append(fret)
 				.append("?viewName\">")
 				.append("<b>File Name</b></a>\n</td>\n")
-				.append(SearchFragment.TD2_CENTER)
+				.append(MainFragment.TD2_CENTER)
 				.append("<b>Size (bytes)</b></td>\n")
-				.append(SearchFragment.TD3_CENTER)
+				.append(MainFragment.TD3_CENTER)
 				.append("<b>Delete?</b></td>\n")
-				.append(SearchFragment.TD3_CENTER)
+				.append(MainFragment.TD3_CENTER)
 				.append("<b>Delete Group</b></td>\n")
-				.append(SearchFragment.TD3_CENTER)
+				.append(MainFragment.TD3_CENTER)
 				.append("<b>Delete Folder</b></td>\n")
-				.append(SearchFragment.TD3_CENTER)
+				.append(MainFragment.TD3_CENTER)
 				.append("<b>Delete Sub Folder</b></td>\n")
 				.append("</tr>");
 			List<List<FileInfo>> newGroupList = new LinkedList<>();
@@ -358,49 +358,49 @@ class DupFinderTask extends AsyncTask<Void, String, String> {
 							dupSize += ff.length;
 							noDup++;
 						}
-						sb.append(SearchFragment.TD1_LEFT).append(++counter).append("</td>\n")
-							.append(SearchFragment.TD1_LEFT).append(ff.group).append("</td>\n")
-							.append(SearchFragment.TD2_LEFT).append("<a href=\"").append(ff.file.toURI().toURL().toString()).append("\">")
+						sb.append(MainFragment.TD1_LEFT).append(++counter).append("</td>\n")
+							.append(MainFragment.TD1_LEFT).append(ff.group).append("</td>\n")
+							.append(MainFragment.TD2_LEFT).append("<a href=\"").append(ff.file.toURI().toURL().toString()).append("\">")
 							.append(ff.path).append("</a>\n</td>\n")
-							.append(SearchFragment.TD3_LEFT).append(SearchFragment.nf.format(ff.length)).append("</td>")
-							.append(SearchFragment.TD3_LEFT).append("<a href=\"").append(fret)
+							.append(MainFragment.TD3_LEFT).append(MainFragment.nf.format(ff.length)).append("</td>")
+							.append(MainFragment.TD3_LEFT).append("<a href=\"").append(fret)
 							.append("?deleteFile=").append(ff.path).append("\">Delete</a>\n</td>\n");
 						if (dupInGroup > 1) {
-							sb.append(SearchFragment.TD3_LEFT).append("<a href=\"").append(fret)
+							sb.append(MainFragment.TD3_LEFT).append("<a href=\"").append(fret)
 								.append("?deleteGroup=").append(ff.group).append(",").append(ff.path).append("\">Delete group</a>\n</td>\n");
 						} else {
-							sb.append(SearchFragment.TD3_LEFT).append("&nbsp;\n</td>\n");
+							sb.append(MainFragment.TD3_LEFT).append("&nbsp;\n</td>\n");
 						}
-						sb.append(SearchFragment.TD3_LEFT).append("<a href=\"").append(fret)
+						sb.append(MainFragment.TD3_LEFT).append("<a href=\"").append(fret)
 							.append("?deleteFolder=").append(ff.path).append("\">Delete Folder</a>\n</td>\n")
-							.append(SearchFragment.TD3_LEFT).append("<a href=\"").append(fret)
+							.append(MainFragment.TD3_LEFT).append("<a href=\"").append(fret)
 							.append("?deleteSub=").append(ff.path).append("\">Delete Sub Folder</a>\n</td>\n")
 							.append("</tr>\n")
 							;
 
 					} else {
-						sb.append(SearchFragment.TD1_LEFT).append(++counter).append("</td>\n")
-							.append(SearchFragment.TD1_LEFT).append(ff.group).append("</td>\n")
-							.append(SearchFragment.TD2_LEFT)
+						sb.append(MainFragment.TD1_LEFT).append(++counter).append("</td>\n")
+							.append(MainFragment.TD1_LEFT).append(ff.group).append("</td>\n")
+							.append(MainFragment.TD2_LEFT)
 							//.append("<a href=\"").append(ff.toURI().toURL().toString()).append("\">")
 							.append("<font color='red'><strike>")
 							.append(ff.path)
 							.append("</strike></font>")
 							.append("\n</td>\n")
-							.append(SearchFragment.TD3_LEFT).append(SearchFragment.nf.format(ff.length)).append("</td>")
-							.append(SearchFragment.TD3_LEFT)
+							.append(MainFragment.TD3_LEFT).append(MainFragment.nf.format(ff.length)).append("</td>")
+							.append(MainFragment.TD3_LEFT)
 							//.append("<a href=\"").append(findRet).append("?delete=").append(ff.getAbsolutePath())
 							//.append("\">Delete</a>\n")
 							.append("&nbsp;</td>\n");
 						if (dupInGroup > 1) {
-							sb.append(SearchFragment.TD3_LEFT).append("<a href=\"").append(fret)
+							sb.append(MainFragment.TD3_LEFT).append("<a href=\"").append(fret)
 								.append("?deleteGroup=").append(ff.group).append(",").append(ff.path).append("\">Delete group</a>\n</td>\n");
 						} else {
-							sb.append(SearchFragment.TD3_LEFT).append("&nbsp;\n</td>\n");
+							sb.append(MainFragment.TD3_LEFT).append("&nbsp;\n</td>\n");
 						}
-						sb.append(SearchFragment.TD3_LEFT).append("<a href=\"").append(fret)
+						sb.append(MainFragment.TD3_LEFT).append("<a href=\"").append(fret)
 							.append("?deleteFolder=").append(ff.path).append("\">Delete Folder</a>\n</td>\n")
-							.append(SearchFragment.TD3_LEFT).append("<a href=\"").append(fret)
+							.append(MainFragment.TD3_LEFT).append("<a href=\"").append(fret)
 							.append("?deleteSub=").append(ff.path).append("\">Delete Sub Folder</a>\n</td>\n")
 							.append("</tr>\n")
 							;
@@ -417,21 +417,21 @@ class DupFinderTask extends AsyncTask<Void, String, String> {
 		}
 		long duration = System.currentTimeMillis() - start;
 		sb.append("<strong><br/>")
-			.append("Total ").append(SearchFragment.nf.format(noFile)).append(" files (")
-			.append(SearchFragment.nf.format(totalSize)).append(" bytes)<br/>")
-			.append(SearchFragment.nf.format(noDup)).append(" files (").append(SearchFragment.nf.format(dupSize)).append(" bytes) duplicate<br/>")
-			.append((realSize != 0) ? SearchFragment.nf.format(dupSize * 100 / (double) realSize) : "0").append("% duplicate<br/>")
-			.append(SearchFragment.nf.format(groupSize)).append(" group duplicate<br/>")
-			.append("took ").append(SearchFragment.nf.format(duration)).append(" milliseconds<br/>")
+			.append("Total ").append(MainFragment.nf.format(noFile)).append(" files (")
+			.append(MainFragment.nf.format(totalSize)).append(" bytes)<br/>")
+			.append(MainFragment.nf.format(noDup)).append(" files (").append(MainFragment.nf.format(dupSize)).append(" bytes) duplicate<br/>")
+			.append((realSize != 0) ? MainFragment.nf.format(dupSize * 100 / (double) realSize) : "0").append("% duplicate<br/>")
+			.append(MainFragment.nf.format(groupSize)).append(" group duplicate<br/>")
+			.append("took ").append(MainFragment.nf.format(duration)).append(" milliseconds<br/>")
 			.append("</strong></div>\n</body>\n</html>");
 		statusViewResult = new StringBuilder();
 
-		statusViewResult.append("Total ").append(SearchFragment.nf.format(noFile)).append(" files (")
-			.append(SearchFragment.nf.format(realSize)).append(" bytes), ")
-			.append(SearchFragment.nf.format(noDup)).append(" files (").append(SearchFragment.nf.format(dupSize)).append(" bytes) duplicate, ")
-			.append((realSize != 0) ? SearchFragment.nf.format(dupSize * 100 / (double) realSize) : "0").append("% duplicate, ")
-			.append(SearchFragment.nf.format(groupSize)).append(" duplicate group, ")
-			.append("took ").append(SearchFragment.nf.format(duration)).append(" milliseconds");
+		statusViewResult.append("Total ").append(MainFragment.nf.format(noFile)).append(" files (")
+			.append(MainFragment.nf.format(realSize)).append(" bytes), ")
+			.append(MainFragment.nf.format(noDup)).append(" files (").append(MainFragment.nf.format(dupSize)).append(" bytes) duplicate, ")
+			.append((realSize != 0) ? MainFragment.nf.format(dupSize * 100 / (double) realSize) : "0").append("% duplicate, ")
+			.append(MainFragment.nf.format(groupSize)).append(" duplicate group, ")
+			.append("took ").append(MainFragment.nf.format(duration)).append(" milliseconds");
 		return sb;
 	}
 
@@ -468,25 +468,25 @@ class DupFinderTask extends AsyncTask<Void, String, String> {
 		if (lset != null && lset.size() > 0) {
 
 			sb.append("<tr bgcolor=\"#FCCC74\">\r\n")
-				.append(SearchFragment.TD1_CENTER)
+				.append(MainFragment.TD1_CENTER)
 				.append("<b>No.</b></td>\n")
-				.append(SearchFragment.TD1_CENTER)
+				.append(MainFragment.TD1_CENTER)
 				.append("<a href=\"").append(fret)
 				.append("?viewGroup\">")
 				.append("<b>Group</b></a>\n</td>\n")
-				.append(SearchFragment.TD2_CENTER)
+				.append(MainFragment.TD2_CENTER)
 				.append("<a href=\"").append(fret)
 				.append("?viewName\">")
 				.append("<b>File Name</b></a>\n</td>\n")
-				.append(SearchFragment.TD3_CENTER)
+				.append(MainFragment.TD3_CENTER)
 				.append("<b>Size (bytes)</b></td>\n")
-				.append(SearchFragment.TD3_CENTER)
+				.append(MainFragment.TD3_CENTER)
 				.append("<b>Delete?</b></td>\n")
-				.append(SearchFragment.TD3_CENTER)
+				.append(MainFragment.TD3_CENTER)
 				.append("<b>Delete Group</b></td>\n")
-				.append(SearchFragment.TD3_CENTER)
+				.append(MainFragment.TD3_CENTER)
 				.append("<b>Delete Folder</b></td>\n")
-				.append(SearchFragment.TD3_CENTER)
+				.append(MainFragment.TD3_CENTER)
 				.append("<b>Delete Sub Folder</b></td>\n")
 				.append("</tr>");
 
@@ -534,48 +534,48 @@ class DupFinderTask extends AsyncTask<Void, String, String> {
 						noDup++;
 						dupSize += ff.length;
 					}
-					sb.append(SearchFragment.TD1_LEFT).append(++counter).append("</td>\n")
-						.append(SearchFragment.TD1_LEFT).append(ff.group).append("</td>\n")
-						.append(SearchFragment.TD2_LEFT).append("<a href=\"").append(ff.file.toURI().toURL().toString()).append("\">")
+					sb.append(MainFragment.TD1_LEFT).append(++counter).append("</td>\n")
+						.append(MainFragment.TD1_LEFT).append(ff.group).append("</td>\n")
+						.append(MainFragment.TD2_LEFT).append("<a href=\"").append(ff.file.toURI().toURL().toString()).append("\">")
 						.append(ff.path).append("</a>\n</td>\n")
-						.append(SearchFragment.TD3_LEFT).append(SearchFragment.nf.format(ff.length)).append("</td>")
-						.append(SearchFragment.TD3_LEFT).append("<a href=\"").append(fret)
+						.append(MainFragment.TD3_LEFT).append(MainFragment.nf.format(ff.length)).append("</td>")
+						.append(MainFragment.TD3_LEFT).append("<a href=\"").append(fret)
 						.append("?deleteFile=").append(ff.path).append("\">Delete</a>\n</td>\n");
 					if (dupInGroup > 1) {
-						sb.append(SearchFragment.TD3_LEFT).append("<a href=\"").append(fret)
+						sb.append(MainFragment.TD3_LEFT).append("<a href=\"").append(fret)
 							.append("?deleteGroup=").append(ff.group).append(",").append(ff.path).append("\">Delete group</a>\n</td>\n");
 					} else {
-						sb.append(SearchFragment.TD3_LEFT).append("&nbsp;\n</td>\n");
+						sb.append(MainFragment.TD3_LEFT).append("&nbsp;\n</td>\n");
 					}
-					sb.append(SearchFragment.TD3_LEFT).append("<a href=\"").append(fret)
+					sb.append(MainFragment.TD3_LEFT).append("<a href=\"").append(fret)
 						.append("?deleteFolder=").append(ff.path).append("\">Delete Folder</a>\n</td>\n")
-						.append(SearchFragment.TD3_LEFT).append("<a href=\"").append(fret)
+						.append(MainFragment.TD3_LEFT).append("<a href=\"").append(fret)
 						.append("?deleteSub=").append(ff.path).append("\">Delete Sub Folder</a>\n</td>\n")
 						.append("</tr>\n")
 						;
 				} else {
-					sb.append(SearchFragment.TD1_LEFT).append(++counter).append("</td>\n")
-						.append(SearchFragment.TD1_LEFT).append(ff.group).append("</td>\n")
-						.append(SearchFragment.TD2_LEFT)
+					sb.append(MainFragment.TD1_LEFT).append(++counter).append("</td>\n")
+						.append(MainFragment.TD1_LEFT).append(ff.group).append("</td>\n")
+						.append(MainFragment.TD2_LEFT)
 						//.append("<a href=\"").append(ff.toURI().toURL().toString()).append("\">")
 						.append("<font color='red'><strike>")
 						.append(ff.path)
 						.append("</strike></font>")
 						.append("\n</td>\n")
-						.append(SearchFragment.TD3_LEFT).append(SearchFragment.nf.format(ff.length)).append("</td>")
-						.append(SearchFragment.TD3_LEFT)
+						.append(MainFragment.TD3_LEFT).append(MainFragment.nf.format(ff.length)).append("</td>")
+						.append(MainFragment.TD3_LEFT)
 						//.append("<a href=\"").append(findRet).append("?delete=").append(ff.getAbsolutePath())
 						//.append("\">Delete</a>\n")
 						.append("&nbsp;</td>\n");
 					if (dupInGroup > 1) {
-						sb.append(SearchFragment.TD3_LEFT).append("<a href=\"").append(fret)
+						sb.append(MainFragment.TD3_LEFT).append("<a href=\"").append(fret)
 							.append("?deleteGroup=").append(ff.group).append(",").append(ff.path).append("\">Delete group</a>\n</td>\n");
 					} else {
-						sb.append(SearchFragment.TD3_LEFT).append("&nbsp;\n</td>\n");
+						sb.append(MainFragment.TD3_LEFT).append("&nbsp;\n</td>\n");
 					}
-					sb.append(SearchFragment.TD3_LEFT).append("<a href=\"").append(fret)
+					sb.append(MainFragment.TD3_LEFT).append("<a href=\"").append(fret)
 						.append("?deleteFolder=").append(ff.path).append("\">Delete Folder</a>\n</td>\n")
-						.append(SearchFragment.TD3_LEFT).append("<a href=\"").append(fret)
+						.append(MainFragment.TD3_LEFT).append("<a href=\"").append(fret)
 						.append("?deleteSub=").append(ff.path).append("\">Delete Sub Folder</a>\n</td>\n")
 						.append("</tr>\n")
 						;
@@ -586,20 +586,20 @@ class DupFinderTask extends AsyncTask<Void, String, String> {
 		}
 		long duration = System.currentTimeMillis() - start;
 		sb.append("<strong><br/>")
-			.append("Total ").append(SearchFragment.nf.format(noFile)).append(" files (")
-			.append(SearchFragment.nf.format(totalSize)).append(" bytes)<br/>")
-			.append(SearchFragment.nf.format(noDup)).append(" files (").append(SearchFragment.nf.format(dupSize)).append(" bytes) duplicate<br/>")
-			.append((realSize != 0) ? SearchFragment.nf.format(dupSize * 100 / (double) realSize) : "0").append("% duplicate<br/>")
-			.append(SearchFragment.nf.format(groupSize)).append(" group duplicate<br/>")
-			.append("took ").append(SearchFragment.nf.format(duration)).append(" milliseconds<br/>")
+			.append("Total ").append(MainFragment.nf.format(noFile)).append(" files (")
+			.append(MainFragment.nf.format(totalSize)).append(" bytes)<br/>")
+			.append(MainFragment.nf.format(noDup)).append(" files (").append(MainFragment.nf.format(dupSize)).append(" bytes) duplicate<br/>")
+			.append((realSize != 0) ? MainFragment.nf.format(dupSize * 100 / (double) realSize) : "0").append("% duplicate<br/>")
+			.append(MainFragment.nf.format(groupSize)).append(" group duplicate<br/>")
+			.append("took ").append(MainFragment.nf.format(duration)).append(" milliseconds<br/>")
 			.append("</strong></div>\n</body>\n</html>");
 		statusViewResult = new StringBuilder();
-		statusViewResult.append("Total ").append(SearchFragment.nf.format(noFile)).append(" files (")
-			.append(SearchFragment.nf.format(totalSize)).append(" bytes), ")
-			.append(SearchFragment.nf.format(noDup)).append(" files (").append(SearchFragment.nf.format(dupSize)).append(" bytes) duplicate, ")
-			.append((realSize != 0) ? SearchFragment.nf.format(dupSize * 100 / (double) realSize) : "0").append("% duplicate, ")
-			.append(SearchFragment.nf.format(groupSize)).append(" duplicate group, ")
-			.append("took ").append(SearchFragment.nf.format(duration)).append(" milliseconds");
+		statusViewResult.append("Total ").append(MainFragment.nf.format(noFile)).append(" files (")
+			.append(MainFragment.nf.format(totalSize)).append(" bytes), ")
+			.append(MainFragment.nf.format(noDup)).append(" files (").append(MainFragment.nf.format(dupSize)).append(" bytes) duplicate, ")
+			.append((realSize != 0) ? MainFragment.nf.format(dupSize * 100 / (double) realSize) : "0").append("% duplicate, ")
+			.append(MainFragment.nf.format(groupSize)).append(" duplicate group, ")
+			.append("took ").append(MainFragment.nf.format(duration)).append(" milliseconds");
 		return sb;
 	}
 }

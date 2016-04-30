@@ -33,11 +33,11 @@ public class Entry<K extends Comparable<?>, V> implements
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj == null || !(obj instanceof Entry<?, ?>)) {
+		if (obj == null || !(obj instanceof Entry)) {
 			return false;
 		} else {
-			Entry<?, ?> other = (Entry<?, ?>) obj;
-			return key.toString().equalsIgnoreCase(other.getKey().toString());
+			Entry other = (Entry) obj;
+			return key.toString().equalsIgnoreCase(other.key.toString());
 		}
 	}
 
@@ -49,7 +49,7 @@ public class Entry<K extends Comparable<?>, V> implements
 
 	@Override
 	public int compareTo(Entry<K, V> o) {
-		return this.key.toString().toLowerCase()
-			.compareTo(o.key.toString().toLowerCase());
+		return this.key.toString()
+			.compareToIgnoreCase(o.key.toString());
 	}
 }

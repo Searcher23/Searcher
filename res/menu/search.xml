@@ -34,7 +34,7 @@
         android:showAsAction="ifRoom"
         android:onClick="readZip"
         android:title="@string/action_readZip"/>
-        
+
     <item
         android:id="@+id/action_compare"
         android:orderInCategory="304"
@@ -94,18 +94,18 @@
         android:checked="false"/>
 
     <item
-	android:id="@+id/action_genstardict"
-	android:orderInCategory="400"
-	android:showAsAction="ifRoom"
-	android:onClick="gen"
-	android:title="Generate Stardict files"/>
+		android:id="@+id/action_genstardict"
+		android:orderInCategory="400"
+		android:showAsAction="ifRoom"
+		android:onClick="gen"
+		android:title="Generate Stardict files"/>
 
     <item
-	android:id="@+id/action_restorestardict"
-	android:orderInCategory="410"
-	android:showAsAction="ifRoom"
-	android:onClick="restore"
-	android:title="Restore Dictionary text"/>
+		android:id="@+id/action_restorestardict"
+		android:orderInCategory="410"
+		android:showAsAction="ifRoom"
+		android:onClick="restore"
+		android:title="Restore Dictionary text"/>
 
     <item
         android:id="@+id/action_preview"
@@ -121,7 +121,7 @@
         android:onClick="viewSource"
         android:title="@string/action_viewSource"/>
 
-<item
+	<item
         android:id="@+id/action_autoBackup"
         android:orderInCategory="666"
         android:showAsAction="never"
@@ -131,20 +131,35 @@
         android:enabled="true"
         android:checked="true"/>
 
-<item
+	<item
         android:id="@+id/action_batchConvert"
         android:orderInCategory="676"
         android:showAsAction="never"
         android:onClick="batchConvert"
         android:title="Media Batch Converter"
     />
-<item
+	<item
         android:id="@+id/action_translate"
         android:orderInCategory="690"
         android:showAsAction="never"
         android:onClick="translate"
         android:title="English Translation 4 Fun"
     />
+
+	<item
+        android:id="@+id/action_replace"
+        android:orderInCategory="695"
+        android:showAsAction="never"
+        android:onClick="replace"
+        android:title="Replace All"/>
+	
+	<item
+        android:id="@+id/action_splitMerge"
+        android:orderInCategory="697"
+        android:showAsAction="never"
+        android:onClick="splitMerge"
+        android:title="Split &amp; Merge"/>
+	
     <item
         android:id="@+id/action_clearCache"
         android:orderInCategory="700"
@@ -158,5 +173,5 @@
         android:showAsAction="never"
         android:onClick="about"
         android:title="About"/>
-	
+
 </menu>

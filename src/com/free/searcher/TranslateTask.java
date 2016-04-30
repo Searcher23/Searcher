@@ -9,10 +9,10 @@ import java.util.*;
 
 public class TranslateTask extends AsyncTask<Void, String, String> {
 	List<File> fList;
-	SearchFragment searchFragment= null;
+	MainFragment searchFragment= null;
 	TranslationSession session;
 	
-	TranslateTask(SearchFragment ctx, List<File> f) {
+	TranslateTask(MainFragment ctx, List<File> f) {
 		this.searchFragment = ctx;
 		fList = f;
 		session = new TranslationSession();

@@ -46,30 +46,30 @@ class WebTask extends AsyncTask<Void, String, String> {
 	String status = "";
 
 	String mime;
-	private SearchFragment s;
+	private MainFragment s;
 
-	public WebTask(SearchFragment s) {
+	public WebTask(MainFragment s) {
 		this.s = s;
 	}
 
-	public WebTask(SearchFragment s, WebView webView, String url) {
+	public WebTask(MainFragment s, WebView webView, String url) {
 		this.s = s;
 		init(webView, url);
 	}
 
-	public WebTask(SearchFragment s, WebView webView, String url, String status) {
+	public WebTask(MainFragment s, WebView webView, String url, String status) {
 		this.s = s;
 		init(webView, url);
 		this.status = status;
 	}
 
-	public WebTask(SearchFragment s, WebView webView, String url, boolean isHome) {
+	public WebTask(MainFragment s, WebView webView, String url, boolean isHome) {
 		this.s = s;
 		init(webView, url);
 		this.isHome = isHome;
 	}
 
-	public WebTask(SearchFragment s, WebView webView, String url, boolean isHome, String status) {
+	public WebTask(MainFragment s, WebView webView, String url, boolean isHome, String status) {
 		this.s = s;
 		init(webView, url);
 		this.isHome = isHome;
@@ -88,10 +88,10 @@ class WebTask extends AsyncTask<Void, String, String> {
 		Log.d("mUrl, exeptFilePrefix", url + ", " + exeptFilePrefix);
 		int lastIndexOfDot = exeptFilePrefix.lastIndexOf(".");
 		String fileExtensionFromUrl = lastIndexOfDot >= 0 ? exeptFilePrefix.substring(lastIndexOfDot + 1) : "";
-		mime = SearchFragment.mimeTypeMap.getMimeTypeFromExtension(fileExtensionFromUrl.toLowerCase());
+		mime = MainFragment.mimeTypeMap.getMimeTypeFromExtension(fileExtensionFromUrl.toLowerCase());
 		if (s.currentZipFileName.length() > 0 && s.extractFile == null) {
 			try {
-				s.extractFile = new ExtractFile(s.currentZipFileName, SearchFragment.PRIVATE_PATH + s.currentZipFileName);
+				s.extractFile = new ExtractFile(s.currentZipFileName, MainFragment.PRIVATE_PATH + s.currentZipFileName);
 			} catch (RarException e) {
 				e.printStackTrace();
 			} catch (IOException e) {
@@ -277,13 +277,13 @@ class WebTask extends AsyncTask<Void, String, String> {
 								curFullEntryName; // do là folder
 							Log.d("entryName 1", name);
 
-							File tempFName = new  File(SearchFragment.PRIVATE_PATH + s.currentZipFileName + "/" + name + "-0123456789.list.converted.html");
+							File tempFName = new  File(MainFragment.PRIVATE_PATH + s.currentZipFileName + "/" + name + "-0123456789.list.converted.html");
 							//File.createTempFile(name + "-", ".html", new File(SearchFragment.PRIVATE_PATH + s.currentZipFileName));
 							//tempFList.add(tempFName.getAbsolutePath());
 							Log.d("(!tempFName.exists()", 
 								  (!tempFName.exists() || tempFName.lastModified() < new  File(s.currentZipFileName).lastModified()) + "");
 							if (!tempFName.exists() || tempFName.lastModified() < new  File(s.currentZipFileName).lastModified()) {
-								FileUtil.writeContentToFile(tempFName.getAbsolutePath(), SearchFragment.EMPTY_HEAD + zipToUrlStr + SearchFragment.END_BODY_HTML);
+								FileUtil.writeContentToFile(tempFName.getAbsolutePath(), MainFragment.EMPTY_HEAD + zipToUrlStr + MainFragment.END_BODY_HTML);
 							}
 							s.currentUrl = tempFName.toURI().toURL().toString();
 							s.home = s.currentUrl;
@@ -304,14 +304,14 @@ class WebTask extends AsyncTask<Void, String, String> {
 //									int lastIndexOf = name.lastIndexOf("/");
 //									name = name.substring(lastIndexOf > 0 ? lastIndexOf : 0);
 //									Log.d("entryName", name);
-								Log.d("SearchFragment.PRIVATE_PATH + currentZFile", SearchFragment.PRIVATE_PATH + s.currentZipFileName);
-								File tempFName = new  File(SearchFragment.PRIVATE_PATH + s.currentZipFileName + "/" + name + ".000.list.html"); 
+								Log.d("SearchFragment.PRIVATE_PATH + currentZFile", MainFragment.PRIVATE_PATH + s.currentZipFileName);
+								File tempFName = new  File(MainFragment.PRIVATE_PATH + s.currentZipFileName + "/" + name + ".000.list.html"); 
 								// File.createTempFile(name + "--", ".html", new File(SearchFragment.PRIVATE_PATH + s.currentZipFileName));
 								//tempFList.add(tempFName.getAbsolutePath());
 								Log.d("(!tempFName.exists()2", 
 									  (!tempFName.exists() || tempFName.lastModified() < new  File(s.currentZipFileName).lastModified()) + "");
 								if (!tempFName.exists() || tempFName.lastModified() < new  File(s.currentZipFileName).lastModified()) {
-									FileUtil.writeContentToFile(tempFName.getAbsolutePath(), SearchFragment.EMPTY_HEAD + zipToUrlStr + SearchFragment.END_BODY_HTML);
+									FileUtil.writeContentToFile(tempFName.getAbsolutePath(), MainFragment.EMPTY_HEAD + zipToUrlStr + MainFragment.END_BODY_HTML);
 								}
 								s.currentUrl = tempFName.toURI().toURL().toString();
 								//home = s.currentUrl;
@@ -432,7 +432,7 @@ class WebTask extends AsyncTask<Void, String, String> {
 
 							// load file text ra ngoài theo đúng file name gốc hay entry
 							// text file có thể có nguồn gốc từ file: hoặc zip:
-							StringBuilder sb = new StringBuilder(SearchFragment.EMPTY_HEAD);
+							StringBuilder sb = new StringBuilder(MainFragment.EMPTY_HEAD);
 							Log.d("mSearchView", s.mSearchView + "");
 							//Log.d("((FragmentStack)activity).mSearchView.getQuery()", ((SearchStack)activity).mSearchView.getQuery() + "");
 
@@ -446,7 +446,7 @@ class WebTask extends AsyncTask<Void, String, String> {
 														  new String[] { "&", "<", "\n", },
 														  new String[] { "&amp;", "&lt;", "<br/>" }));
 							}
-							sb.append(SearchFragment.END_BODY_HTML);
+							sb.append(MainFragment.END_BODY_HTML);
 							loadUrl(sb.toString());
 							// chỉ nhằm save file rồi load, không cần phải extract gì vì đó là text
 							// mWebView.loadDataWithBaseURL("file:///android_asset/",
@@ -490,20 +490,20 @@ class WebTask extends AsyncTask<Void, String, String> {
 		Log.d("pathToOpenFile", pathToOpenFile + " ");
 		Log.d("exeptFilePrefix", exeptFilePrefix + " ");
 		if (s.currentZipFileName.length() > 0) {
-			if (zipPartWithSlash.startsWith(SearchFragment.PRIVATE_PATH)) {
+			if (zipPartWithSlash.startsWith(MainFragment.PRIVATE_PATH)) {
 				tempFileName = zipPartWithSlash + curFullEntryName;
 			} else {
-				tempFileName = SearchFragment.PRIVATE_PATH + "/" + zipPartWithSlash + curFullEntryName;
+				tempFileName = MainFragment.PRIVATE_PATH + "/" + zipPartWithSlash + curFullEntryName;
 			}
 
 			/*} else {
 			 tempFile = new File(zipPartWithSlash + curFullEntryName);
 			 }*/
 		} else {
-			if (pathToOpenFile.startsWith(SearchFragment.PRIVATE_PATH)) {
+			if (pathToOpenFile.startsWith(MainFragment.PRIVATE_PATH)) {
 				tempFileName = pathToOpenFile;
 			} else if (pathToOpenFile.length() > 0){
-				tempFileName = SearchFragment.PRIVATE_PATH + "/" + pathToOpenFile;
+				tempFileName = MainFragment.PRIVATE_PATH + "/" + pathToOpenFile;
 			} else {
 				tempFileName = exeptFilePrefix;
 			}

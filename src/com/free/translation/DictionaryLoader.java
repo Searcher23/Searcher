@@ -28,36 +28,31 @@ import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import com.free.translation.util.*;
+
 import org.apache.poi.hdf.model.hdftypes.*;
 import org.apache.poi.poifs.filesystem.*;
 import java.io.*;
-import android.util.*;
 import com.free.searcher.*;
-//import android.util.*;
+import android.util.*;
 
 public class DictionaryLoader implements Iterable<ComplexWordDef> {
 	private Dictionary genDic;
 	private Dictionary oriDic;
-	private static Logger logger = Constants.LOGGER;
+	private static Logger logger = Logger.getLogger(DictionaryLoader.class.getName());
 
-	public static final TreeSet<Entry<String, List<String>>> IRREGULAR_VERBS = new TreeSet<Entry<String, List<String>>>();
+	private static final TreeMap<String, List<String>> IRREGULAR_VERBS = new TreeMap<String, List<String>>();
 	
-	public static Map<String, String[]> IRREGULAR_NOUN_MAP = null;
+	private static Map<String, String[]> IRREGULAR_NOUN_MAP = null;
 
 	static {
 		try {
-
 			// Đọc danh sách động từ bất quy tắc
-			Workbook irregularWB = FileUtil.readWorkBook(Constants.IRREGULAR_VERBS_EXCEL_FILE);
 			// lưu động từ bất quy tắc vào TreeSet IRREGULAR_VERBS
-			fillIrregularVerbs(irregularWB);
+			fillIrregularVerbs(Constants.IRREGULAR_VERBS_EXCEL_FILE);
 			
 			// Đọc danh sách danh từ số nhiều bất quy tắc
 			IRREGULAR_NOUN_MAP = readIrregularPluralNoun(Constants.IRREGULAR_PLURAL_NOUN_FILE);
-			
 //			LOG.info(Util.setToSlashString(IRREGULAR_VERBS));
-			
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -71,8 +66,9 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 	/**
 	 * Điền động từ bất quy tắc vào TreeSet IRREGULAR_VERBS
 	 */
-	private static void fillIrregularVerbs(Workbook wb) {
-		Entry<String, List<String>> newIrregularVerb = null;
+	private static void fillIrregularVerbs(String f) throws IOException {
+		Workbook wb = FileUtil.readWorkBook(f);
+//		Entry<String, List<String>> newIrregularVerb = null;
 		List<String> values = null;
 		Row row;
 		Sheet sheet = wb.getSheetAt(0);
@@ -94,10 +90,10 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 							values.add(cellkValue.toLowerCase());
 						}
 					}
-					newIrregularVerb = new Entry<String, List<String>>(
-							cellBaseForm.getStringCellValue().toLowerCase(),
-							values);
-					IRREGULAR_VERBS.add(newIrregularVerb);
+//					newIrregularVerb = new Entry<String, List<String>>(
+//							cellBaseForm.getStringCellValue().toLowerCase(),
+//							values);
+					IRREGULAR_VERBS.put(cellBaseForm.getStringCellValue().toLowerCase(), values);
 				}
 			}
 		}
@@ -187,7 +183,7 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 							if (cell1 != null) {
 								String cell1Value = cell1.getStringCellValue();
 								int cell1IntValue = getIntType(cell1Value);
-								newWord = new ComplexWordDef(cell0Value).add(cell1IntValue, "", cell2Value);
+								newWord = new ComplexWordDef(cell0Value).add(cell1IntValue, cell2Value);
 								if ("N".equalsIgnoreCase(cell1Value)) {
 									String[] pluralNouns = makeRegularPluralNounsForCustomDict(cell0Value);
 									for (String pluralNoun : pluralNouns) {
@@ -198,7 +194,7 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 	//							} else if ("Adj".equals(cell1Value)) {
 								}
 							} else {
-								newWord = new ComplexWordDef(cell0Value).add(Dictionary.OTHER, "", cell2Value);
+								newWord = new ComplexWordDef(cell0Value).add(Dictionary.OTHER, cell2Value);
 							}
 							genDic.addAppend(newWord);
 							oriDic.addAppend(newWord);
@@ -227,7 +223,7 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 //		LOG.info("exampleName: " + exampleName + ", definition: " + definition);
 		int index = exampleName.indexOf(" ");
 		String verb = index > 0 ? exampleName.substring(0, index) : exampleName;
-		Entry<String, List<String>> floor = IRREGULAR_VERBS.floor(new Entry<String, List<String>>(verb, null));
+		Map.Entry<String, List<String>> floor = IRREGULAR_VERBS.floorEntry(verb);
 		if (floor != null && verb.equalsIgnoreCase(floor.getKey())) {
 //			logger.info("floor: " + floor);
 			int counter = 0;
@@ -241,13 +237,13 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 //					logger.info("splitValues[" + i +"]: " + splitValues[i]);
 					ComplexWordDef newDW = new ComplexWordDef(splitValues[i] + ((index > 0) ? exampleName.substring(index) : ""));
 //					logger.info("newDW 0: " + newDW);
-					if (counter == 0) {
-						newDW.add(Dictionary.VERB, "past", definition);
-					} else if (counter == 3) {
-						newDW.add(Dictionary.VERB, "pres", definition);
-					} else {
-						newDW.add(Dictionary.VERB, "", definition);
-					}
+//					if (counter == 0) {
+//						newDW.add(Dictionary.VERB, "past", definition);
+//					} else if (counter == 3) {
+//						newDW.add(Dictionary.VERB, "pres", definition);
+//					} else {
+						newDW.add(Dictionary.VERB, definition);
+					//}
 //					logger.info("newDW 1: " + newDW);
 					add(newDW);
 //					logger.info("newDW 2: " + newDW);
@@ -264,26 +260,26 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 				if (verb.length() >= 2) {
 					makeVerbForms(verb, sbS, sbING, sbED);
 
-					add(new ComplexWordDef(exampleName).add(Dictionary.VERB, "", definition));
+					add(new ComplexWordDef(exampleName).add(Dictionary.VERB, definition));
 
 					add(new ComplexWordDef(sbS.append(
-							exampleName.substring(index)).toString()).add(Dictionary.VERB, "", definition));
+							exampleName.substring(index)).toString()).add(Dictionary.VERB, definition));
 
 					add(new ComplexWordDef(sbING.append(
-							exampleName.substring(index)).toString()).add(Dictionary.VERB, "", definition));
+							exampleName.substring(index)).toString()).add(Dictionary.VERB, definition));
 
 					add(new ComplexWordDef(sbED.append(
-							exampleName.substring(index)).toString()).add(Dictionary.VERB, "", definition));
+							exampleName.substring(index)).toString()).add(Dictionary.VERB, definition));
 				}
 			} else {
 //				LOG.info("exampleName: " + exampleName + ", definition: " + definition);
 				makeVerbForms(exampleName, sbS, sbING, sbED);
 
-				add(new ComplexWordDef(sbS.toString()).add(Dictionary.VERB, "", definition));
+				add(new ComplexWordDef(sbS.toString()).add(Dictionary.VERB, definition));
 
-				add(new ComplexWordDef(sbING.toString()).add(Dictionary.VERB, "", definition));
+				add(new ComplexWordDef(sbING.toString()).add(Dictionary.VERB, definition));
 
-				add(new ComplexWordDef(sbED.toString()).add(Dictionary.VERB, "", definition));
+				add(new ComplexWordDef(sbED.toString()).add(Dictionary.VERB, definition));
 			}
 		}
 	}
@@ -452,7 +448,7 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 						sb.append(wc.getDefinition()).append("/");
 					}
 				}
-				dw.add(Dictionary.NOUN, "", sb.toString());
+				dw.add(Dictionary.NOUN, sb.toString());
 				add(dw);
 //				LOG.info("dw.toString(): " + dw.toString());
 			} else {
@@ -514,7 +510,7 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 	 * @throws IOException
 	 * @throws ClassNotFoundException
 	 */
-	public Dictionary readGenExcelDict(boolean manySheet) throws FileNotFoundException, IOException, ClassNotFoundException {
+	public Dictionary readGenExcelDict(boolean manySheet) throws FileNotFoundException, IOException {
 //		if (Constants.READ_ORI_EXCEL_FILE) {
 //			logger.log(Level.INFO, "ORI_EXCEL_FILE_NAME: {0}", Constants.ORI_EXCEL_FILE);
 			return readOriExcelDict(Constants.ORI_EXCEL_FILE, manySheet);
@@ -527,7 +523,7 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 //		}
 	}
 	
-	public Dictionary readOriExcelDict() throws FileNotFoundException, IOException, ClassNotFoundException {
+	public Dictionary readOriExcelDict() {
 		return oriDic;
 	}
 
@@ -561,9 +557,9 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 						String cell2Value = cell2.getStringCellValue();
 						String cell0Value = cell0.getStringCellValue();
 						if (cell1 != null) {
-							newWord = new ComplexWordDef(cell0Value).add(getIntType(cell1.getStringCellValue()), "", cell2Value);
+							newWord = new ComplexWordDef(cell0Value).add(getIntType(cell1.getStringCellValue()), cell2Value);
 						} else {
-							newWord = new ComplexWordDef(cell0Value).add(Dictionary.OTHER, "", cell2Value);
+							newWord = new ComplexWordDef(cell0Value).add(Dictionary.OTHER, cell2Value);
 						}
 						genDic.addAppend(newWord);
 //						LOG.info("newWord.toString(): " + newWord.toString());
@@ -786,67 +782,87 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 
 	// line	@line /lain/
 	private static final Pattern NAME_PATTERN = Pattern.compile(
-			"^([^@]+?)[\\p{Space}]*@([\\u0020-\\uFFFF]+?)$");
+		"^([^@]+?)[\\p{Space}]*@(.+?)$", Pattern.UNICODE_CASE);
+//		"^([^@]+?)[\\p{Space}]*@([\\u0020-\\uFFFF]+?)$");
 
 	// *  danh từ
 	private static final Pattern TYPE_PATTERN = Pattern.compile(
-			"^[\\p{Space}]*[\\\\*][\\p{Space}]*([\\u0020-\\uFFFF]+)$");
+		"^[\\p{Space}]*[\\\\*][\\p{Space}]*([^\\(]+)$", Pattern.UNICODE_CASE);
+//		"^[\\p{Space}]*[\\\\*][\\p{Space}]*([\\u0020-\\uFFFF]+)$");
 
 	// @line
 	private static final Pattern ATSIGN_PATTERN = Pattern.compile(
-			"^[\\p{Space}]*@(.+)$");
+		"^[\\p{Space}]*@(.+)$");
 
 	// - (quân sự) tuyến, phòng tuyến
 	private static final Pattern PROFESSION_PATTERN = Pattern.compile(
-			"^[\\p{Space}]*-[\\p{Space}]*[\\(]([\\u0020-\\uFFFF]+?)[\\)]([\\u0020-\\uFFFF]*+)$");
+		"^[\\p{Space}]*[\\\\*-][\\p{Space}]*\\((.+?)\\)(.+)$", Pattern.UNICODE_CASE);
+//		"^[\\p{Space}]*-[\\p{Space}]*[\\(]([\\u0020-\\uFFFF]+?)[\\)]([\\u0020-\\uFFFF]*+)$");
 	
 	// !to bring into line [with]
 	private static final Pattern REMOVE_BRACKET_PATTERN = Pattern.compile("[\\[\\]]");
 
-	private static final Pattern REMOVE_BRACKET_CONTENT_PATTERN = Pattern.compile(" ?\\[[^\\]]*+\\] ?");
+//	private static final Pattern REMOVE_BRACKET_CONTENT_PATTERN = Pattern.compile(" ?\\[[^\\]]*+\\] ?");
 	
-	private static final Pattern REMOVE_NESTED_PARENTHESES_CONTENT_PATTERN = Pattern.compile(
-			" ??\\([\\u0020-\\uFFFF]+\\) ??");
+//	private static final Pattern REMOVE_NESTED_PARENTHESES_CONTENT_PATTERN = Pattern.compile(
+//		" ??\\(.+\\) ??", Pattern.UNICODE_CASE);
+//		" ??\\([\\u0020-\\uFFFF]+\\) ??", Pattern.UNICODE_CASE);
 
-	private static final Pattern REMOVE_CLOSED_PARENTHESES_CONTENT_PATTERN = Pattern.compile(
-			"[\\u0020-\\uFFFF]+\\) ??");
+//	private static final Pattern REMOVE_CLOSED_PARENTHESES_CONTENT_PATTERN = Pattern.compile(
+//		".+\\) ??", Pattern.UNICODE_CASE);
+//		"[\\u0020-\\uFFFF]+\\) ??");
 
-	private static final Pattern REMOVE_PARENTHESES_CONTENT_PATTERN = Pattern.compile(
-			" ??\\([\\u0020-\\uFFFF]+?\\) ??");
+//	private static final Pattern REMOVE_PARENTHESES_CONTENT_PATTERN = Pattern.compile(
+//		" ??\\(.+?\\) ??", Pattern.UNICODE_CASE);
+//		" ??\\([\\u0020-\\uFFFF]+?\\) ??");
 
-	private static final Pattern REMOVE_NGOAC_NHON_CONTENT_PATTERN = Pattern.compile(
-			"<([\\u0020-\\uFFFF]+?)>");
+//	private static final Pattern REMOVE_NGOAC_NHON_CONTENT_PATTERN = Pattern.compile(
+//		"<(.+?)>", Pattern.UNICODE_CASE);
+//		"<([\\u0020-\\uFFFF]+?)>");
 
 	// - (xem) read
-	private static final Pattern XEM_PATTERN = Pattern.compile("\\(xem\\)([\u0020-\uFFFF]+)");
+	private static final Pattern XEM_PATTERN = Pattern.compile(
+		"\\(xem\\)(.+)", Pattern.UNICODE_CASE);
 	
 	// - dây, dây thép
 	private static final Pattern DEFINITION_PATTERN = Pattern.compile(
-			"^[\\p{Space}]*-[\\p{Space}]*([\\u0020-\\uFFFF]+)$");
+		"^[\\p{Space}]*-[\\p{Space}]*(.+)$", Pattern.UNICODE_CASE);
+//		"^[\\p{Space}]*-[\\p{Space}]*([\\u0020-\\uFFFF]+)$");
 	
 	// =line of sight+ đường ngắm (súng)
 	private static final Pattern EXAMPLE_PATTERN = Pattern.compile(
-			"^[\\p{Space}]*=[\\p{Space}]*([\\u0020-\\uFFFF]+?)\\+([\\u0020-\\uFFFF]+)$");
+		"^[\\p{Space}]*=[\\p{Space}]*(.+?)\\+(.+)$", Pattern.UNICODE_CASE);
+//		"^[\\p{Space}]*=[\\p{Space}]*([\\u0020-\\uFFFF]+?)\\+([\\u0020-\\uFFFF]+)$");
 	
 	// =to begin a new line+ xuống dòng
 	// !to give someone line enough
 	private static final Pattern TO_PATTERN = Pattern.compile(
-			"^[\\p{Space}]*to[\\p{Space}]+([\\u0020-\\uFFFF]+?)$");
+		"^[\\p{Space}]*[=!]to[\\p{Space}]+(.+?)$", Pattern.UNICODE_CASE);
+//		"^[\\p{Space}]*to[\\p{Space}]+([\\u0020-\\uFFFF]+?)$");
 	
 	// !in two twos
 	private static final Pattern IDIOM_PATTERN = Pattern.compile(
-			"^[\\p{Space}]*![\\p{Space}]*([\\u0020-\\uFFFF]+)$");
+		"^[\\p{Space}]*![\\p{Space}]*(.+)$", Pattern.UNICODE_CASE);
+//		"^[\\p{Space}]*![\\p{Space}]*([\\u0020-\\uFFFF]+)$");
 
-	private static final Pattern REMOVE_SONHIEU_PATTERN = Pattern.compile("số nhiều ([\\u0020-\\uFFFF]+)");
+	private static final Pattern SONHIEU_PATTERN = Pattern.compile(
+		"số nhiều (.+)", Pattern.UNICODE_CASE);
+//		"số nhiều ([\\u0020-\\uFFFF]+)");
 
-	private static final Pattern PLU_PATTERN = Pattern.compile("([^ ]+)[\\u0020-\\uFFFF]*");
+	private static final Pattern PLU_PATTERN = Pattern.compile(
+		"([^ ]+).*", Pattern.UNICODE_CASE);
+//		"([^ ]+)[\\u0020-\\uFFFF]*");
 	
-	private static final Pattern PLUS_PRO_PATTERN = Pattern.compile("\\+( [^ \\)]+)");
+	private static final Pattern PLUS_PRO_PATTERN = Pattern.compile("\\+( *[^\\)]+)");
 
-	private static final Pattern WORD_PATTERN = Pattern.compile("([^ ,]+)([ ,]*)");
-	private static final Pattern REMOVE_DANH_TU_PATTERN = Pattern.compile("danh từ[ ,;]*([\\u0020-\uFFFF]*)");
-	private static final Pattern TWO_WORDS_PATTERN = Pattern.compile("^([^ ]+ +[^ ]+)");
-	
+//	private static final Pattern WORD_PATTERN = Pattern.compile("([a-zA-Z]+)([ ,]+)");
+	// *  danh từ,  số nhiều knives
+	private static final Pattern DANH_TU_PATTERN = Pattern.compile(
+		"danh từ[ ,;]*(.*)", Pattern.UNICODE_CASE);
+//		"danh từ[ ,;]*([\\u0020-\uFFFF]*)");
+//	private static final Pattern TWO_WORDS_PATTERN = Pattern.compile("^([^ ]+ +[^ ]+)");
+	private static Pattern SPACES = Pattern.compile("  +");
+	private static Pattern EN_WORD_PATTERN = Pattern.compile("[a-zA-Z]+");
 	/**
 	 * Đọc từ điển HNĐ original (dạng text file) vào DictionaryReader
 	 * @param fileName
@@ -863,46 +879,63 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 		logger.log(Level.INFO, "fileName: {0}", fileName);
 //		DictionaryReader dr = new DictionaryReader();
 		boolean isPluralNotChange = false;
-		boolean noAddPluralMore = false;
+//		boolean alreadyPlural = false;
 
 		List<Entry<String, String>> pluralNounList = new LinkedList<Entry<String, String>>();
 		List<Entry<String, String>> pluralNounDefinitionList = new LinkedList<Entry<String, String>>();
+		List<Entry<String, ComplexWordDef>> synonymNounList = new LinkedList<Entry<String, ComplexWordDef>>();
 		List<Entry<String, String>> atsignIdiomList = new LinkedList<Entry<String, String>>();
 		List<Entry<ComplexWordDef, String>> xemWaitingList = new LinkedList<Entry<ComplexWordDef, String>>();
 		List<Entry<String, String>> toList = new LinkedList<Entry<String, String>>();
-	
+//		List<String> l = new LinkedList<>();
+//		l.add("adnexa	@adnexa\\n* danh từ số nhiều\\n- cấu trúc ngoại phôi; màng phụ");
+//		l.add("adnominal	@adnominal\\n- xem adnoun");
+//		l.add("adnoun	@adnoun /'ædnaun/\\n*  danh từ\\n- (ngôn ngữ học) tính từ, danh tính từ");
+		//l.add("zygoma	@zygoma /zai'goumə/\\\\n*  danh từ,  số nhiều zygomata\\\\n*  (giải phẫu) xương gò má");
 		int numWords = 0;
+		//for (int i = 0; i < l.size(); i++) {
+		//for (int i = 0; i < 1; i++) {
 		for (int i = 0; in.ready(); i++) {
 			numWords = i;
-			String word = in.readLine();
-			logger.log(Level.INFO, "dic[{0}]: {1}", new Object[]{i, word});
-			if (i % 100 == 0) {
+			String line = SPACES.matcher(in.readLine().trim()).replaceAll(" ");
+			//String line = l.get(i);
+			//String line = "zygoma	@zygoma /zai'goumə/\\n*  danh từ,  số nhiều zygomata\\n*  (giải phẫu) xương gò má";
+			//String line = "singularity	@singularity /,siɳgju'læriti/\\n*  danh từ\\n- tính đặc biệt, tính kỳ dị, tính phi thường; cái kỳ dị\\n- tính lập dị; nét kỳ quặc\\n- (từ hiếm,nghĩa hiếm) tính duy nhất, tính độc nhất\\n\\n@singularity\\n- tính kỳ dị; điểm kỳ dị s. at infinity điển kỳ dị ở vô tận\\n- s. of a curve [điểm; tính] kỳ dị của một đường cong \\n- abnormal s. [tính; điểm] kỳ dị bất thường \\n- accessible s. điểm kỳ dị đạt được\\n- accidnetal s. điểm kỳ dị ngẫu nhiên\\n- apparent s. điểm kỳ dị bề ngoài\\n- essential s. điểm kỳ dị cốt yếu\\n- finite s. điển kỳ dị hữu hạn\\n- isolated s. (giải tích) điểm kỳ dị cô lập\\n- real s. điểm kỳ dị thực\\n- removable s. điểm kỳ dị bỏ được\\n- unessential s. điểm kỳ dị không cốt yếu";
+			//String line = "delve	@delve /delv/\\n*  danh từ\\n- chỗ trũng, chỗ lõm sâu xuống, hốc\\n*  ngoại động từ\\n- (+ out) moi móc ra, bới ra ((nghĩa đen) & (nghĩa bóng))\\n- nghiên cứu sâu, đào sâu (vấn đề, tài liệu...)\\n- (từ cổ,nghĩa cổ),  (thơ ca) đào, bới\\n*  nội động từ\\n- trũng xuống, lõm vào, sâu hoắm xuống\\n- tìm tòi, nghiên cứu sâu\\n- dốc đứng xuống (đường...)\\n- (từ cổ,nghĩa cổ); (thơ ca) đào đất, bới đất";
+//			logger.log(Level.INFO, "dic[{0}]: {1}", new Object[]{i, line});
+			//System.out.println(line);
+			if (i % 1000 == 0) {
 				System.out.println(i);
 			}
-			if (word == null) {
+			if (line == null) {
 				break;
 			}
-			String[] defArr = word.split("\\\\n");
-			ComplexWordDef currentDW = null;
+			String[] defArr = line.split("\\\\n");
+			ComplexWordDef currentCWD = null;
 			WordClass currentWC = null;
-			noAddPluralMore = false;
-			for (int j = 0; j < defArr.length; j++) {
-				// System.gc();
-				logger.log(Level.INFO, "def[{0}]: {1}", new Object[]{j, defArr[j]});
+//			noAddPluralMore = false;
+			int defArrLength = defArr.length;
+			isPluralNotChange = false;
+			for (int j = 0; j < defArrLength; j++) {
+				defArr[j] = defArr[j].trim();
+				//Log.i("defArr[j]", defArr[j]);
 				if (j == 0) {
 					// def[0]: line	@line /lain/
 					Matcher matcher = NAME_PATTERN.matcher(defArr[j]);
 					if (matcher.find()) {
 						String names = matcher.group(1);
-//						LOG.info("names: " + names);
+						//Log.i("names: ", names);
+						//System.out.println(names);
 						if (Util.isNotEmpty(names)) {
-							String[] nameArr = names.split("=");
+							// caps = capitals	@caps = capitals\n- (Tech) các chữ hoa
+							String[] nameArr = names.split("=+");
 							// logger.log(Level.INFO, "names: {0}, length = {1}", new Object[]{names, nameArr.length});
-							for (int k = 0; k < nameArr.length; k++) {
+							int nameArrLength = nameArr.length;
+							for (int k = 0; k < nameArrLength; k++) {
 								String nameKTrimed = nameArr[k].trim();
-								currentDW = new ComplexWordDef(nameKTrimed);
-								add(currentDW);
-								currentDW = genDic.floor(currentDW);	// trùng giữa example và new word
+								currentCWD = new ComplexWordDef(nameKTrimed);
+								add(currentCWD);
+								currentCWD = genDic.floor(currentCWD);	// trùng giữa example và new word
 								if (k > 0) {
 									String name0Trimed = nameArr[k-1].trim();
 									if (nameKTrimed.compareTo(name0Trimed) >= 0) {
@@ -946,81 +979,98 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 				Matcher matType = TYPE_PATTERN.matcher(defArr[j]);
 				if (matType.find()) {
 					String type = matType.group(1);
-					Matcher twoWordType = TWO_WORDS_PATTERN.matcher(type);
 					if (type.startsWith("danh từ")) {
 						currentWC = new WordClass(Dictionary.NOUN);
-					} else if (type.startsWith("ngoại động từ")) {
-						currentWC = new WordClass(Dictionary.VERB);
-					} else if (type.startsWith("nội động từ")) {
+					} else if (type.indexOf("động từ") >= 0) {
 						currentWC = new WordClass(Dictionary.VERB);
 					} else if (type.startsWith("tính từ")) {
 						currentWC = new WordClass(Dictionary.ADJECTIVE);
 					} else if (type.startsWith("phó từ")) {
 						currentWC = new WordClass(Dictionary.ADVERB);
-					} else if (twoWordType.find()) {
+					} else { //if (TWO_WORDS_PATTERN.matcher(type).find()) {
 //						currentWC = new WordClass(twoWordType.group(1));
 						currentWC = new WordClass(Dictionary.OTHER);
 					}
-					currentDW.add(currentWC);
+					currentCWD.add(currentWC);
 					// logger.log(Level.INFO, "type currentDW: {0}", currentDW);
 					// logger.log(Level.INFO, "type: {0}", type);
 					//REMOVE_SONHIEU_PATTERN = Pattern.compile("số nhiều ([\\u0020-\\uFFFF]+)");
 					//PLU_PATTERN = Pattern.compile("([^ ]+)[\\u0020-\\uFFFF]*");
-					isPluralNotChange = false;
-					Matcher danhTuMat = REMOVE_DANH_TU_PATTERN.matcher(type);
+					
+					Matcher danhTuMat = DANH_TU_PATTERN.matcher(type);
 					// bat dau xu ly rieng cho phan danh tu
 					// [capt] []
 					// [caps = capitals] [: Tech: [các chữ hoa]]
 					// capt	@capt /kæpt/\n*  danh từ,  (viết tắt) của captain
 
 					if (danhTuMat.find()) {
+						//isPluralNotChange = false;
+//						alreadyPlural = false;
 						// remain after remove danhtu la sonhieu
-						String soNhieu = danhTuMat.group(1).trim();
+						String danhtu = danhTuMat.group(1).trim();
 						// check so nhieu cua
-						if (soNhieu.indexOf("số nhiều của") >= 0) {
-							noAddPluralMore = true;
-						} else if (soNhieu.indexOf("số nhiều không đổi") >= 0) {
+//						if (danhtu.indexOf("số nhiều của") >= 0) {
+//							alreadyPlural = true;
+//						} else 
+						if (type.indexOf("số nhiều không đổi") >= 0 || type.indexOf("số nhiều không thay đổi") >= 0
+									|| type.equals("danh từ số nhiều")) {
 							isPluralNotChange = true;
-						} else if (soNhieu.indexOf("viết tắt") >= 0) {
-							String[] soNhieuArr = soNhieu.split(" ");
-							for (int k = 0; k < soNhieuArr.length; k++) {
-								// logger.log(Level.INFO, "soNhieuArr[{0}]: {1}", new Object[]{k, soNhieuArr[k]});
-							}
-							pluralNounList.add(new Entry<String, String>(
-									currentDW.getName(), soNhieuArr[soNhieuArr.length - 1]));
+							//Log.i("isPluralNotChange", isPluralNotChange + "");
+						} else if (danhtu.indexOf("viết tắt") >= 0) {
+							synonymNounList.add(new Entry<String, ComplexWordDef>(danhtu.substring(danhtu.lastIndexOf(" ")), currentCWD));
+//							String[] danhTuArr = danhtu.split(" ");
+//							for (int k = 0; k < danhTuArr.length; k++) {
+//								// logger.log(Level.INFO, "soNhieuArr[{0}]: {1}", new Object[]{k, soNhieuArr[k]});
+//							}
+//							pluralNounList.add(new Entry<String, String>(
+//							currentCWD.getName(), danhTuArr[danhTuArr.length - 1]));
 						} else {
-							Matcher removeSoNhieuMat = REMOVE_SONHIEU_PATTERN.matcher(type);
-							if (removeSoNhieuMat.find()) {
-								String soNhieuRemovedStr = removeSoNhieuMat.group(1).trim();
-								String[] danhtuSoNhieuArr = soNhieuRemovedStr.split("[,;]|(\\bhay\\b)|(\\bhoặc\\b)");
-								for (int k = 0; k < danhtuSoNhieuArr.length; k++) {
+							// tìm số nhiều bất quy tắc
+							Matcher soNhieuMat = SONHIEU_PATTERN.matcher(type);
+							if (danhtu.indexOf("số nhiều của") < 0 && soNhieuMat.find()) {
+								//Log.i("danhtu.indexOf(số nhiều của) < 0 && soNhieuMat.find()", "true");
+								String soNhieuValue = soNhieuMat.group(1).trim();
+								String[] danhtuSoNhieuArr = soNhieuValue.split("[,;]|(\\bhay\\b)|(\\bhoặc\\b)");
+								int danhtuSoNhieuArrLength = danhtuSoNhieuArr.length;
+								for (int k = 0; k < danhtuSoNhieuArrLength; k++) {
 									Matcher firstWordMat = PLU_PATTERN.matcher(danhtuSoNhieuArr[k]);
 									if (firstWordMat.find()) {
 										String firstSoNhieu = firstWordMat.group(1);
+										//Log.i("firstSoNhieu", firstSoNhieu + ", " + currentCWD.getName());
 										// logger.log(Level.INFO, "firstSoNhieu: {0}", firstSoNhieu);
 //										if (!pluralNounList.contains(new Entry<String, String>(
 //												firstSoNhieu, ""))) {
 											pluralNounList.add(new Entry<String, String>(
-													firstSoNhieu, currentDW.getName()));
+													firstSoNhieu, currentCWD.getName()));
 //										}
 									}
 								}
-								noAddPluralMore = true;
-							} else if (!"số nhiều".equals(soNhieu)
-									&& !noAddPluralMore) {
-								String makeRegularPluralNounsForm = makeRegularPluralNounsForm(currentDW.getName());
+								
+							} else if (//!"số nhiều".equals(danhtu) &&
+								danhtu.indexOf("số nhiều của") < 0) { // tự tạo danh sách số nhiều
+								
+								//Log.i("danhtu.indexOf(số nhiều của) < 0", "danhtu.indexOf(số nhiều của) < 0");
+								String makeRegularPluralNounsForm = makeRegularPluralNounsForm(currentCWD.getName());
 								if (!pluralNounList.contains(new Entry<String, String>(
-										makeRegularPluralNounsForm, ""))) {
+																 makeRegularPluralNounsForm, ""))) {
 									pluralNounList.add(new Entry<String, String>(
-											makeRegularPluralNounsForm,
-											currentDW.getName()));
+														   makeRegularPluralNounsForm,
+														   currentCWD.getName()));
+								} else if (defArr[j].indexOf("số nhiều của") >= 0) {
+//				@data /'deitə/
+//				*  danh từ
+//				- số nhiều của datum
+//				- ((thường) dùng như số ít) số liệu, dữ kiện; tài liệu, cứ liệu (cung cấp những điều cần thiết)
+									continue;
 								}
 							}
 						}
 					}
 					continue;
-						
 				}
+				
+				//Log.i("EXAMPLE_PATTERN", EXAMPLE_PATTERN.toString());
+
 				// in reply to...
 				// def[5]: =to draw a line+ kẻ một đường
 				// =to be a good (poor) knife and fork+ là một người ăn khoẻ (yếu)
@@ -1031,19 +1081,19 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 					// logger.log(Level.INFO, "exampleName origin: {0}", exampleName);
 					String[] multiMeaning = exampleName.split(";");
 					String definition = matExam.group(2);
-					definition = removeContents(definition,
-							REMOVE_PARENTHESES_CONTENT_PATTERN).toString().trim().replaceAll("\\.", "").replaceAll("  ", " ");
+					definition = Util.removeBracket(definition,
+															'(', ')').toString().trim().replaceAll("\\.", "");
 					// logger.log(Level.INFO, "definition: {0}", definition);
 					if (multiMeaning.length == 1) {
 
 //						exampleName = formatNameValueAsGroup1(TO_PATTERN,
 //								exampleName);
-//						exampleName = removeContents(exampleName,
+//						exampleName = Util.removeBracket(exampleName,
 //								REMOVE_PARENTHESES_CONTENT_PATTERN).toString()
 //								.trim().replaceAll("\\.", "")
 //								.replaceAll("  ", " ");
 //
-//						group1 = removeContents(group1,
+//						group1 = Util.removeBracket(group1,
 //								REMOVE_PARENTHESES_CONTENT_PATTERN).toString()
 //								.trim().replaceAll("\\.", "")
 //								.replaceAll("  ", " ");
@@ -1058,10 +1108,10 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 						toList.add(new Entry<String, String>(exampleName, definition));
 						
 //						// xoa ngoac vuong
-//						exampleName = removeContents(exampleName,
+//						exampleName = Util.removeBracket(exampleName,
 //								REMOVE_BRACKET_CONTENT_PATTERN).toString().replaceAll("  ", " ");
 //
-//						group1 = removeContents(group1,
+//						group1 = Util.removeBracket(group1,
 //								REMOVE_BRACKET_CONTENT_PATTERN).toString().replaceAll("  ", " ");
 //						addMoreDerivedTo(exampleName, group1, definition, dr);
 					} else {
@@ -1069,9 +1119,9 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 //							exampleName = multiMeaning[k];
 							
 //							exampleName = formatNameValueAsGroup1(TO_PATTERN, exampleName);
-//							exampleName = removeContents(exampleName,
+//							exampleName = Util.removeBracket(exampleName,
 //									REMOVE_PARENTHESES_CONTENT_PATTERN).toString().trim().replaceAll("\\.", "").replaceAll("  ", " ");
-//							multiMeaning[k] = removeContents(multiMeaning[k],
+//							multiMeaning[k] = Util.removeBracket(multiMeaning[k],
 //									REMOVE_PARENTHESES_CONTENT_PATTERN).toString().trim().replaceAll("\\.", "").replaceAll("  ", " ");
 							
 //							LOG.info("new exampleName: " + exampleName);
@@ -1083,9 +1133,9 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 							toList.add(new Entry<String, String>(multiMeaning[k], definition));
 
 //							// xoa ngoac vuong
-//							exampleName = removeContents(exampleName,
+//							exampleName = Util.removeBracket(exampleName,
 //									REMOVE_BRACKET_CONTENT_PATTERN).toString().replaceAll("  ", " ");
-//							group1 = removeContents(multiMeaning[k],
+//							group1 = Util.removeBracket(multiMeaning[k],
 //									REMOVE_BRACKET_CONTENT_PATTERN).toString().replaceAll("  ", " ");
 				
 //							addMoreDerivedTo(exampleName, multiMeaning[k], definition, dr);
@@ -1102,11 +1152,11 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 				// - không biết gì cả, dốt đặc cán mai
 				Matcher matIdiom = IDIOM_PATTERN.matcher(defArr[j]);
 				if (matIdiom.find()) {
-					String oriIdiomWithoutParentheses = removeContents(matIdiom.group(1),
-							REMOVE_PARENTHESES_CONTENT_PATTERN).toString().trim().replaceAll("\\.", "").replaceAll("  ", " ");
+					String oriIdiomWithoutParentheses = Util.removeBracket(matIdiom.group(1),
+																				   '(', ')').toString().trim().replaceAll("\\.", "");
 					String[] idiomArr = oriIdiomWithoutParentheses.split("[;]");
 					
-//					idiomName = removeContents(idiomName,
+//					idiomName = Util.removeBracket(idiomName,
 //							REMOVE_PARENTHESES_CONTENT_PATTERN).toString().trim().replaceAll("\\.", "").replaceAll("  ", " ");
 
 					while (++j < defArr.length) {
@@ -1118,11 +1168,11 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 							Matcher matXem = XEM_PATTERN.matcher(definition);
 							// logger.log(Level.INFO, "xem definition: {0}", definition);
 							if (!matXem.find()) {
-								definition = removeContents(definition,
-										REMOVE_PARENTHESES_CONTENT_PATTERN)
+								definition = Util.removeBracket(definition,
+																		'(', ')')
 										.toString().trim()
 										.replaceAll("\\.", "")
-										.replaceAll("  ", " ");
+										;
 								// logger.log(Level.INFO, "idiom definition: {0}", definition);
 								for (int k = 0; k < idiomArr.length; k++) {
 //									String idiomName = idiomArr[k];
@@ -1148,41 +1198,77 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 				// def[141]: - biệt; i. particularr nói riêng, đặc biệt; i. the small cục bộ
 				// /tổng hợp in g. nói chung/cái chung/
 				// ([ \w]+)*? (\w)\. ([ \w]+)*?([\u0020-\uFFFF]+?);
-
+//						@order
+//						- o. that, in o to để
+//							- o. of congruence cấp của một đoàn
+//							- o. of contact bậc tiếp xúc
+//							- o. of a curve cấp của một đường cong 
+//							- o. of a determinant cấp của một định thức 
+//							- o. of a differential equation (giải tích) cấp của một phương trình vi phân
+//							- o. of an element in a groupcấp của một phần tử trong một nhóm
+//							- o. of a groupcấp của một nhóm
+//							- o. of magnitude độ lớn
+//							- o. of a matrix cấp của một ma trận
+//							- o. of a permutation cấp của phép hoán vị
+//							- o. of a pole (giải tích) cấp của cực
+//							- o. of a radical chỉ số căn, bậc của căn số
+//							- o. of a singular point cấp của một điểm kỳ dị
+//							- o. of a stationarity (thống kê) cấp dừng (của quá trình)
+//						- o. of a tensor cấp của một tensor
+//							- blocking o. trật tự cản
+//							- calling o. lệnh gửi
+//							- circular o. thứ tự vòng quanh
+//							- coded o. lệnh được mã hoá
+//							- conditional o. lệnh có điều kiện
+				// ATSIGN_PATTERN = Pattern.compile("^[\\p{Space}]*@(.+)$");
 				Matcher atsignIdiom = ATSIGN_PATTERN.matcher(defArr[j]);
 				if (atsignIdiom.find()) {
 					String atsignIdiomName = atsignIdiom.group(1).trim();
 					// logger.log(Level.INFO, "atsignIdiomName: {0}", atsignIdiomName);
 					// logger.log(Level.INFO, "currentDW.getName(): {0}", currentDW.getName());
-					if (atsignIdiomName.equalsIgnoreCase(currentDW.getName())) {
-						if (j + 1 < defArr.length) {
-							String definition = defArr[++j].trim().replaceFirst("^ *- *", "");//.concat(";");
-							definition = removeContents(definition,
-									REMOVE_NESTED_PARENTHESES_CONTENT_PATTERN).toString();
-							add(new ComplexWordDef(currentDW.getName()).add(Dictionary.OTHER, "", definition));
+//					if (atsignIdiomName.equalsIgnoreCase(currentCWD.getName())) {
+						while (++j < defArr.length && defArr[j].length() > 0) { //if (j + 1 < defArr.length) {
+							String definition = defArr[j].replaceFirst("^ *- *", "");//.concat(";");
+							//Log.d("definition", definition);
+							definition = Util.removeBracket(definition, '(', ')').toString();
+							Matcher mat = Pattern.compile("\\[([^\\]]+)\\]").matcher(definition);
+							if (mat.find()) {
+								String[] inBracket =  mat.group(1).split("[;,]");
+								String end = ((mat.end(0) < definition.length() - 1) ? definition.substring(mat.end(0) + 1) : "");
+								for (int k = 0; k < inBracket.length; k++) {
+									atsignIdiomList.add(new Entry<String, String>(atsignIdiomName, definition.substring(0, mat.start(0)) + inBracket[k] + end));
+								}
+							} else {
+								String[] split = definition.split(";");
+								for (String st : split) {
+									atsignIdiomList.add(new Entry<String, String>(atsignIdiomName, st.trim()));
+								}
+							}
+							
+//							add(new ComplexWordDef(currentCWD.getName()).add(Dictionary.OTHER, "", definition));
 							// logger.log(Level.INFO, "atsign Definition: {0}", definition);
 						}
 
-						while (++j < defArr.length && defArr[j].trim().length() > 0) {
-							// logger.log(Level.INFO, "in atsign 2: [{0}] : {1}", new Object[]{atsignIdiomName, defArr[j]});
-							atsignIdiomList.add(new Entry<String, String>(atsignIdiomName, defArr[j]));
-						}
-						j--;
-					} else {
-						while (++j < defArr.length
-								&& !ATSIGN_PATTERN.matcher(defArr[j]).matches()
-								&& defArr[j].trim().length() > 0) {
-							// logger.log(Level.INFO, "in atsign 2: {0}", defArr[j]);
-							String definition = defArr[j].trim().replaceFirst("^-[ ]?", "");
-							definition = removeContents(definition,
-									REMOVE_NESTED_PARENTHESES_CONTENT_PATTERN).toString();
-							add(new ComplexWordDef(atsignIdiomName).add(Dictionary.OTHER, "", definition));
-						}
-						j--;
-					}
+//						while (++j < defArr.length && defArr[j].trim().length() > 0) {
+//							// logger.log(Level.INFO, "in atsign 2: [{0}] : {1}", new Object[]{atsignIdiomName, defArr[j]});
+//							atsignIdiomList.add(new Entry<String, String>(atsignIdiomName, defArr[j]));
+//						}
+//						j--;
+//					} else {
+//						while (++j < defArr.length
+//								&& !ATSIGN_PATTERN.matcher(defArr[j]).matches()
+//								&& defArr[j].trim().length() > 0) {
+//							// logger.log(Level.INFO, "in atsign 2: {0}", defArr[j]);
+//							String definition = defArr[j].trim().replaceFirst("^-[ ]?", "");
+//							definition = Util.removeBracket(definition,
+//															 '(', ')').toString();
+//							add(new ComplexWordDef(atsignIdiomName).add(Dictionary.OTHER, "", definition));
+//						}
+//						j--;
+//					}
 					continue;
 				}
-				
+						//Log.i("", PROFESSION_PATTERN.toString());
 				// def[20]: - (quân sự) tuyến, phòng tuyến
 				// - ((thường) + out) do thám, dò xét, theo dõi\
 				// - (+ down) lướt xuống (máy bay)
@@ -1195,69 +1281,70 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 					String definition = matPro.group(2);
 					// logger.log(Level.INFO, "pro: {0}", pro);
 					// logger.log(Level.INFO, "origin definition: {0}", definition);
-
+					
+					//Log.i("pro " + pro + ".", definition);
 					if (pro.indexOf("không dịch") >= 0) {
 						continue;
 					} else if ("xem".equals(pro)) {
 						xemWaitingList.add(new Entry<ComplexWordDef, String>(
-								new ComplexWordDef(currentDW.getName()),
+								new ComplexWordDef(currentCWD.getName()),
 								definition));
 //						LOG.info("xemWaitingList: " + xemWaitingList.toString());
 						continue;
 					}
 					
-					definition = removeContents(definition,
-							REMOVE_NESTED_PARENTHESES_CONTENT_PATTERN).toString().trim();
-					definition = removeContents(definition,
-							REMOVE_CLOSED_PARENTHESES_CONTENT_PATTERN).toString().trim();
+					definition = Util.removeBracket(definition,
+															'(', ')').toString().trim();
+//					definition = Util.removeBracket(definition,
+//															'(', ')').toString().trim();
 					// logger.log(Level.INFO, "new definition: {0}", definition);
-					
+					//Log.i("definition: ", definition);
 					if (definition == null || definition.trim().length() == 0) {
 						if (j + 1 < defArr.length) {
 							definition = defArr[++j];
 							Matcher defMat = DEFINITION_PATTERN.matcher(definition);
 							if (defMat.find()) {
 								definition = defMat.group(1);
-								definition = removeContents(definition,
-										REMOVE_NESTED_PARENTHESES_CONTENT_PATTERN).toString().trim();
-								definition = removeContents(definition,
-										REMOVE_CLOSED_PARENTHESES_CONTENT_PATTERN).toString().trim();
+								definition = Util.removeBracket(definition,
+																		'(', ')').toString().trim();
+//								definition = Util.removeBracket(definition,
+//																		'(', ')').toString().trim();
 							}
 						}
 					}
-					
+					//Log.i("definition: ", definition);
 					if ("số nhiều".equals(pro)) {
 						if (isPluralNotChange) {
-							definition = "những|các " + definition;
+							definition = "các " + definition;
 						}
 						// - (số nhiều) (chính trị) (the ins) Đảng đang nắm chính quyền
-						pluralNounDefinitionList.add(new Entry<String, String>(currentDW.getName(), definition));
+						pluralNounDefinitionList.add(new Entry<String, String>(currentCWD.getName(), definition));
 					} else {
 						Matcher plusMat = PLUS_PRO_PATTERN.matcher(pro);
 						if (pro.indexOf("số nhiều") >= 0) {
 							if (isPluralNotChange || pro.indexOf("số nhiều không đổi") >= 0) {
-								definition = "những|các " + definition;
+								definition = "các " + definition;
 							} else {
-								pluralNounDefinitionList.add(new Entry<String, String>(currentDW.getName(), definition));
+								pluralNounDefinitionList.add(new Entry<String, String>(currentCWD.getName(), definition));
 								continue;
 							}
 							// - (+ down) lướt xuống (máy bay)
 						} else if (plusMat.find()) {
-							add(new ComplexWordDef(currentDW.getName() + plusMat.group(1)).add(Dictionary.OTHER, "", definition));
+							add(new ComplexWordDef(currentCWD.getName() + plusMat.group(1)).add(Dictionary.OTHER, definition));
 							currentWC = null;
 							continue;
-						}
+						} 
 						WordClass tempWC = null;
 						if (currentWC == null) {
 							currentWC = new WordClass();
-							currentWC.setProfession(pro);
+							//currentWC.setProfession(pro);
 							currentWC.addDefinition(definition);
-							currentDW.add(currentWC);
+							currentCWD.add(currentWC);
 						} else {
 							tempWC = new WordClass(currentWC.getType());
-							tempWC.setProfession(pro);
+							//tempWC.setProfession(pro);
 							tempWC.addDefinition(definition);
-							currentDW.add(tempWC);
+							currentCWD.add(tempWC);
 						}
 					}
 					continue;
@@ -1272,14 +1359,13 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 					if (currentWC == null) {
 						currentWC = new WordClass();
 					}
-					
-					StringBuffer sb = removeContents(defStr, REMOVE_PARENTHESES_CONTENT_PATTERN);
-					sb = removeContents(sb.toString(), REMOVE_NGOAC_NHON_CONTENT_PATTERN);
+					StringBuilder sb = Util.removeBracket(defStr, '(', ')');
+					sb = Util.removeBracket(sb.toString(), '<', '>');
 					if (isPluralNotChange) {
-						sb.insert(0, "những|các ");
+						sb.insert(0, "các "); //những|
 					}
-					currentWC.addDefinition(sb.toString().trim().replaceAll("\\.", "").replaceAll("  ", " "));
-					currentDW.add(currentWC);
+					currentWC.addDefinition(sb.toString().replaceAll("\\.", ""));
+					currentCWD.add(currentWC);
 					// logger.log(Level.INFO, "definition defStr: {0}", defStr);
 					// logger.log(Level.INFO, "currentWC: {0}", currentWC);
 					// logger.log(Level.INFO, "currentDW: {0}", currentDW);
@@ -1298,7 +1384,7 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 
 		for (Entry<String, String> entry : pluralNounDefinitionList) {
 			add(new ComplexWordDef(makeRegularPluralNounsForm(entry.getKey()))
-			.add(Dictionary.NOUN, "", "những|các " + entry.getValue()));
+						.add(Dictionary.NOUN, "các " + entry.getValue())); //những|
 		}
 
 		// collection of verbs in the dictionary
@@ -1314,46 +1400,76 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 		// - i. the large, i. general nói chung;
 		// [marginal classification sự] [: : [phân loại biên duyên]]
 		// marginal c. sự phân loại biên duyên
-		for (Entry<String, String> entry : atsignIdiomList) {
-			// logger.log(Level.INFO, "entryAssign: {0}", entry);
-			if (entry.getValue().indexOf(".") > 0) {
-				String sb = entry.getValue().trim().replaceFirst(
-						entry.getKey().charAt(0) + "\\.", entry.getKey()).substring(1).trim().replaceAll("  ", " ");
-				// logger.log(Level.INFO, "sb: {0}", sb);
-				StringBuffer sbIdiomName = new StringBuffer();
-				StringBuffer sbIdiomDef = new StringBuffer();
+		
+				FileWriter fw = new FileWriter(fileName + ".idiom.txt");
+				BufferedWriter bw = new BufferedWriter(fw);
+				for (Entry<String, String> entry : atsignIdiomList) {
+					// logger.log(Level.INFO, "entryAssign: {0}", entry);
+					String value = entry.getValue();
+					if (value.indexOf(".") > 0) {
+						String key = entry.getKey();
+						String sb = value.replaceFirst(key.charAt(0) + "\\.", key); //substring(1).
+						// logger.log(Level.INFO, "sb: {0}", sb);
+						StringBuffer sbIdiomName = new StringBuffer();
+						StringBuffer sbIdiomDef = new StringBuffer();
 
-				Matcher mat2 = WORD_PATTERN.matcher(sb);
-				boolean notEmpty = false;
-				while ((notEmpty = mat2.find())) {
-					// logger.log(Level.INFO, "mat2.group(1): {0}", mat2.group(1));
-					// logger.log(Level.INFO, "mat2.group(2): {0}", mat2.group(2));
-					if (genDic.contains(new ComplexWordDef(mat2.group(1)))) {
-						sbIdiomName.append(mat2.group(1)).append(mat2.group(2));
+						//Log.i("IdiomName", key + ", " + value + ", " + sb);
+//						Matcher mat2 = WORD_PATTERN.matcher(sb);
+						//boolean notEmpty = false;
+						int curIdx = 0;
+						int newIdx = 0;
+						int length = sb.length() - 1;
+						while (curIdx < length && (newIdx = sb.indexOf(" ", curIdx + 1)) > curIdx) {
+							String substring = sb.substring(curIdx, newIdx);
+							//Log.i("curIdx", curIdx + ", " + newIdx + ", '" + substring + "'");
+							if (EN_WORD_PATTERN.matcher(substring).matches() && genDic.contains(new ComplexWordDef(substring))) {
+								sbIdiomName.append(substring).append(" ");
+								curIdx = ++newIdx;
+								//Log.i("newIdx", curIdx + ", " + newIdx);
+							} else {
+								break;
+							}
+						}
+						sbIdiomDef.append(sb.substring(curIdx, ++length));
+//				while ((notEmpty = mat2.find())) {
+//					// logger.log(Level.INFO, "mat2.group(1): {0}", mat2.group(1));
+//					// logger.log(Level.INFO, "mat2.group(2): {0}", mat2.group(2));
+//					if (genDic.contains(new ComplexWordDef(mat2.group(1)))) {
+//						sbIdiomName.append(mat2.group(1)).append(mat2.group(2));
+//					} else {
+//						break;
+//					}
+//				}
+
+						// entryAssign: [space]: [- null s.]
+//				if (notEmpty) {
+//					sbIdiomDef.append(mat2.group(1)).append(mat2.group(2)).append(sb.substring(mat2.end()));
+//				} else {
+//					// logger.log(Level.INFO, "entry of origin dictionary error: {0}", entry);
+//				}
+						//Log.i("IdiomNameDef", sbIdiomName + ", " + sbIdiomDef);
+						// logger.log(Level.INFO, "sbIdiomName: {0}", sbIdiomName);
+						// logger.log(Level.INFO, "sbIdiomDef: {0}", sbIdiomDef);
+						String[] idiomArr = sbIdiomName.toString().trim().split(",");
+						for (String idiom : idiomArr) {
+							if (Util.isNotEmpty(idiom)) {
+								ComplexWordDef add = new ComplexWordDef(idiom).add(Dictionary.OTHER, 
+																				   sbIdiomDef.toString());
+								add(add);//Util.removeBracket(, '(', ')').toString()
+								//Log.i("IdiomName", idiom + ", " + sbIdiomDef.toString());
+								//saveIdiomInPlainTextFile(add, bw);
+							}
+						}
 					} else {
-						break;
+						ComplexWordDef add = new ComplexWordDef(entry.getKey()).add(Dictionary.OTHER, 
+																					entry.getValue());
+						add(add); //Util.removeBracket(.trim().replaceFirst("^ *- *", ""), '(', ')').toString())
+						saveIdiomInPlainTextFile(add, bw);
 					}
 				}
-				// entryAssign: [space]: [- null s.]
-				if (notEmpty) {
-					sbIdiomDef.append(mat2.group(1)).append(mat2.group(2)).append(sb.substring(mat2.end()));
-				} else {
-					// logger.log(Level.INFO, "entry of origin dictionary error: {0}", entry);
-				}
-				// logger.log(Level.INFO, "sbIdiomName: {0}", sbIdiomName);
-				// logger.log(Level.INFO, "sbIdiomDef: {0}", sbIdiomDef);
-				String[] idiomArr = sbIdiomName.toString().trim().split("[,;]");
-				for (String idiom : idiomArr) {
-					if (Util.isNotEmpty(idiom)) {
-						add(new ComplexWordDef(idiom).add(Dictionary.OTHER, "", 
-								removeContents(sbIdiomDef.toString(), REMOVE_PARENTHESES_CONTENT_PATTERN).toString()));
-					}
-				}
-			} else {
-				add(new ComplexWordDef(entry.getKey()).add(Dictionary.OTHER, "", 
-						removeContents(entry.getValue().trim().replaceFirst("^ *- *", ""), REMOVE_PARENTHESES_CONTENT_PATTERN).toString()));
-			}
-		}
+		bw.flush();
+		bw.close();
+		fw.close();
 		
 		for (Entry<ComplexWordDef, String> entry : xemWaitingList) {
 			if (contains(new ComplexWordDef(entry.getValue()))) {
@@ -1365,7 +1481,7 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 				}
 			}
 		}
-		
+		Log.i("Total line", numWords + ".");
 		// logger.log(Level.INFO, "total words: {0}", size());
 		return this;
 	}
@@ -1402,7 +1518,7 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 				if (wc.getType() == Dictionary.VERB) {
 					verbSet.add(dw.getName());
 					// logger.info("dw.getName(): " + dw.getName());
-					if (!IRREGULAR_VERBS.contains(new Entry<String, Set<String>>(dw.getName(), null))) {
+					if (!IRREGULAR_VERBS.containsKey(dw.getName())) {
 						isAddMoreRegularVerb = true;
 						
 						StringBuilder sbS = new StringBuilder();
@@ -1426,8 +1542,8 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 					} else {
 						isAddMoreIrregularVerb = true;
 						
-						Entry<String, List<String>> entry = IRREGULAR_VERBS
-								.floor(new Entry<String, List<String>>(dw.getName(), null));
+						Map.Entry<String, List<String>> entry = IRREGULAR_VERBS
+								.floorEntry(dw.getName());
 						int counter = 0;
 						for (String irregularVerb : entry.getValue()) {
 							// logger.info("irregularVerb: " + irregularVerb);
@@ -1469,21 +1585,6 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 		return verbSet;
 	}
 
-	/**
-	 * Xóa nội dung của String defStr theo Pattern pat
-	 * @param defStr
-	 * @param pat
-	 * @return
-	 */
-	private static StringBuffer removeContents(String defStr, Pattern pat) {
-		Matcher mat = pat.matcher(defStr);
-		StringBuffer sb = new StringBuffer();
-		while (mat.find()) {
-			mat.appendReplacement(sb, " ");
-		}
-		mat.appendTail(sb);
-		return sb;
-	}
 
 	/**
 	 * Thêm các quá khứ, qkpt vào các ví dụ có "to" ở đầu câu
@@ -1503,53 +1604,53 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 		}
 		// khac nhau va la irregular
 		if ((!removedTo.equals(group1) && indexOfSpace > 0 && IRREGULAR_VERBS
-				.contains(new Entry<String, Set<String>>(removedTo.substring(0, indexOfSpace), null)))
+				.containsKey(removedTo.substring(0, indexOfSpace)))
 				|| (!removedTo.equals(group1) && indexOfSpace < 0 && IRREGULAR_VERBS
-						.contains(new Entry<String, Set<String>>(removedTo, null)))) {
-			String idiomTmp = REMOVE_BRACKET_PATTERN.matcher(removedTo).replaceAll("").replaceAll("  ", " ");
-			idiomTmp = removeContents(idiomTmp,
-					REMOVE_PARENTHESES_CONTENT_PATTERN).toString().replaceAll("  ", " ");
+						.containsKey(removedTo))) {
+			String idiomTmp = REMOVE_BRACKET_PATTERN.matcher(removedTo).replaceAll("");
+			idiomTmp = Util.removeBracket(idiomTmp,
+													  '(', ')').toString();
 			addForIrregularVerbs(idiomTmp, definition);
 			
-			StringBuffer sb = removeContents(removedTo, REMOVE_BRACKET_CONTENT_PATTERN);
+						StringBuilder sb = Util.removeBracket(removedTo, '[', ']');
 			if (sb.toString().length() > 0) {
-				addForIrregularVerbs(sb.toString().trim().replaceAll("  ", " "), definition);
+				addForIrregularVerbs(sb.toString().trim(), definition);
 			}
 		} else if ((!removedTo.equals(group1) && indexOfSpace > 0 && verbSet
 				.contains(removedTo.substring(0, indexOfSpace)))
 				|| (!removedTo.equals(group1) && indexOfSpace < 0 && verbSet
 						.contains(removedTo))) {
 			// khac nhau nhung la regular verbs
-			String idiomTmp = REMOVE_BRACKET_PATTERN.matcher(removedTo).replaceAll("").replaceAll("  ", " ");
-			idiomTmp = removeContents(idiomTmp,
-					REMOVE_PARENTHESES_CONTENT_PATTERN).toString().replaceAll("  ", " ");
+			String idiomTmp = REMOVE_BRACKET_PATTERN.matcher(removedTo).replaceAll("");
+			idiomTmp = Util.removeBracket(idiomTmp,
+												 '(', ')').toString();
 			addForRegularVerbs(idiomTmp, definition);
 			
-			StringBuffer sb = removeContents(removedTo, REMOVE_BRACKET_CONTENT_PATTERN);
+				   StringBuilder sb = Util.removeBracket(removedTo, '[', ']');
 			if (sb.toString().length() > 0) {
-				addForRegularVerbs(sb.toString().trim().replaceAll("  ", " "), definition);
+				addForRegularVerbs(sb.toString().trim(), definition);
 			}
 		} else if (removedTo.equals(group1) && indexOfSpace >= 0) {
 			// giong nhau ma khong co to
-			String idiomTmp = REMOVE_BRACKET_PATTERN.matcher(removedTo).replaceAll("").replaceAll("  ", " ");
-			idiomTmp = removeContents(idiomTmp,
-					REMOVE_PARENTHESES_CONTENT_PATTERN).toString().replaceAll("  ", " ");
+			String idiomTmp = REMOVE_BRACKET_PATTERN.matcher(removedTo).replaceAll("");
+			idiomTmp = Util.removeBracket(idiomTmp,
+					'(', ')').toString();
 			// logger.log(Level.INFO, "no verb idiomTmp: {0}", idiomTmp);
 			ComplexWordDef newDW = new ComplexWordDef(idiomTmp);
-			newDW.add(Dictionary.OTHER, "", definition);
+			newDW.add(Dictionary.OTHER, definition);
 			add(newDW);
 			
-			String st = removeContents(removedTo.trim(), REMOVE_BRACKET_CONTENT_PATTERN).toString();
+			String st = Util.removeBracket(removedTo.trim(), '[', ']').toString();
 			st = st.replaceAll("[\\(\\)]", "");
 			if (st.length() > 0) {
-				newDW = new ComplexWordDef(st.replaceAll("  ", " "));
-				newDW.add(Dictionary.OTHER, "", definition);
+				newDW = new ComplexWordDef(st);
+				newDW.add(Dictionary.OTHER, definition);
 				add(newDW);
 			}
 		} else {
 			// giong nhau ma co to
 			ComplexWordDef newDW = new ComplexWordDef(group1);
-			newDW.add(Dictionary.OTHER, "", definition);
+			newDW.add(Dictionary.OTHER, definition);
 			add(newDW);
 		}
 	}
@@ -1562,8 +1663,7 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 	private void addForIrregularVerbs(String verbPhrase, String definition) {
 		int index = verbPhrase.indexOf(" ");
 		String verb = index > 0 ? verbPhrase.substring(0, index) : verbPhrase;
-		Entry<String, List<String>> floor = IRREGULAR_VERBS
-				.floor(new Entry<String, List<String>>(verb, null));
+		Map.Entry<String, List<String>> floor = IRREGULAR_VERBS.floorEntry(verb);
 //		for (Entry<String, Set<String>> entry : IRREGULAR_VERBS) {
 			if (verb.equalsIgnoreCase(floor.getKey())) {
 				int counter = 0;
@@ -1575,11 +1675,11 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 					// logger.info("newDW: " + newDW);
 					for (int i = 0; i < splitValues.length; i++) {
 						if (counter == 0) {
-							newDW.add(Dictionary.VERB, "", "đã " + definition);
+							newDW.add(Dictionary.VERB, "đã " + definition);
 						} else if (counter == 3) {
-							newDW.add(Dictionary.VERB, "", "đang " + definition);
+							newDW.add(Dictionary.VERB, "đang " + definition);
 						} else {
-							newDW.add(Dictionary.VERB, "", definition);
+							newDW.add(Dictionary.VERB, definition);
 						}
 					}
 					add(newDW);
@@ -1628,13 +1728,13 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 			ComplexWordDef dw = new ComplexWordDef(line.substring(0, indexOfTab1));
 			String type = line.substring(indexOfTab1 + 1, indexOfTab2);
 			
-			dw.add(getIntType(type), "", line.substring(indexOfTab2 + 1));
+			dw.add(getIntType(type), line.substring(indexOfTab2 + 1));
 			dicLoader.add(dw);
 //			System.out.println("new dw: " + dw.toString());
 		}
 //		System.out.println("dicReader.getDictionary().toString(): " + dicReader.getDictionary().toString());
 		br.close();
-//		dicLoader.genDic.save(Constants.SERIALED_PLAIN_FILE_NAME);
+		dicLoader.genDic.save(Constants.SERIALED_PLAIN_FILE_NAME);
 		return dicLoader.genDic;
 	}
 	/**
@@ -1677,7 +1777,7 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 					bw.write(getStringType(wc.getType()));
 					bw.write("\t");
 					bw.write(definition);
-					bw.write("\r\n");
+					bw.write("\n");
 				}
 			}
 		}
@@ -1687,6 +1787,21 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 		fw.close();
 	}
 
+	public static void saveIdiomInPlainTextFile(
+		ComplexWordDef dw, BufferedWriter bw) throws IOException {
+		for (WordClass wc : dw.getDefinitions()) {
+			String definition = wc.getDefinition().trim();
+			if (definition.length() > 0) {
+				bw.write(dw.getName());
+				bw.write("\t");
+				bw.write(getStringType(wc.getType()));
+				bw.write("\t");
+				bw.write(definition);
+				bw.write("\n");
+			}
+		}
+	}
+	
 	/**
 	 * Hàm utility lấy danh sách số nhiều bất quy tắc trong từ điển HNĐ original
 	 */
@@ -1776,8 +1891,8 @@ public class DictionaryLoader implements Iterable<ComplexWordDef> {
 		System.out.println(map.get("index")[0]);
 		System.out.println(map.get("index")[1]);
 		
-		Map<String, String[]> map2 = readIrregularPluralNounFromTextDict(new File(Constants.PRIVATE_PATH + "/data/dictd_anh-viet.txt").getAbsolutePath());
-		writePluralNounToTextFile(new File("dicts-parsers/Irregular-Plural-Nouns.txt").getAbsolutePath(), map2);
+		//Map<String, String[]> map2 = readIrregularPluralNounFromTextDict(new File(Constants.PRIVATE_PATH + "/data/new_dictd_www.freedict.de_anh-viet.txt").getAbsolutePath());
+		//writePluralNounToTextFile(new File(Constants.PRIVATE_PATH + "/data/Irregular-Plural-Nouns2.txt").getAbsolutePath(), map2);
 		
 //		writeWorkBook(dr, NEW_EXCEL_FILE_NAME);
 //		String strTemp = "acidophilous	@acidophilous\\n* tính từ\\n- (sinh học) ưa axit; ưa chua; mọc ở đất chua";

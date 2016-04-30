@@ -192,15 +192,15 @@ public class FileUtil {
 
 	public static void copyAssetToDir(Activity activity, String dest, String src) {
 		try {
-			String src2 = dest + "/" + src;
-			File file = new File(src2);
+			String newDest = dest + "/" + src;
+			File file = new File(newDest);
 			if (!file.exists()) {
-				System.out.println("ok " + src2);
+				System.out.println("ok " + newDest);
 				InputStream ins = activity.getAssets().open(src);
-				FileUtil.saveISToFile(ins, src2);
+				FileUtil.saveISToFile(ins, newDest);
 				ins.close();
 			} else {
-				System.out.println("fail " + src2);
+				System.out.println("fail " + newDest);
 			}
 		} catch (Exception e) {
 			Log.e("copyAssetToDir", e.getMessage(), e);
@@ -235,7 +235,8 @@ public class FileUtil {
 	public static Workbook readWorkBook(String inputFile)
 	throws FileNotFoundException, IOException {
 		FileInputStream fis = new FileInputStream(inputFile);
-		POIFSFileSystem fileSystem = new POIFSFileSystem(fis);
+		BufferedInputStream bis = new BufferedInputStream(fis);
+		POIFSFileSystem fileSystem = new POIFSFileSystem(bis);
 		Workbook wb = new HSSFWorkbook(fileSystem);
 		return wb;
 	}
@@ -244,8 +245,10 @@ public class FileUtil {
 	throws FileNotFoundException, IOException {
 		File fTemp = new File(outputFile + ".tmp");
 		FileOutputStream fos = new FileOutputStream(fTemp);
-		wb.write(fos);
-		fos.flush();
+		BufferedOutputStream bos = new BufferedOutputStream(fos);
+		wb.write(bos);
+		bos.flush();
+		bos.close();
 		fos.close();
 		File file = new File(outputFile);
 		file.delete();
@@ -415,7 +418,7 @@ public class FileUtil {
 		FileOutputStream fos = new FileOutputStream(tempFile);
 		BufferedOutputStream bos = new BufferedOutputStream(fos);
 		BufferedInputStream bis = new BufferedInputStream(is);
-		byte[] barr = new byte[8192];
+		byte[] barr = new byte[32768];
 		int read = 0;
 		while ((read = bis.read(barr)) > 0) {
 			bos.write(barr, 0, read);
@@ -697,7 +700,7 @@ public class FileUtil {
 	private static POIFSFileSystem createPOIFSFileSystem(String fileName)
 	throws IOException {
 		FileInputStream fis = new FileInputStream(fileName);
-		POIFSFileSystem fs = new POIFSFileSystem(fis);
+		POIFSFileSystem fs = new POIFSFileSystem(new BufferedInputStream(fis));
 		return fs;
 	}
 
@@ -1534,7 +1537,8 @@ public class FileUtil {
 //		BufferedOutputStream bos = new BufferedOutputStream(fos);
 //		ZipOutputStream zos = new ZipOutputStream(bos);
 
-		BufferedWriter bw = new BufferedWriter(new FileWriter(zipFileName + ".tmp"));
+		String zipFileTmp = zipFileName + ".tmp";
+		BufferedWriter bw = new BufferedWriter(new FileWriter(zipFileTmp));
 		try {
 			int filePathLength = file.getAbsolutePath().length() + 1;
 			for (File f : filesNeedCompress) {
@@ -1574,7 +1578,8 @@ public class FileUtil {
 //		File fileZ = new File(zipFileName);
 //		fileZ.delete();
 //		fileZFTmp.renameTo(fileZ);
-		new Andro7za().compress(zipFileName, "-t7z", "", "-xr@"+zipFileName+".tmp", "-ir!"+file.getAbsolutePath()+"/"+includes);
+		new Andro7za().compress(zipFileName, "-t7z", "", "-xr@"+zipFileTmp, "-ir!"+file.getAbsolutePath()+"/"+includes);
+		new File(zipFileTmp).delete();
 	}
 
 	/**
@@ -1706,7 +1711,7 @@ public class FileUtil {
 	}
 
 	public static List<File> getFiles(File f) {
-		final List<File> lf = new LinkedList<File>();
+		final Set<File> lf = new HashSet<File>();
 		if (f.isDirectory()) {
 			final Stack<File> stk = new Stack<>();
 			stk.push(f);
@@ -1725,7 +1730,9 @@ public class FileUtil {
 		} else {
 			lf.add(f);
 		}
-		return lf;
+		ArrayList<File> al = new ArrayList<File>(lf.size());
+		al.addAll(lf);
+		return al;
 	}
 
 	public static void copySaveLastModified(String[] fs, String destDir, boolean includeSrcDir) {

@@ -25,12 +25,11 @@ import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.TreebankLanguagePack;
 import edu.stanford.nlp.trees.TypedDependency;
 
-import com.free.translation.util.*;
-import android.util.*;
-import android.webkit.*;
+
 import java.net.*;
 import com.free.searcher.*;
 import java.text.*;
+import android.util.*;
 //import android.util.*;
 
 public class Translator {
@@ -82,14 +81,9 @@ public class Translator {
 //			HND_FIRST_DICTIONARY.addNewDictionary(HND_DICTIONARY);
 //			HND_FIRST_DICTIONARY.addNewDictionary(CUSTOM_ONLY_DICTIONARY);
 			
-		} catch (FileNotFoundException e) {
-			Constants.LOGGER.throwing(Translator.class.getName(), "startup", e);
-			
-		} catch (IOException e) {
-			Constants.LOGGER.throwing(Translator.class.getName(), "startup", e);
-			
-		} catch (ClassNotFoundException e) {
-			Constants.LOGGER.throwing(Translator.class.getName(), "startup", e);
+		} catch (Throwable e) {
+			//Constants.LOGGER.throwing(Translator.class.getName(), "startup", e);
+			e.printStackTrace();
 			
 		}
 	}
@@ -335,8 +329,8 @@ public class Translator {
 		sentenceList.add("The method most often used");
 		sentenceList.add("method most often used");
 
-		translateFromPlainTextFile(new File("/storage/emulated/0/backups/Living and dying new.doc.converted.txt"), 
-		"/storage/emulated/0/backups/Living and dying.doc.html", null);
+//		translateFromPlainTextFile(new File("/storage/emulated/0/backups/Living and dying new.doc.converted.txt"), 
+//		"/storage/emulated/0/backups/Living and dying.doc.html", null);
 		
 		
 //		LOG.info(translateParagraphs(sentenceList));
@@ -1543,10 +1537,10 @@ public class Translator {
 			String combinedStr2 = wordInfoCombined2.toString();
 			String combinedStr3 = wordInfoCombined3.toString();
 
-			ComplexWordDef wordDefinition2 = GEN_DICT.getDefinition(combinedStr2);
+			ComplexWordDef wordDefinition2 = GEN_DICT.getComplexWordDef(combinedStr2);
 			//Log.i("combinedStr2:", combinedStr2 + " wordDefinition2: " + wordDefinition2);
 
-			ComplexWordDef wordDefinition3 = GEN_DICT.getDefinition(combinedStr3);
+			ComplexWordDef wordDefinition3 = GEN_DICT.getComplexWordDef(combinedStr3);
 			//Log.i("combinedStr3:", combinedStr3 + " wordDefinition3: " + wordDefinition3);
 
 			if (wordDefinition3 != null) {
@@ -1648,7 +1642,7 @@ public class Translator {
 
 	static NumberFormat nf = NumberFormat.getInstance();
 	public static int currentPercent = 0;
-	private static String translateParsedWords(Object[] paragraphs, String htmlFileName, final SearchFragment searchFragment) {
+	private static String translateParsedWords(Object[] paragraphs, String htmlFileName) { //}, final MainFragment searchFragment) {
 		List<String> sentencesList;
 		List<WordInfo> wordInfoList;
 		StringBuilder translatedBuffer = new StringBuilder();
@@ -1675,13 +1669,13 @@ public class Translator {
 			for (String sentence : sentencesList) {
 				//System.out.println(sentence);
 				TranslationSession.bytesRead += sentence.getBytes().length;
-				final String sen = "File " + TranslationSession.curFileNo + "/" + searchFragment.getSourceFileTask.convertedFileList.size() + ": " + nf.format((double)TranslationSession.bytesRead * 100/searchFragment.getSourceFileTask.totalSelectedSize) + "% (" + (TranslationSession.bytesRead + "/" + searchFragment.getSourceFileTask.totalSelectedSize) + "): " + sentence;
-				searchFragment.statusView.postDelayed(new  Runnable() {
-														  @Override
-														  public void run() {
-															  searchFragment.statusView.setText(sen);
-														  }
-				}, 1);
+//				final String sen = "File " + TranslationSession.curFileNo + "/" + searchFragment.getSourceFileTask.convertedFileList.size() + ": " + nf.format((double)TranslationSession.bytesRead * 100/searchFragment.getSourceFileTask.totalSelectedSize) + "% (" + (TranslationSession.bytesRead + "/" + searchFragment.getSourceFileTask.totalSelectedSize) + "): " + sentence;
+//				searchFragment.statusView.postDelayed(new  Runnable() {
+//														  @Override
+//														  public void run() {
+//															  searchFragment.statusView.setText(sen);
+//														  }
+//				}, 1);
 				List<String> sentenceParts = readSentenceParts(sentence);
 				for (String sentencePart : sentenceParts) {
 					wordInfoList = readWordsInSentencePart(sentencePart);
@@ -1703,22 +1697,22 @@ public class Translator {
 					translatedBuffer = new StringBuilder();
 					
 					Log.d("file.toURL().toString()", file.toURL().toString() + ", " + file.toURI().toURL().toString());
-					if (searchFragment.webView != null) {
-						searchFragment.webView.postDelayed(new  Runnable() {
-										   @Override
-										   public void run() {
-											   try {
-												   searchFragment.locX = searchFragment.webView.getScrollX();
-												   searchFragment.locY = searchFragment.webView.getScrollY();
-												   searchFragment.webView.loadUrl(file.toURL().toString());
-											   } catch (MalformedURLException e) {
-												   e.printStackTrace();
-											   }
-										   }
-										   
-							
-						}, 1);
-					}
+//					if (searchFragment.webView != null) {
+//						searchFragment.webView.postDelayed(new  Runnable() {
+//										   @Override
+//										   public void run() {
+//											   try {
+//												   searchFragment.locX = searchFragment.webView.getScrollX();
+//												   searchFragment.locY = searchFragment.webView.getScrollY();
+//												   searchFragment.webView.loadUrl(file.toURL().toString());
+//											   } catch (MalformedURLException e) {
+//												   e.printStackTrace();
+//											   }
+//										   }
+//										   
+//							
+//						}, 1);
+//					}
 				} catch (IOException e) {}
 //				Thread.sleep(10000);
 			}
@@ -1921,8 +1915,8 @@ public class Translator {
 					} else if (group4.toLowerCase().endsWith("ed")) {
 						group2 = group2.substring(0, indexOfApos);
 						tailAdded = "has";
-					} else if (GEN_DICT.getDefinition(group4) != null) {
-						TreeSet<WordClass> definitions = GEN_DICT.getDefinition(group4).getDefinitions();
+					} else if (GEN_DICT.getComplexWordDef(group4) != null) {
+						TreeSet<WordClass> definitions = GEN_DICT.getComplexWordDef(group4).getDefinitions();
 						for (WordClass wordClass : definitions) {
 							if (Dictionary.VERB == wordClass.getType()) {
 								group2 = group2.substring(0, indexOfApos);
@@ -1932,12 +1926,12 @@ public class Translator {
 						}
 					}
 				}
-				ComplexWordDef wordDefinition = GEN_DICT.getDefinition(group2);
+				ComplexWordDef wordDefinition = GEN_DICT.getComplexWordDef(group2);
 //				LOG.info("wordDefinition: " + wordDefinition);
 				if (wordDefinition != null) {
 					if (tailAdded.length() > 0) {
 						wordInfoList.add(new WordInfo(++order, group2, wordDefinition.getDefinitions(), mat.group(1), ""));
-						wordInfoList.add(new WordInfo(++order, tailAdded, GEN_DICT.getDefinition(tailAdded).getDefinitions(), "", mat.group(3)));
+						wordInfoList.add(new WordInfo(++order, tailAdded, GEN_DICT.getComplexWordDef(tailAdded).getDefinitions(), "", mat.group(3)));
 					} else {
 						wordInfoList.add(new WordInfo(++order, group2, wordDefinition.getDefinitions(), mat.group(1), mat.group(3)));
 					}
@@ -1945,7 +1939,7 @@ public class Translator {
 //					newWords.add(group2);
 					if (tailAdded.length() > 0) {
 						wordInfoList.add(new WordInfo(++order, group2, "", mat.group(1), ""));
-						wordInfoList.add(new WordInfo(++order, tailAdded, GEN_DICT.getDefinition(tailAdded).getDefinitions(), "", mat.group(3)));
+						wordInfoList.add(new WordInfo(++order, tailAdded, GEN_DICT.getComplexWordDef(tailAdded).getDefinitions(), "", mat.group(3)));
 					} else {
 						wordInfoList.add(new WordInfo(++order, group2, "", mat.group(1), mat.group(3)));
 					}
@@ -1961,39 +1955,39 @@ public class Translator {
 //	static List<String> newWords;
 	private static int fileSize = 0;
 
-	public static void translateFromSimpleWordFile(File wordFileName, String htmlFileName, SearchFragment searchFragment) throws IOException {
+	public static void translateFromSimpleWordFile(File wordFileName, String htmlFileName) throws IOException { //}, MainFragment searchFragment) throws IOException {
 		long start = System.currentTimeMillis();
 //		newWords = new LinkedList<String>();
 		String[] paragraphs = FileUtil.readWordFileToParagraphs(wordFileName.getAbsolutePath());
 		for (String st : paragraphs) {
 			fileSize += st.length();
 		}
-		String translateParseWords = translateParsedWords(paragraphs, htmlFileName, searchFragment);
+		String translateParseWords = translateParsedWords(paragraphs, htmlFileName); //, searchFragment);
 		FileUtil.writeContentToFile(htmlFileName, translateParseWords);
 		Log.i("Translated file ", wordFileName + ": " + (System.currentTimeMillis() - start) + " milliseconds");
 	}
 
-	public static String translateFromPlainTextFile(File fileName, String htmlFileName, SearchFragment searchFragment) throws IOException {
+	public static String translateFromPlainTextFile(File fileName, String htmlFileName) throws IOException { //}, MainFragment searchFragment) throws IOException {
 		Log.i("translateFromPlainTextFile", fileName + ": " + fileName + ", " + htmlFileName);
 		long start = System.currentTimeMillis();
 //		newWords = new LinkedList<String>();
 		String fileContent = FileUtil.readFileWithCheckEncode(fileName.getAbsolutePath());
 		fileSize += fileContent.length();
 		List<String> paragraphs = readParagraphs(fileContent);
-		String translateParseWords = translateParsedWords(paragraphs.toArray(), htmlFileName, searchFragment);
+		String translateParseWords = translateParsedWords(paragraphs.toArray(), htmlFileName); //, searchFragment);
 //		FileUtil.writeContentToFile(htmlFileName, translateParseWords);
 		Log.i("Translated file ", fileName + ": " + (System.currentTimeMillis() - start) + " milliseconds");
 		return translateParseWords;
 	}
 
-	public static String translateFromParagraphList(List<String> paragraphs, String htmlFileName, SearchFragment searchFragment) throws IOException {
+	public static String translateFromParagraphList(List<String> paragraphs, String htmlFileName) throws IOException { //}, MainFragment searchFragment) throws IOException {
 		long start = System.currentTimeMillis();
 //		newWords = new LinkedList<String>();
 		for (String st : paragraphs) {
 			fileSize += st.length();
 		}
 		new  File(htmlFileName).getParentFile().mkdirs();
-		String translateParseWords = translateParsedWords(paragraphs.toArray(), htmlFileName, searchFragment);
+		String translateParseWords = translateParsedWords(paragraphs.toArray(), htmlFileName); //}, searchFragment);
 		FileUtil.writeContentToFile(htmlFileName, translateParseWords);
 		Log.i("Translated took: ", (System.currentTimeMillis() - start) + " milliseconds");
 		return translateParseWords;
@@ -2052,7 +2046,7 @@ public class Translator {
 //				wordMLPackage = WordprocessingMLPackage.load(sourceFile);
 //				exporter.html(wordMLPackage, result, newFullFileName + "_files");
 			} else if (sourceFile.getAbsolutePath().toLowerCase().endsWith("doc")) {
-				Translator.translateFromSimpleWordFile(sourceFile, newFullFileName, null);
+				Translator.translateFromSimpleWordFile(sourceFile, newFullFileName); //, null);
 			}
 		} catch (IOException e) {
 //			JOptionPane.showMessageDialog(null, "I/O Error");

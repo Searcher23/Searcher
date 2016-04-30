@@ -2,7 +2,6 @@ package com.free.translation.html;
 
 import java.util.ArrayList;
 import java.util.List;
-import com.free.translation.util.*;
 import com.free.searcher.*;
 
 public class Element extends EmptyElement {

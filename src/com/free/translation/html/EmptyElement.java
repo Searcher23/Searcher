@@ -2,7 +2,6 @@ package com.free.translation.html;
 
 import java.util.Map;
 import java.util.TreeMap;
-import com.free.translation.util.*;
 import com.free.searcher.*;
 
 public class EmptyElement {

@@ -45,8 +45,7 @@ class BitmapManager {
 				myBitmaps[i] = null;
 				myIndexes[i] = null;
 			}
-			System.gc();
-			System.gc();
+			
 			System.gc();
 		}
 	}
@@ -63,7 +62,6 @@ class BitmapManager {
 			try {
 				myBitmaps[iIndex] = Bitmap.createBitmap(myWidth, myHeight, Bitmap.Config.RGB_565);
 			} catch (OutOfMemoryError e) {
-				System.gc();
 				System.gc();
 				myBitmaps[iIndex] = Bitmap.createBitmap(myWidth, myHeight, Bitmap.Config.RGB_565);
 			}

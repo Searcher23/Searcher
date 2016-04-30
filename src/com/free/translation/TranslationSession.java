@@ -1,15 +1,16 @@
 package com.free.translation;
 
 import com.free.translation.html.*;
-//import com.free.translation.util.*;
+
 import java.io.*;
 
 import com.free.translation.html.HtmlSAXHandler;
 import java.util.*;
 import java.text.*;
-import android.util.*;
-import android.webkit.*;
+
+
 import com.free.searcher.*;
+import android.util.*;
 //import android.util.*;
 
 public class TranslationSession {
@@ -40,7 +41,7 @@ public class TranslationSession {
 		curFileNo = 0;
 	}
 	
-	public void translate(String sourcePath, SearchFragment searchFragment) {
+	public void translate(String sourcePath, MainFragment searchFragment) {
 		curFileNo++;
 		long start = System.currentTimeMillis();
 		File sourceFile = new File(sourcePath);
@@ -52,7 +53,7 @@ public class TranslationSession {
 			translatedFile.getParentFile().mkdirs();
 			if (sourceLower.endsWith(".txt")) {
 				extractWords(sourceFile);
-				Translator.translateFromPlainTextFile(sourceFile, translatedPath, searchFragment);
+				Translator.translateFromPlainTextFile(sourceFile, translatedPath); //}, searchFragment);
 			} else if (sourceLower.endsWith(".html") || sourceLower.endsWith(".htm")) {
 				extractWords(sourceFile);
 				HtmlSAXHandler.translateFromHTML(sourceFile, translatedFile);

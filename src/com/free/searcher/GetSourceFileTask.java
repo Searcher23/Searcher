@@ -27,9 +27,9 @@ public class GetSourceFileTask extends AsyncTask<Void, String, String> {
 //		volatile Collection<String> entryFileList = new HashSet<String>();
 	public long totalSelectedSize = 0;
 	
-	private SearchFragment s;
+	private MainFragment s;
 
-	public GetSourceFileTask(SearchFragment s) {
+	public GetSourceFileTask(MainFragment s) {
 		this.s = s;
 	}
 
@@ -37,15 +37,15 @@ public class GetSourceFileTask extends AsyncTask<Void, String, String> {
 		// int count = urls.length;
 		// long totalSize = 0;
 		totalSelectedSize = 0;
-		synchronized (SearchFragment.PRIVATE_PATH) {
-			Log.d("lock start", SearchFragment.df.format(System.currentTimeMillis()));
+		synchronized (MainFragment.PRIVATE_PATH) {
+			Log.d("lock start", MainFragment.df.format(System.currentTimeMillis()));
 			s.currentContent = "";
 			s.contentLower = "";
 
-			Log.d("s.selectedFiles", Util.arrayToString(s.selectedFiles, true, SearchFragment.LINE_SEP));
+			Log.d("s.selectedFiles", Util.arrayToString(s.selectedFiles, true, MainFragment.LINE_SEP));
 			convertedFileList = new LinkedList<File>();
 			File f;
-			errorProcessFiles = new StringBuilder(SearchFragment.TITLE_ERROR_PROCESSING_FILES);
+			errorProcessFiles = new StringBuilder(MainFragment.TITLE_ERROR_PROCESSING_FILES);
 			initFolderFiles = new LinkedList<File>();
 			readTextFiles = new LinkedList<File>();
 			for (int i = 0; i < s.selectedFiles.length; i++) {
@@ -68,30 +68,30 @@ public class GetSourceFileTask extends AsyncTask<Void, String, String> {
 			// chỉ lấy hết các file thực sự tồn tại
 			s.files = new File[convertedFileList.size()];
 			s.files = convertedFileList.toArray(s.files);
-			Log.d("getSourceFile fList", Util.collectionToString(convertedFileList, true, SearchFragment.LINE_SEP));
+			Log.d("getSourceFile fList", Util.collectionToString(convertedFileList, true, MainFragment.LINE_SEP));
 
 			s.cache = null;
 			//convertedFileList = FileUtil.getFiles(files, SEARCH_FILES_SUFFIX);
-			Log.d("getSourceFile filtered", Util.collectionToString(convertedFileList, true, SearchFragment.LINE_SEP));
+			Log.d("getSourceFile filtered", Util.collectionToString(convertedFileList, true, MainFragment.LINE_SEP));
 
 			try {
 				long milliTime = System.currentTimeMillis();
 				// list file converted
 				convertedFileList = readFile(convertedFileList);
-				Log.d("fileList", Util.collectionToString(convertedFileList, true, SearchFragment.LINE_SEP));
-				publishProgress("Free memory = " + SearchFragment.nf.format(Runtime.getRuntime().freeMemory()) 
+				Log.d("fileList", Util.collectionToString(convertedFileList, true, MainFragment.LINE_SEP));
+				publishProgress("Free memory = " + MainFragment.nf.format(Runtime.getRuntime().freeMemory()) 
 								+ " bytes. Caching...");
 				s.cache = new Cache(convertedFileList);
 
 				resultStr = new StringBuilder("Processed ")
-					.append(SearchFragment.nf.format(convertedFileList.size()))
-					.append(" files, cached ").append(SearchFragment.nf.format(s.cache.cached()))
-					.append(" files, cached size ").append(SearchFragment.nf.format(s.cache.getCurrentSize()))
-					.append("/").append(SearchFragment.nf.format(s.cache.getTotalSize()))
+					.append(MainFragment.nf.format(convertedFileList.size()))
+					.append(" files, cached ").append(MainFragment.nf.format(s.cache.cached()))
+					.append(" files, cached size ").append(MainFragment.nf.format(s.cache.getCurrentSize()))
+					.append("/").append(MainFragment.nf.format(s.cache.getTotalSize()))
 					.append(" bytes, took: ")
-					.append(SearchFragment.nf.format(System.currentTimeMillis() - milliTime))
+					.append(MainFragment.nf.format(System.currentTimeMillis() - milliTime))
 					.append(" milliseconds. Current free memory ")
-					.append(SearchFragment.nf.format(Runtime.getRuntime().freeMemory()))
+					.append(MainFragment.nf.format(Runtime.getRuntime().freeMemory()))
 					.append(" bytes.").toString();
 				publishProgress(resultStr);
 
@@ -110,18 +110,18 @@ public class GetSourceFileTask extends AsyncTask<Void, String, String> {
 						Log.d("s.currentContent", s.currentContent);
 					}
 					// không có lỗi
-					if (errorProcessFiles.length() == SearchFragment.TITLE_ERROR_PROCESSING_FILES.length()) {
+					if (errorProcessFiles.length() == MainFragment.TITLE_ERROR_PROCESSING_FILES.length()) {
 						s.currentUrl = s.files[0].toURI().toURL().toString();
 						// (webTask = new WebTask(webView, displayData)).execute();
 						Log.d("s.currentUrl 1", s.currentUrl);
 					} else {
 						// có lỗi
-						s.currentUrl = new StringBuilder(SearchFragment.EMPTY_HEAD).append(
+						s.currentUrl = new StringBuilder(MainFragment.EMPTY_HEAD).append(
 							"Chosen files: <br/>").append(
 							filesToHref(initFolderFiles)).append(
 							errorProcessFiles).append(
 							(readTextFiles.size() > 0) ? new StringBuilder("<br/> Converted files: <br/>").append(filesToHref(readTextFiles)) : "").append(
-							SearchFragment.END_BODY_HTML).toString();
+							MainFragment.END_BODY_HTML).toString();
 						// displayData = loadUrl(webView, displayData);
 						Log.d("s.currentUrl 2", s.currentUrl);
 					}
@@ -130,30 +130,30 @@ public class GetSourceFileTask extends AsyncTask<Void, String, String> {
 					s.currentContent = "";
 					s.contentLower = "";
 					readTextFiles = convertedFileList;
-					if (errorProcessFiles.length() > SearchFragment.TITLE_ERROR_PROCESSING_FILES.length()) {
-						s.currentUrl = new StringBuilder(SearchFragment.EMPTY_HEAD).append(
+					if (errorProcessFiles.length() > MainFragment.TITLE_ERROR_PROCESSING_FILES.length()) {
+						s.currentUrl = new StringBuilder(MainFragment.EMPTY_HEAD).append(
 							"Chosen files: <br/>").append(
 							filesToHref(initFolderFiles)).append( // "Converted succesfully <br />"
 							errorProcessFiles).append(
 							(readTextFiles.size() > 0) ? new StringBuilder("<br/> Converted files: <br/>").append(filesToHref(readTextFiles)) : "").append( // filesToHref(readTextFiles)
-							SearchFragment.END_BODY_HTML).toString();
+							MainFragment.END_BODY_HTML).toString();
 						// displayData = loadUrl(webView, displayData);
 					} else {
-						s.currentUrl = new StringBuilder(SearchFragment.EMPTY_HEAD).append(
+						s.currentUrl = new StringBuilder(MainFragment.EMPTY_HEAD).append(
 							"Chosen files: <br/>").append(
 							filesToHref(initFolderFiles)).append( // "Converted succesfully <br />"
 							((readTextFiles.size() > 0) ? new StringBuilder("<br/> Converted files: <br/>").append(filesToHref(readTextFiles)) : "")).append( // filesToHref(readTextFiles)
-							SearchFragment.END_BODY_HTML).toString();
+							MainFragment.END_BODY_HTML).toString();
 						// displayData = loadUrl(webView, displayData);
 					}
 					Log.d("s.currentUrl 3", s.currentUrl);
 				} else if (s.files.length == 0) {
-					s.currentUrl = new StringBuilder(SearchFragment.EMPTY_HEAD).append(
+					s.currentUrl = new StringBuilder(MainFragment.EMPTY_HEAD).append(
 						"Chosen files: <br/>").append(
 						filesToHref(initFolderFiles)).append(
 						errorProcessFiles).append(
 						(readTextFiles.size() > 0) ? new StringBuilder("<br/> Converted files: <br/>").append(filesToHref(readTextFiles)) : "").append(
-						SearchFragment.END_BODY_HTML).toString();
+						MainFragment.END_BODY_HTML).toString();
 //					resultStr = "Nothing to load";
 				}
 			} catch (MalformedURLException e) {
@@ -225,14 +225,14 @@ public class GetSourceFileTask extends AsyncTask<Void, String, String> {
 				s.translateTask.execute();
 				s.requestTranslate = false;
 			}
-			if (SearchStack.autoBackup) {
+			if (MainActivity.autoBackup) {
 				new Thread(new Runnable() {
 						@Override
 						public void run() {
 							for (String st : s.selectedFiles) {
 								File f = new File(st);
 								if (f.isDirectory()) {
-									File fp = new File(SearchFragment.PRIVATE_PATH + st);
+									File fp = new File(MainFragment.PRIVATE_PATH + st);
 									try {
 										FileUtil.compressAFileOrFolderRecursiveToZip(fp, st + ".converted.7z", ".+\\.converted\\.7z.*", "*.converted.txt");// ".+\\.converted\\.7z.*", ".*\\.converted.txt");
 									} catch (IOException e) {
@@ -294,10 +294,10 @@ public class GetSourceFileTask extends AsyncTask<Void, String, String> {
 
 		inFilePath = inFile.getAbsolutePath();
 		File newFile;
-		if (inFilePath.startsWith(SearchFragment.PRIVATE_PATH)) {
+		if (inFilePath.startsWith(MainFragment.PRIVATE_PATH)) {
 			newFile = new File(inFilePath + Util.CONVERTED_TXT);
 		} else {
-			newFile = new File(SearchFragment.PRIVATE_PATH + inFilePath + Util.CONVERTED_TXT);
+			newFile = new File(MainFragment.PRIVATE_PATH + inFilePath + Util.CONVERTED_TXT);
 		}
 		// file text được chọn đã được convert từ trước
 		if (newFile.exists() // && "Search".equals(load)
@@ -312,7 +312,7 @@ public class GetSourceFileTask extends AsyncTask<Void, String, String> {
 		s.currentContent = null;
 
 		String fileExtensionFromUrl = MimeTypeMap.getFileExtensionFromUrl(inFile.toURI().toURL().toString());
-		String mimeTypeFromExtension = SearchFragment.mimeTypeMap.getMimeTypeFromExtension(fileExtensionFromUrl.toLowerCase());
+		String mimeTypeFromExtension = MainFragment.mimeTypeMap.getMimeTypeFromExtension(fileExtensionFromUrl.toLowerCase());
 		//Log.d("mime currentFName", currentFName + " is "+ mimeTypeFromExtension);
 
 		// file duoc chon co duoi .converted
@@ -415,14 +415,14 @@ public class GetSourceFileTask extends AsyncTask<Void, String, String> {
 			//} catch (Exception e) {
 			//e.printStackTrace();
 			//}
-		} else if (inFilePathLowerCase.matches(SearchFragment.compressExtension)) {
+		} else if (inFilePathLowerCase.matches(MainFragment.compressExtension)) {
 			String outDirFilePath = "";
-			if (inFile.getAbsolutePath().startsWith(SearchFragment.PRIVATE_PATH)) {
+			if (inFile.getAbsolutePath().startsWith(MainFragment.PRIVATE_PATH)) {
 				String name = inFile.getName();
 				int lastIndexOf = name.lastIndexOf(".");
 				outDirFilePath = inFile.getParent() + "/" + name.substring(0, lastIndexOf) + "_" + name.substring(lastIndexOf + 1);
 			} else {
-				outDirFilePath = SearchFragment.PRIVATE_PATH + inFile;
+				outDirFilePath = MainFragment.PRIVATE_PATH + inFile;
 			}
 
 			File outDirFile = new File(outDirFilePath);
@@ -444,7 +444,7 @@ public class GetSourceFileTask extends AsyncTask<Void, String, String> {
 
 					String mimeType = entryFile.toURI().toURL().toString();
 					fileExtensionFromUrl = MimeTypeMap.getFileExtensionFromUrl(mimeType);
-					mimeTypeFromExtension = SearchFragment.mimeTypeMap.getMimeTypeFromExtension(fileExtensionFromUrl.toLowerCase());
+					mimeTypeFromExtension = MainFragment.mimeTypeMap.getMimeTypeFromExtension(fileExtensionFromUrl.toLowerCase());
 					Log.d("mime entryFile", mimeType + " is " + fileExtensionFromUrl + " : " + mimeTypeFromExtension + (mimeTypeFromExtension != null && mimeTypeFromExtension.startsWith(("text"))));
 
 					if (!zeName.endsWith("/")//.isDirectory()
@@ -463,7 +463,7 @@ public class GetSourceFileTask extends AsyncTask<Void, String, String> {
 						Log.d("adding source file: ", entryFile + " ");
 						extractedList.add(entryFile);
 					} else if (!zeName.endsWith("/")//.isDirectory()
-							   && (zeNameLower.matches(SearchFragment.CAN_PROCESS)
+							   && (zeNameLower.matches(MainFragment.CAN_PROCESS)
 							   || (mimeTypeFromExtension != null 
 							   && mimeTypeFromExtension.startsWith("text")))) {
 						publishProgress("extracting " + inFile + "/" + zeName);
@@ -512,9 +512,9 @@ public class GetSourceFileTask extends AsyncTask<Void, String, String> {
 	private String loadUrl(WebView mWebView, String sb) throws IOException, MalformedURLException {
 		File tempFile;
 		if (s.files.length == 1) {
-			tempFile = new File(SearchFragment.PRIVATE_PATH + "/" + inFilePath /*+ "_" + System.currentTimeMillis() */ + ".1111.html");
+			tempFile = new File(MainFragment.PRIVATE_PATH + "/" + inFilePath /*+ "_" + System.currentTimeMillis() */ + ".1111.html");
 		} else {
-			tempFile = new File(SearchFragment.PRIVATE_PATH + "/ziplisting_" + SearchFragment.df.format(System.currentTimeMillis()).replaceAll("[/\\?<>\"':|]", "_") + ".html");
+			tempFile = new File(MainFragment.PRIVATE_PATH + "/ziplisting_" + MainFragment.df.format(System.currentTimeMillis()).replaceAll("[/\\?<>\"':|]", "_") + ".html");
 		}
 		FileUtil.writeContentToFile(tempFile.getAbsolutePath(), sb);
 		s.currentUrl = tempFile.toURI().toURL().toString();
