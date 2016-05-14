@@ -10,7 +10,7 @@ import android.app.*;
 import android.os.*;
 import android.widget.*;
 
-public class MergeSplitTask  extends AsyncTask<Void, Void, String> {
+public class SplitMergeTask  extends AsyncTask<Void, Void, String> {
 
 	private Activity activity = null;
 	private Collection<String> filePaths;
@@ -19,13 +19,13 @@ public class MergeSplitTask  extends AsyncTask<Void, Void, String> {
 	private static final String SPLIT_PAT = ".+\\.\\d{3}";
 	private static final Pattern SPLIT_PATTERN01 = Pattern.compile(SPLIT_PAT01);
 	private static final Pattern SPLIT_PATTERN = Pattern.compile(SPLIT_PAT);
-	private static final int defaultArrayLength = 32768;
+	private static final int DEFAULT_ARRAY_LENGTH = 32768;
 	private int parts;
 	private long size;
 	private String saveTo;
 	private static final String TAG = "MergeSplitTask";
 	
-	public MergeSplitTask(Activity s, Collection<String> filePaths, String saveTo, int parts, long size) {
+	public SplitMergeTask(Activity s, Collection<String> filePaths, String saveTo, int parts, long size) {
 		this.filePaths = filePaths;
 		this.parts = parts;
 		this.size = size;
@@ -72,7 +72,8 @@ public class MergeSplitTask  extends AsyncTask<Void, Void, String> {
 		RandomAccessFile f = new RandomAccessFile(new File(fPath), "r");
 		long len = f.length();
 		if (len < parts) {
-			parts = len;
+			parts = 0;//len;
+			sizeOfPart = DEFAULT_ARRAY_LENGTH;
 		}
 		if (len < sizeOfPart) {
 			sizeOfPart = len;
@@ -88,13 +89,13 @@ public class MergeSplitTask  extends AsyncTask<Void, Void, String> {
 		} else {
 			parts = ((len % sizeOfPart) == 0) ? len / sizeOfPart : len / sizeOfPart + 1;
 		}
-		byte[] bArr = new byte[(int)Math.min(defaultArrayLength, sizeOfPart)];
+		byte[] bArr = new byte[(int)Math.min(DEFAULT_ARRAY_LENGTH, sizeOfPart)];
 		Log.d(TAG, len + ", " + parts + ", " + sizeOfPart + ", " + bArr.length);
 		
 		String newPath = savePath + fPath;
 		new File(newPath).getParentFile().mkdirs();
 		
-		if (sizeOfPart <= defaultArrayLength) {
+		if (sizeOfPart <= DEFAULT_ARRAY_LENGTH) {
 			for (long i = 1; i < parts; i++) {
 				writeClose(f, bArr, newPath, i);
 			}
@@ -109,15 +110,15 @@ public class MergeSplitTask  extends AsyncTask<Void, Void, String> {
 				OutputStream os = new FileOutputStream(format, true);
 				BufferedOutputStream bos = new BufferedOutputStream(os);
 				
-				for (long j = 0; j < (sizeOfPart / defaultArrayLength) - 1; j++) {
+				for (long j = 0; j < (sizeOfPart / DEFAULT_ARRAY_LENGTH) - 1; j++) {
 					writeNotClose(f, bArr, bos);
 				}
 				if (i < parts) {
 //					bArr = new byte[(int)(sizeOfPart - (sizeOfPart / S32768b - 1) * bArr.length)];
-					writeNotClose(f, new byte[(int)(sizeOfPart - (sizeOfPart / defaultArrayLength - 1) * bArr.length)], bos);
+					writeNotClose(f, new byte[(int)(sizeOfPart - (sizeOfPart / DEFAULT_ARRAY_LENGTH - 1) * bArr.length)], bos);
 				} else {
 //					bArr = new byte[(int)(len - (parts-1)*sizeOfPart - (sizeOfPart/S32768b - 1)*bArr.length)];
-					writeNotClose(f, new byte[(int)(len - (parts-1)*sizeOfPart - (sizeOfPart/defaultArrayLength - 1)*bArr.length)], bos);
+					writeNotClose(f, new byte[(int)(len - (parts-1)*sizeOfPart - (sizeOfPart/DEFAULT_ARRAY_LENGTH - 1)*bArr.length)], bos);
 				}
 				bos.close();
 			}
@@ -173,7 +174,7 @@ public class MergeSplitTask  extends AsyncTask<Void, Void, String> {
 	public static void saveISToFile(InputStream is, BufferedOutputStream bos)
 	throws IOException {
 		BufferedInputStream bis = new BufferedInputStream(is);
-		byte[] barr = new byte[defaultArrayLength];
+		byte[] barr = new byte[DEFAULT_ARRAY_LENGTH];
 		int read = 0;
 		while ((read = bis.read(barr)) > 0) {
 			bos.write(barr, 0, read);

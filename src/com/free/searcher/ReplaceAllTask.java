@@ -15,9 +15,10 @@ public class ReplaceAllTask extends AsyncTask<String, Void, String> {
 	private String[] froms;
 	private String[] tos;
 	private String saveTo;
+	private String stardict;
 	private static final String TAG = "ReplaceAllTask";
 	
-	public ReplaceAllTask(Activity s, Collection<File> files, String saveTo, boolean isRegex, boolean caseSensitive, String[] froms, String[] tos) {
+	public ReplaceAllTask(Activity s, Collection<File> files, String saveTo, String stardict, boolean isRegex, boolean caseSensitive, String[] froms, String[] tos) {
 
 		filePaths = new ArrayList<String>(files.size());
 		for (File f : files) {
@@ -26,6 +27,7 @@ public class ReplaceAllTask extends AsyncTask<String, Void, String> {
 		this.caseSensitive = caseSensitive;
 		this.isRegex = isRegex;
 		this.saveTo = saveTo;
+		this.stardict = stardict;
 		this.froms = froms;
 		this.tos = tos;
 		this.activity = s;
@@ -47,8 +49,23 @@ public class ReplaceAllTask extends AsyncTask<String, Void, String> {
 
 	private void replaceAll(String fileP) throws IOException {
 		String fileContent = FileUtil.readFileWithCheckEncode(fileP);
+		
+		if (stardict.length() > 0) {
+			BufferedReader reader = new BufferedReader(new FileReader(stardict));
+			String line;
+			String[] entry;
+			while (reader.ready()) {
+				line = reader.readLine().trim();
+				if (line.length() > 0) {
+					entry = line.split("\t");
+					Log.d(TAG, entry[0] + ", " + entry[1] + isRegex + ", " + caseSensitive);
+					fileContent = Util.replaceRegexAll(fileContent, entry[0], entry[1], isRegex, caseSensitive);
+				}
+			}
+			reader.close();
+		}
+		
 		for (int i = 0; i < tos.length; i++) {
-			
 			Log.d(TAG, froms[i] + ", " + tos[i] + isRegex + ", " + caseSensitive);
 			fileContent = Util.replaceRegexAll(fileContent, froms[i], tos[i], isRegex, caseSensitive);
 		}

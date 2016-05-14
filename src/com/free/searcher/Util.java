@@ -1460,16 +1460,15 @@ public class Util {
 			Log.d(from, to);
 		}
 		//System.out.println(fileContent);
+		Pattern p = null;
 		if (!caseSensitive) {
-			Pattern p = Pattern.compile(from, Pattern.CASE_INSENSITIVE);
-			fileContent = p.matcher(fileContent).replaceAll(to);
+			p = Pattern.compile(from, Pattern.CASE_INSENSITIVE);
 			//fileContent = fileContent.replaceAll("(?i)"+from, to);
 		} else {
-			Pattern p = Pattern.compile(from, Pattern.UNICODE_CASE);
-			fileContent = p.matcher(fileContent).replaceAll(to);
+			p = Pattern.compile(from, Pattern.UNICODE_CASE);
 			//fileContent = fileContent.replaceAll(from, to);
 		}
-		
+		fileContent = p.matcher(fileContent).replaceAll(to);
 		//System.out.println(fileContent);
 		return fileContent;
 	}

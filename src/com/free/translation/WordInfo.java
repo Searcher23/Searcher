@@ -149,7 +149,7 @@ public class WordInfo implements Comparable<WordInfo>, HasWord {
 				String nameSubstring = name.substring(0, 1);
 				if (nameSubstring.toUpperCase().equals(nameSubstring)) {
 					return new StringBuilder(definition.substring(0, 1)
-											 .toUpperCase()).append(definition, 1, definition.length() - 1)
+											 .toUpperCase()).append(definition, 1, definition.length())
 							.toString();
 				} else {
 					return definition;
@@ -254,10 +254,11 @@ public class WordInfo implements Comparable<WordInfo>, HasWord {
 
 	@Override
 	public String toString() {
-		return new StringBuilder(order).append(": ").append(startTag)
-				.append(startSign).append("[").append(name).append("]")
-				.append(": ").append(definition).append(endSign).append(endTag)
-				.toString();
+//		return new StringBuilder(order).append(": ").append(startTag)
+//				.append(startSign).append("[").append(name).append("]")
+//				.append(": ").append(definition).append(endSign).append(endTag)
+//				.toString();
+		return translated();
 	}
 	
 	public String signTranslated() {

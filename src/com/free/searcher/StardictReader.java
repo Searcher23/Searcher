@@ -198,7 +198,7 @@ public class StardictReader {
 				if (en.getKey().equals(name)) {
 					int[] value = en.getValue();
 					
-					System.out.println(en);
+//					System.out.println(en);
 					RandomAccessFile raf = new RandomAccessFile(dict, "r");
 					if (dictArr == null && raf.length() < Runtime.getRuntime().maxMemory() * 3 / 10) {
 						Log.d("readDef", "read memory");

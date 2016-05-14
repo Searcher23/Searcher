@@ -25,8 +25,11 @@ public class GetSourceFileTask extends AsyncTask<Void, String, String> {
 	private List<File> readTextFiles = new LinkedList<File>();
 	public volatile List<File> convertedFileList;
 //		volatile Collection<String> entryFileList = new HashSet<String>();
+	StringBuilder errorProcessFiles = null;
+	int errorCounter = 0;
+	String inFilePath = "";
 	public long totalSelectedSize = 0;
-	
+	private String retContent;
 	private MainFragment s;
 
 	public GetSourceFileTask(MainFragment s) {
@@ -48,7 +51,8 @@ public class GetSourceFileTask extends AsyncTask<Void, String, String> {
 			errorProcessFiles = new StringBuilder(MainFragment.TITLE_ERROR_PROCESSING_FILES);
 			initFolderFiles = new LinkedList<File>();
 			readTextFiles = new LinkedList<File>();
-			for (int i = 0; i < s.selectedFiles.length; i++) {
+			int length = s.selectedFiles.length;
+			for (int i = 0; i < length; i++) {
 				f = new File(s.selectedFiles[i]);
 				// lấy hết file trong các thư mục con lưu vào initFolderFiles
 				// bất kể file đó có tồn tại hay ko
@@ -63,6 +67,12 @@ public class GetSourceFileTask extends AsyncTask<Void, String, String> {
 					convertedFileList.addAll(listFilesByName);
 				} else {
 					initFolderFiles.add(f);
+					errorProcessFiles
+						.append(++errorCounter)
+						.append(". ")
+						.append("<a href=\"")
+						.append(f.toURI()).append("\">").append(f.getAbsolutePath()).append("</a> is not exist")
+						.append("<br/>");
 				}
 			}
 			// chỉ lấy hết các file thực sự tồn tại
@@ -111,12 +121,12 @@ public class GetSourceFileTask extends AsyncTask<Void, String, String> {
 					}
 					// không có lỗi
 					if (errorProcessFiles.length() == MainFragment.TITLE_ERROR_PROCESSING_FILES.length()) {
-						s.currentUrl = s.files[0].toURI().toURL().toString();
+						retContent = s.files[0].toURI().toURL().toString(); //s.currentUrl
 						// (webTask = new WebTask(webView, displayData)).execute();
 						Log.d("s.currentUrl 1", s.currentUrl);
 					} else {
 						// có lỗi
-						s.currentUrl = new StringBuilder(MainFragment.EMPTY_HEAD).append(
+						retContent = new StringBuilder(MainFragment.EMPTY_HEAD).append( //s.currentUrl
 							"Chosen files: <br/>").append(
 							filesToHref(initFolderFiles)).append(
 							errorProcessFiles).append(
@@ -131,7 +141,7 @@ public class GetSourceFileTask extends AsyncTask<Void, String, String> {
 					s.contentLower = "";
 					readTextFiles = convertedFileList;
 					if (errorProcessFiles.length() > MainFragment.TITLE_ERROR_PROCESSING_FILES.length()) {
-						s.currentUrl = new StringBuilder(MainFragment.EMPTY_HEAD).append(
+						retContent = new StringBuilder(MainFragment.EMPTY_HEAD).append( //s.currentUrl
 							"Chosen files: <br/>").append(
 							filesToHref(initFolderFiles)).append( // "Converted succesfully <br />"
 							errorProcessFiles).append(
@@ -139,7 +149,7 @@ public class GetSourceFileTask extends AsyncTask<Void, String, String> {
 							MainFragment.END_BODY_HTML).toString();
 						// displayData = loadUrl(webView, displayData);
 					} else {
-						s.currentUrl = new StringBuilder(MainFragment.EMPTY_HEAD).append(
+						retContent = new StringBuilder(MainFragment.EMPTY_HEAD).append( //s.currentUrl
 							"Chosen files: <br/>").append(
 							filesToHref(initFolderFiles)).append( // "Converted succesfully <br />"
 							((readTextFiles.size() > 0) ? new StringBuilder("<br/> Converted files: <br/>").append(filesToHref(readTextFiles)) : "")).append( // filesToHref(readTextFiles)
@@ -148,7 +158,7 @@ public class GetSourceFileTask extends AsyncTask<Void, String, String> {
 					}
 					Log.d("s.currentUrl 3", s.currentUrl);
 				} else if (s.files.length == 0) {
-					s.currentUrl = new StringBuilder(MainFragment.EMPTY_HEAD).append(
+					retContent = new StringBuilder(MainFragment.EMPTY_HEAD).append( //s.currentUrl
 						"Chosen files: <br/>").append(
 						filesToHref(initFolderFiles)).append(
 						errorProcessFiles).append(
@@ -196,16 +206,21 @@ public class GetSourceFileTask extends AsyncTask<Void, String, String> {
 	protected void onPostExecute(final String result) {
 		try {
 			// chỉ khi nào thuần search thì mới show, còn 
-// xài chung với ReadZip thì khỏi show
+			// xài chung với ReadZip thì khỏi show
 			// sourceContent = s.currentUrl;
-			if (s.currentZipFileName.length() == 0) {
-				if (s.currentUrl.startsWith("file:/")) {
-					(s.webTask = new WebTask(s, s.webView, s.currentUrl, true, result)).execute();
-//						webView.loadUrl(s.currentUrl);
-				} else {
-					loadUrl(s.webView, s.currentUrl);
-					s.home = s.currentUrl;
+			if (s.showList) {
+				if (s.currentZipFileName.length() == 0) {
+					if (retContent.startsWith("file:/")) {
+						(s.webTask = new WebTask(s, s.webView, retContent, true, result)).execute();
+					} else {
+						loadUrl(s.webView, retContent);
+						s.home = s.currentUrl;
+					}
 				}
+			} else {
+				s.showList = true;
+				s.webView.loadUrl(s.currentUrl);
+				s.statusView.setText(s.status);
 			}
 			s.statusView.setText(result);
 			if (s.requestCompare) {
@@ -283,10 +298,6 @@ public class GetSourceFileTask extends AsyncTask<Void, String, String> {
 
 		return fileList;
 	}
-
-	StringBuilder errorProcessFiles = null;
-	int errorCounter = 0;
-	String inFilePath = "";
 
 	private void readFile(final File inFile, List<File> fileList) throws IOException, Exception, SAXException {
 		Log.d("readFile2", inFile.toString());

@@ -228,8 +228,8 @@ import java.util.regex.*;
 				sb.append("\n</td>\n</tr>\n");
 			}
 		} else {
-			Pattern pat = Pattern.compile(pattern.replaceAll(Util.SPECIAL_CHAR_PATTERNSTR, "\\\\$1"), Pattern.UNICODE_CASE);
-			Matcher mat = pat.matcher(s.currentContent.toLowerCase()); 
+			Pattern pat = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);//.replaceAll(Util.SPECIAL_CHAR_PATTERNSTR, "\\\\$1"), Pattern.UNICODE_CASE);
+			Matcher mat = pat.matcher(s.currentContent);//.toLowerCase()); 
 			int contentLength = s.currentContent.length();
 			while (mat.find(presentCursorPos)) { // && isAlive
 				if (!found) {

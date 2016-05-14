@@ -21,27 +21,35 @@ public class TranslateTask extends AsyncTask<Void, String, String> {
 	@Override
 	protected String doInBackground(Void[] p1) {
 		try {
-			publishProgress("Translate files...");
+			publishProgress("Translating files...");
 			
 			for (File f : fList) {
 				final File ff = f;
 				if (!this.isCancelled()) {
-					session.translate(f.getAbsolutePath(), searchFragment);
-					searchFragment.statusView.postDelayed(new Runnable() {
-							@Override
-							public void run() {
-								searchFragment.showToast("Translate files " + ff + " successfully");
-								try {
-									searchFragment.locX = searchFragment.webView.getScrollX();
-									searchFragment.locY = searchFragment.webView.getScrollY();
-									searchFragment.currentUrl = new File(Constants.PRIVATE_PATH + ff + ".translated.html").toURL().toString();
-									searchFragment.home = searchFragment.currentUrl;
-									searchFragment.webView.loadUrl(searchFragment.currentUrl);
-								} catch (MalformedURLException e) {
-									e.printStackTrace();
-								}
-							} 
-					}, 0);
+					boolean finished = session.translate(f.getAbsolutePath(), searchFragment);
+					if (finished) {
+						searchFragment.statusView.postDelayed(new Runnable() {
+								@Override
+								public void run() {
+									searchFragment.showToast("Translate files " + ff + " successfully");
+									try {
+										searchFragment.locX = searchFragment.webView.getScrollX();
+										searchFragment.locY = searchFragment.webView.getScrollY();
+										searchFragment.currentUrl = new File(Constants.PRIVATE_PATH + ff + ".translated.html").toURL().toString();
+										searchFragment.home = searchFragment.currentUrl;
+										searchFragment.webView.loadUrl(searchFragment.currentUrl);
+									} catch (MalformedURLException e) {
+										e.printStackTrace();
+									}
+								} 
+							}, 0);
+					} else {
+						cancel();
+						return null;
+					}
+				} else {
+					cancel();
+					return null;
 				}
 			}
 			return Constants.PRIVATE_PATH + fList.get(fList.size() - 1) +".translated.html";
@@ -50,6 +58,15 @@ public class TranslateTask extends AsyncTask<Void, String, String> {
 			Log.e("Error Translate files", e.getMessage(),e);
 			return null;
 		}
+	}
+
+	private void cancel() {
+		searchFragment.statusView.postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					searchFragment.showToast("Cancelled translating");
+				}
+			}, 0);
 	}
 
 	protected void onProgressUpdate(String... progress) {

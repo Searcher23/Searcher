@@ -608,7 +608,7 @@ public class HtmlSAXHandler extends DefaultHandler implements LexicalHandler {
         File oldFile = new File("I:/The Nhap 22-2.htm"); //Constants.ORI_HTML_FILE_NAME);
         File newFile = new File(Constants.NEW_HTML_FILE_NAME);
 
-		FileUtil.writeContentToFile("I:/test.html", translateFromHTML(oldFile, newFile));
+		//FileUtil.writeContentToFile("I:/test.html", translateFromHTML(oldFile, newFile));
 //		StringBuilder sb = new StringBuilder();
 //		sb.append("<html>").append("<body>");
 //		
@@ -627,7 +627,7 @@ public class HtmlSAXHandler extends DefaultHandler implements LexicalHandler {
 //		FileUtil.writeContentToFile("I:/test-table.html", sb.toString());
     }
 //	static List<String> newWords;
-    public static String translateFromHTML(File oldFile, File newFile) throws FileNotFoundException,
+    public static boolean translateFromHTML(File oldFile, File newFile) throws FileNotFoundException,
             IOException, ParserConfigurationException, SAXException,
             SAXNotRecognizedException, SAXNotSupportedException {
 		LOG.log(Level.INFO, "oldFile: {0}, newFile: {1}", new Object[] {
@@ -653,6 +653,6 @@ public class HtmlSAXHandler extends DefaultHandler implements LexicalHandler {
         bis.close();
         FileUtil.writeContentToFile(newFile.getAbsolutePath(), handler.getNewHtmlTable().toString());
         FileUtil.delete(newTmpFile);
-        return handler.getNewHtmlTable().toString();
+        return true; //handler.getNewHtmlTable().toString();
     }
 }

@@ -42,13 +42,13 @@ import com.free.translation.*;
 
 public class MainFragment extends Fragment implements SearchView.OnQueryTextListener, View.OnSystemUiVisibilityChangeListener, View.OnLongClickListener {
 
-	static String PRIVATE_PATH = "";
-	static File PRIVATE_DIR = null;
+	public static String PRIVATE_PATH = "";
+	public static File PRIVATE_DIR = null;
 	static final String CHOOSER_TITLE = "chooserTitle";
 	static final String SUFFIX = "suffix";
 	private static final int SEARCH_MENU_ID = Menu.FIRST;
 	private Button nextButton, backButton, closeButton, clearButton;
-	private EditText findBox;
+	EditText findBox;
 	private TextView findRet;
 	private RelativeLayout container;
 	private boolean showFind = false;
@@ -63,7 +63,7 @@ public class MainFragment extends Fragment implements SearchView.OnQueryTextList
 	volatile ZipExtractionTask zextr = null;
 	GenStardictTask genStardictTask = null;
 	RestoreStardictTask restoreStardictTask = null;
-	TranslateTask translateTask = null;
+	public TranslateTask translateTask = null;
 	File[] files;
 	WebTask webTask = null;
 	public volatile int locX = 0;
@@ -75,8 +75,8 @@ public class MainFragment extends Fragment implements SearchView.OnQueryTextList
 
 	private static final int SEARCH_REQUEST_CODE = 1;
 	private static final int ZIP_REQUEST_CODE = 2;
-	private static final int COMPARE_REQUEST_CODE1 = 3;
-	private static final int COMPARE_REQUEST_CODE2 = 4;
+//	private static final int COMPARE_REQUEST_CODE1 = 3;
+//	private static final int COMPARE_REQUEST_CODE2 = 4;
 	private static final int GEN_REQUEST_CODE = 5;
 	private static final int RESTORE_REQUEST_CODE = 6;
 	private static final int DUP_REQUEST_CODE = 7;
@@ -87,6 +87,7 @@ public class MainFragment extends Fragment implements SearchView.OnQueryTextList
 	static final int REPLACE_REQUEST_CODE = 12;
 	static final int FILES_REQUEST_CODE = 13;
 	static final int SAVETO_REQUEST_CODE = 14;
+	static final int STARDICT_REQUEST_CODE = 15;
 	
 	String[] selectedFiles = new String[0];
 	public WebView webView = null;
@@ -102,6 +103,7 @@ public class MainFragment extends Fragment implements SearchView.OnQueryTextList
 	private boolean backForward = false;
 	String searchFileResult = "";
 
+	boolean showList = true;
 	boolean nameOrder = true;
 	boolean groupViewChanged = false;
 	Cache cache = null;
@@ -1111,41 +1113,41 @@ public class MainFragment extends Fragment implements SearchView.OnQueryTextList
 						showToast("Nothing to read");
 						statusView.setText("Nothing to read");
 					}
-				} else if (requestCode == COMPARE_REQUEST_CODE1) {
-					if (resultCode == Activity.RESULT_OK) {
-						oriDoc = stringExtra[0];
-						Log.d("COMPARE_REQUEST_CODE1.oriDoc", oriDoc);
-						Intent intent = new Intent(activity, FolderChooserActivity.class);
-						intent.putExtra(MainFragment.SELECTED_DIR,
-										new String[] { oriDoc });
-						intent.putExtra(MainFragment.SUFFIX, DOC_FILES_SUFFIX);
-						intent.putExtra(MainFragment.MODE, !MULTI_FILES);
-						intent.putExtra(MainFragment.CHOOSER_TITLE,MODI_SUFFIX_TITLE);
-						activity.startActivityForResult(intent, COMPARE_REQUEST_CODE2);
-					} else { // RESULT_CANCEL
-						if (selectedFiles.length == 0) {
-							showToast("Nothing to compare");
-							statusView.setText("Nothing to compare");
-						}
-					}
-				} else if (requestCode == COMPARE_REQUEST_CODE2) {
-					if (resultCode == Activity.RESULT_OK) {
-						stopReadAndSearch();
-						modifiedDoc = stringExtra[0];
-						Log.d("COMPARE_REQUEST_CODE2.modifiedDoc", modifiedDoc);
-						currentZipFileName = ""; // làm dấu để khỏi show web getSourceFile
-						selectedFiles = new  String[] {oriDoc, modifiedDoc};
-						load = "Search";
-						requestCompare = true;
-						requestSearching = false;
-						getSourceFileTask = new GetSourceFileTask(MainFragment.this);
-						getSourceFileTask.execute();
-					} else { // RESULT_CANCEL
-						if (selectedFiles.length == 0) {
-							showToast("Nothing to compare");
-							statusView.setText("Nothing to compare");
-						}
-					}
+//				} else if (requestCode == COMPARE_REQUEST_CODE1) {
+//					if (resultCode == Activity.RESULT_OK) {
+//						oriDoc = stringExtra[0];
+//						Log.d("COMPARE_REQUEST_CODE1.oriDoc", oriDoc);
+//						Intent intent = new Intent(activity, FolderChooserActivity.class);
+//						intent.putExtra(MainFragment.SELECTED_DIR,
+//										new String[] { oriDoc });
+//						intent.putExtra(MainFragment.SUFFIX, DOC_FILES_SUFFIX);
+//						intent.putExtra(MainFragment.MODE, !MULTI_FILES);
+//						intent.putExtra(MainFragment.CHOOSER_TITLE,MODI_SUFFIX_TITLE);
+//						activity.startActivityForResult(intent, COMPARE_REQUEST_CODE2);
+//					} else { // RESULT_CANCEL
+//						if (selectedFiles.length == 0) {
+//							showToast("Nothing to compare");
+//							statusView.setText("Nothing to compare");
+//						}
+//					}
+//				} else if (requestCode == COMPARE_REQUEST_CODE2) {
+//					if (resultCode == Activity.RESULT_OK) {
+//						stopReadAndSearch();
+//						modifiedDoc = stringExtra[0];
+//						Log.d("COMPARE_REQUEST_CODE2.modifiedDoc", modifiedDoc);
+//						currentZipFileName = ""; // làm dấu để khỏi show web getSourceFile
+//						selectedFiles = new  String[] {oriDoc, modifiedDoc};
+//						load = "Search";
+//						requestCompare = true;
+//						requestSearching = false;
+//						getSourceFileTask = new GetSourceFileTask(MainFragment.this);
+//						getSourceFileTask.execute();
+//					} else { // RESULT_CANCEL
+//						if (selectedFiles.length == 0) {
+//							showToast("Nothing to compare");
+//							statusView.setText("Nothing to compare");
+//						}
+//					}
 				} else if (requestCode == GEN_REQUEST_CODE) {
 					if (resultCode == Activity.RESULT_OK) {
 						Log.d("GEN_REQUEST_CODE.selectedFiles", stringExtra[0]);
@@ -1358,6 +1360,11 @@ public class MainFragment extends Fragment implements SearchView.OnQueryTextList
 		if (translateTask != null) {
 			translateTask.cancel(true);
 			translateTask = null;
+			TranslationSession.stopTranslate = true;
+		}
+		if (compTask != null) {
+			compTask.cancel(true);
+			compTask = null;
 		}
 	}
 
@@ -1575,22 +1582,20 @@ public class MainFragment extends Fragment implements SearchView.OnQueryTextList
 		return true;
 	}
 	
-	
-	
 	String oriDoc = "";
 	String modifiedDoc = "";
-	public boolean compare(MenuItem item) {
-		requestSearching = false;
-		Intent intent = new Intent(activity, FolderChooserActivity.class);
-		Log.d("compare.previous oriDoc", oriDoc);
-		intent.putExtra(MainFragment.SELECTED_DIR,
-						new String[] { oriDoc });
-		intent.putExtra(MainFragment.SUFFIX, DOC_FILES_SUFFIX);
-		intent.putExtra(MainFragment.MODE, !MULTI_FILES);
-		intent.putExtra(MainFragment.CHOOSER_TITLE,ORI_SUFFIX_TITLE);
-		activity.startActivityForResult(intent, COMPARE_REQUEST_CODE1);
-		return true;
-	}
+//	public boolean compare(MenuItem item) {
+//		requestSearching = false;
+//		Intent intent = new Intent(activity, FolderChooserActivity.class);
+//		Log.d("compare.previous oriDoc", oriDoc);
+//		intent.putExtra(MainFragment.SELECTED_DIR,
+//						new String[] { oriDoc });
+//		intent.putExtra(MainFragment.SUFFIX, DOC_FILES_SUFFIX);
+//		intent.putExtra(MainFragment.MODE, !MULTI_FILES);
+//		intent.putExtra(MainFragment.CHOOSER_TITLE,ORI_SUFFIX_TITLE);
+//		activity.startActivityForResult(intent, COMPARE_REQUEST_CODE1);
+//		return true;
+//	}
 
 	public boolean restore(MenuItem item) {
 		Log.d("restore.previous selectedFiles", selectedFiles + ".");
@@ -1648,61 +1653,62 @@ public class MainFragment extends Fragment implements SearchView.OnQueryTextList
 //
 //		return true;
 //	}
-	private boolean isRegex = false;
-	private boolean caseSensitive = false;
-	private boolean includeEnter = false;
-	private String replace = "";
-	private String by = "";
-	public boolean replace(MenuItem item) {
-		
-		LayoutInflater factory = LayoutInflater.from(activity);
-		final View textEntryView = factory.inflate(R.layout.replace_dialog, null);
-		final EditText replaceET = (EditText) textEntryView.findViewById(R.id.replace);
-		final EditText byET = (EditText) textEntryView.findViewById(R.id.by);
-		final CheckBox isRegexCB = (CheckBox) textEntryView.findViewById(R.id.regex);
-		final CheckBox caseSensitiveCB = (CheckBox) textEntryView.findViewById(R.id.caseSensitive);
-		final CheckBox includeEnterCB = (CheckBox) textEntryView.findViewById(R.id.includeEnter);
-		AlertDialog dialog = new AlertDialog.Builder(activity)
-			.setIconAttribute(R.drawable.search_2)
-			.setTitle("Replace")
-			.setView(textEntryView)
-			.setPositiveButton(R.string.ok,
-			new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int whichButton) {
-					replace = replaceET.getText().toString();
-					by = byET.getText().toString();
-					isRegex = isRegexCB.isChecked();
-					caseSensitive = caseSensitiveCB.isChecked();
-					includeEnter = includeEnterCB.isChecked();
-					if (!includeEnter) { // multiline
-						String[] replaces = replace.split("\r?\n");
-						String[] bys = by.split("\r?\n");
-						Log.d("bys.length ", bys.length + ".");
-						if (replaces.length != bys.length) {
-							showToast("The number of lines of replace and by are not equal");
-							return;
-						}
-					}
-					dialog.dismiss();
-					Log.d("replace.previous selectedFiles", selectedFiles + ".");
-					Intent intent = new Intent(activity, FolderChooserActivity.class);
-					intent.putExtra(MainFragment.SELECTED_DIR, selectedFiles);
-					intent.putExtra(MainFragment.SUFFIX, DOC_FILES_SUFFIX);
-					intent.putExtra(MainFragment.MODE, MULTI_FILES);
-					intent.putExtra(MainFragment.CHOOSER_TITLE, TRANSLATE_SUFFIX_TITLE);
-					activity.startActivityForResult(intent, REPLACE_REQUEST_CODE);
-				}
-			})
-			.setNegativeButton(R.string.cancel,
-			new DialogInterface.OnClickListener() {
-				public void onClick(DialogInterface dialog, int whichButton) {
-					dialog.dismiss();
-				}
-			}).create();
-		dialog.show();
-
-		return true;
-	}
+	
+//	private boolean isRegex = false;
+//	private boolean caseSensitive = false;
+//	private boolean includeEnter = false;
+//	private String replace = "";
+//	private String by = "";
+//	public boolean replace(MenuItem item) {
+//		
+//		LayoutInflater factory = LayoutInflater.from(activity);
+//		final View textEntryView = factory.inflate(R.layout.replace_dialog, null);
+//		final EditText replaceET = (EditText) textEntryView.findViewById(R.id.replace);
+//		final EditText byET = (EditText) textEntryView.findViewById(R.id.by);
+//		final CheckBox isRegexCB = (CheckBox) textEntryView.findViewById(R.id.regex);
+//		final CheckBox caseSensitiveCB = (CheckBox) textEntryView.findViewById(R.id.caseSensitive);
+//		final CheckBox includeEnterCB = (CheckBox) textEntryView.findViewById(R.id.includeEnter);
+//		AlertDialog dialog = new AlertDialog.Builder(activity)
+//			.setIconAttribute(R.drawable.search_2)
+//			.setTitle("Replace")
+//			.setView(textEntryView)
+//			.setPositiveButton(R.string.ok,
+//			new DialogInterface.OnClickListener() {
+//				public void onClick(DialogInterface dialog, int whichButton) {
+//					replace = replaceET.getText().toString();
+//					by = byET.getText().toString();
+//					isRegex = isRegexCB.isChecked();
+//					caseSensitive = caseSensitiveCB.isChecked();
+//					includeEnter = includeEnterCB.isChecked();
+//					if (!includeEnter) { // multiline
+//						String[] replaces = replace.split("\r?\n");
+//						String[] bys = by.split("\r?\n");
+//						Log.d("bys.length ", bys.length + ".");
+//						if (replaces.length != bys.length) {
+//							showToast("The number of lines of replace and by are not equal");
+//							return;
+//						}
+//					}
+//					dialog.dismiss();
+//					Log.d("replace.previous selectedFiles", selectedFiles + ".");
+//					Intent intent = new Intent(activity, FolderChooserActivity.class);
+//					intent.putExtra(MainFragment.SELECTED_DIR, selectedFiles);
+//					intent.putExtra(MainFragment.SUFFIX, DOC_FILES_SUFFIX);
+//					intent.putExtra(MainFragment.MODE, MULTI_FILES);
+//					intent.putExtra(MainFragment.CHOOSER_TITLE, TRANSLATE_SUFFIX_TITLE);
+//					activity.startActivityForResult(intent, REPLACE_REQUEST_CODE);
+//				}
+//			})
+//			.setNegativeButton(R.string.cancel,
+//			new DialogInterface.OnClickListener() {
+//				public void onClick(DialogInterface dialog, int whichButton) {
+//					dialog.dismiss();
+//				}
+//			}).create();
+//		dialog.show();
+//
+//		return true;
+//	}
 	
 	public boolean gen(MenuItem item) {
 		Log.d("gen.previous selectedFiles", selectedFiles + ".");

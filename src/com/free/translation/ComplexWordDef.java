@@ -114,7 +114,7 @@ public class ComplexWordDef implements Comparable<ComplexWordDef>, Serializable 
 
     @Override
     public int compareTo(ComplexWordDef o) {
-        return o == null ? -1 : this.name.compareToIgnoreCase(o.getName());
+        return o == null ? -1 : this.name.compareToIgnoreCase(o.name);
     }
 
     public static void main(String[] args) {

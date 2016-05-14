@@ -96,10 +96,11 @@
 					android:text="Save to "
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:layout_above="@+id/stardictLbl"
+					android:layout_above="@+id/partsLbl"
 					android:layout_alignParentLeft="true"
 					android:clickable="false"
 					android:longClickable="false" 
+
 					android:textAppearance="?android:attr/textAppearanceLarge"
 					android:textColor="#ffffff"
 					android:textSize="@dimen/textSize" />
@@ -110,10 +111,11 @@
 					android:singleLine="true"
 					android:layout_width="wrap_content"
 					android:layout_height="wrap_content"
-					android:layout_above="@+id/stardictLbl"
+					android:layout_above="@+id/partsLbl"
 					android:layout_toRightOf="@+id/saveToLbl"
 					android:layout_toLeftOf="@+id/saveToBtn"
 					android:layout_alignBaseline="@+id/saveToLbl"
+
 					android:clickable="true"
 					android:longClickable="true"
 					android:textAppearance="?android:attr/textAppearanceLarge"
@@ -126,6 +128,7 @@
 					android:layout_height="wrap_content"
 					android:layout_alignBaseline="@+id/saveToLbl"
 					android:layout_alignParentRight="true"
+
 					android:singleLine="true"
 					android:onClick="ok"
 					android:padding="0dp"
@@ -204,6 +207,7 @@
 					android:layout_width="0dp"
 					android:layout_height="wrap_content"
 					android:layout_weight="1"
+					android:layout_alignBaseline="@+id/replaceLbl"
 					android:singleLine="false"
 					android:clickable="true"
 					android:longClickable="true" 
@@ -243,55 +247,49 @@
 					android:layout_width="0dp"
 					android:layout_height="wrap_content"
 					android:layout_weight="1"
+					android:layout_alignBaseline="@+id/replace"
 					android:singleLine="false"
 					android:text=""
 					android:clickable="true"
 					android:longClickable="true" />
 			</LinearLayout>
 
-
-			<LinearLayout
-				android:layout_width="match_parent"
+			<CheckBox
+				android:id="@+id/regex"
+				android:layout_width="wrap_content"
 				android:layout_height="wrap_content"
-				android:orientation="horizontal"
-				android:layout_gravity="bottom|center_horizontal" >
+				android:layout_weight="1"
+				android:clickable="true"
+				android:longClickable="true"
+				android:text="Use Regex"
+				android:textAppearance="?android:attr/textAppearanceLarge"
+				android:textColor="#ffffff"
+				android:textSize="@dimen/textSize" />
 
-				<CheckBox
-					android:id="@+id/regex"
-					android:layout_width="0dp"
-					android:layout_height="wrap_content"
-					android:layout_weight="1"
-					android:clickable="true"
-					android:longClickable="true"
-					android:text="Use Regex"
-					android:textAppearance="?android:attr/textAppearanceLarge"
-					android:textColor="#ffffff"
-					android:textSize="@dimen/textSize" />
+			<CheckBox
+				android:id="@+id/caseSensitive"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:clickable="true"
+				android:longClickable="true"
+				android:text="Case Sensitive"
+				android:textAppearance="?android:attr/textAppearanceLarge"
+				android:textColor="#ffffff"
+				android:textSize="@dimen/textSize" />
 
-				<CheckBox
-					android:id="@+id/caseSensitive"
-					android:layout_width="0dp"
-					android:layout_height="wrap_content"
-					android:layout_weight="1"
-					android:clickable="true"
-					android:longClickable="true"
-					android:text="Case Sensitive"
-					android:textAppearance="?android:attr/textAppearanceLarge"
-					android:textColor="#ffffff"
-					android:textSize="@dimen/textSize" />
+			<CheckBox
+				android:id="@+id/includeEnter"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_weight="1"
+				android:clickable="true"
+				android:longClickable="true"
+				android:text="Include Enter"
+				android:textAppearance="?android:attr/textAppearanceLarge"
+				android:textColor="#ffffff"
+				android:textSize="@dimen/textSize" />
 
-				<CheckBox
-					android:id="@+id/includeEnter"
-					android:layout_width="0dp"
-					android:layout_height="wrap_content"
-					android:layout_weight="1"
-					android:clickable="true"
-					android:longClickable="true"
-					android:text="Include Enter"
-					android:textAppearance="?android:attr/textAppearanceLarge"
-					android:textColor="#ffffff"
-					android:textSize="@dimen/textSize" />
-			</LinearLayout>
 		</LinearLayout>
 
 		<LinearLayout

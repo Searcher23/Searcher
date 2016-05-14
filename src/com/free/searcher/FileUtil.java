@@ -216,7 +216,7 @@ public class FileUtil {
 		return paragraphs;
 	}
 
-	public static String readWordFileToText(File wordFileName) throws FileNotFoundException, IOException {
+	public static String readWordFileToText(File wordFileName) throws IOException {
 		try {
 			return WordToTextConverter.getText(wordFileName);
 		} catch (Exception e) {

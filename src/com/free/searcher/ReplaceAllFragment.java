@@ -9,6 +9,7 @@ import android.util.*;
 import android.content.*;
 import java.util.*;
 import java.io.*;
+import android.graphics.*;
 
 /**
  * Activities that contain this fragment must implement the
@@ -23,6 +24,7 @@ public class ReplaceAllFragment extends DialogFragment implements  Serializable 
 
 	String files = null;
 	String saveTo = null;
+	String stardict = null;
 	String replace = "";
 	String by = "";
 	boolean isRegex = false;
@@ -33,8 +35,10 @@ public class ReplaceAllFragment extends DialogFragment implements  Serializable 
     private transient Button mBtnCancel;
     private transient Button filesBtn;
     private transient Button saveToBtn;
+	private transient Button stardictBtn;
     public transient EditText fileET;
     public transient EditText saveToET;
+	public transient EditText stardictET;
 	public transient EditText replaceET;
     public transient EditText byET;
     public transient CheckBox isRegexCB;
@@ -84,30 +88,28 @@ public class ReplaceAllFragment extends DialogFragment implements  Serializable 
 
 		outState.putString("Files", fileET.getText() + "");
 		outState.putString("SaveTo", saveToET.getText() + "");
+		outState.putString("stardict", stardictET.getText() + "");
+		outState.putBoolean("isRegex", isRegex);
+		outState.putBoolean("caseSensitive", caseSensitive);
+		outState.putBoolean("includeEnter", includeEnter);
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 		Log.e("ReplaceAllFragment", "onCreate");
-//        if (getArguments() == null) {
-//            throw new IllegalArgumentException(
-//                    "You must create DirectoryChooserFragment via newInstance().");
-//        } else {
-////            files = getArguments().getString("Files");
-////            saveTo = getArguments().getString("SaveTo");
-////			fileET.setText(getArguments().getString("Files"));
-////			saveToET.setText(getArguments().getString("SaveTo"));
-//        }
+
 
         if (savedInstanceState != null && fileET != null) {
 //            files = savedInstanceState.getString("Files");
 //			saveTo = savedInstanceState.getString("SaveTo");
-//			parts = savedInstanceState.getLong("Parts");
-//			partSize = savedInstanceState.getLong("PartSize");
+
 			fileET.setText(savedInstanceState.getString("Files"));
 			saveToET.setText(savedInstanceState.getString("SaveTo"));
-			
+			stardictET.setText(savedInstanceState.getString("stardict"));
+			isRegexCB.setChecked(savedInstanceState.getBoolean("isRegex", false));
+			caseSensitiveCB.setChecked(savedInstanceState.getBoolean("caseSensitive", false));
+			includeEnterCB.setChecked(savedInstanceState.getBoolean("includeEnter", false));
         }
 
         if (this.getShowsDialog()) {
@@ -122,13 +124,25 @@ public class ReplaceAllFragment extends DialogFragment implements  Serializable 
                              Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
         assert getActivity() != null;
-        final View view = inflater.inflate(R.layout.replace_dialog, container, false);
+		Point op = new Point();
+		getActivity().getWindowManager().getDefaultDisplay().getSize(op);
+//		Log.d("getDefaultDisplay", getWindowManager().getDefaultDisplay() + ".");
+//		Log.d("op", op + ".");
+//		Log.d("getComponentName", getComponentName().toString());
+//		Log.d("getRequestedOrientation()", getRequestedOrientation() + ".");
+		View view;
+		if (op.x < op.y) {
+			view = inflater.inflate(R.layout.replace_portrait, container, false);
+		} else {
+			view = inflater.inflate(R.layout.replace_dialog, container, false);
+		}
 
 		Log.e("ReplaceAllFragment", "onCreateView");
         mBtnConfirm = (Button) view.findViewById(R.id.okDir);
         mBtnCancel = (Button) view.findViewById(R.id.cancelDir);
         fileET = (EditText) view.findViewById(R.id.files);
         saveToET = (EditText) view.findViewById(R.id.saveTo);
+		stardictET = (EditText) view.findViewById(R.id.stardict);
 		replaceET = (EditText) view.findViewById(R.id.replace);
         byET = (EditText) view.findViewById(R.id.by);
         isRegexCB = (CheckBox) view.findViewById(R.id.regex);
@@ -136,17 +150,16 @@ public class ReplaceAllFragment extends DialogFragment implements  Serializable 
 		includeEnterCB = (CheckBox) view.findViewById(R.id.includeEnter);
 		filesBtn = (Button) view.findViewById(R.id.filesBtn);
         saveToBtn = (Button) view.findViewById(R.id.saveToBtn);
+		stardictBtn = (Button) view.findViewById(R.id.stardictBtn);
 
-		//if (savedInstanceState != null) {
-//            files = savedInstanceState.getString("Files");
-//			saveTo = savedInstanceState.getString("SaveTo");
-//			parts = savedInstanceState.getLong("Parts");
-//			partSize = savedInstanceState.getLong("PartSize");
 		fileET.setText(files);//savedInstanceState.getString("Files"));
 		saveToET.setText(saveTo);//savedInstanceState.getString("SaveTo"));
+		stardictET.setText(stardict);
 		replaceET.setText(replace);
 		byET.setText(by);
-        //}
+		isRegexCB.setChecked(isRegex);
+		caseSensitiveCB.setChecked(caseSensitive);
+		includeEnterCB.setChecked(includeEnter);
 
 		filesBtn.setOnClickListener(new OnClickListener() {
 				@Override
@@ -173,6 +186,20 @@ public class ReplaceAllFragment extends DialogFragment implements  Serializable 
 					intent.putExtra(MainFragment.MODE, !MainFragment.MULTI_FILES);
 					intent.putExtra(MainFragment.CHOOSER_TITLE, "Output Folder");
 					getActivity().startActivityForResult(intent, MainFragment.SAVETO_REQUEST_CODE);
+				}
+			});
+			
+		stardictBtn.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					ReplaceAllFragment.this.dismiss();
+
+					Intent intent = new Intent(getActivity(), FolderChooserActivity.class);
+					intent.putExtra(MainFragment.SELECTED_DIR, new String[] {Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath()});
+					intent.putExtra(MainFragment.SUFFIX, MainFragment.TXT_SUFFIX);
+					intent.putExtra(MainFragment.MODE, !MainFragment.MULTI_FILES);
+					intent.putExtra(MainFragment.CHOOSER_TITLE, MainFragment.TXT_SUFFIX_TITLE);
+					getActivity().startActivityForResult(intent, MainFragment.STARDICT_REQUEST_CODE);
 				}
 			});
 

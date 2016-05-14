@@ -757,9 +757,9 @@ public class Translator {
 								typeDep1GovWI.setType(Dictionary.NOUN);
 								typeDep2DepWI.setType(Dictionary.NOUN);
 								putToLast(typeDep1, wordList, wiChangedMap);
-								Log.i("putToLast poss & nn: ", ":" + wordList);
+								//Log.i("putToLast poss & nn: ", ":" + wordList);
 								insertBefore(typeDep2, wordList, wiChangedMap);
-								Log.i("insertBefore poss & nn: ", ":" + wordList);
+								//Log.i("insertBefore poss & nn: ", ":" + wordList);
 								i += 2;
 								break;
 							} else if (("det".equals(grammarRelation1) || "poss".endsWith(grammarRelation1))
@@ -940,8 +940,8 @@ public class Translator {
 
 									wordInfo1.setName(wordInfo1Name.toLowerCase());
 									putToBeforeLast(typeDep1, wordList, wiChangedMap);
-									Log.i("wordInfo1:", ":" + wordInfo1);
-									Log.i("typeList.get(j - 1):", ":" + typeList.get(j - 1));
+									//Log.i("wordInfo1:", ":" + wordInfo1);
+									//Log.i("typeList.get(j - 1):", ":" + typeList.get(j - 1));
 									stack.push(new Entry<Integer, WordInfo>(wordInfo1Order - 1, 
 											new WordInfo(wordInfo1Order, wordInfo1Name, "liệu", " ", " ")));
 								}
@@ -1193,7 +1193,7 @@ public class Translator {
 						// International Pa-auk Forest Buddha Sāsana Centres
 						int counter = typeDep1GovPos - wordInfo1Order; // typeDep1: nn(Meditation-3, Tranquillity-2)
 						boolean isInverseAllNN = true;	// typeDep1: nn(Centres-37, International-32)
-				   		Log.i("counter > 1", ":" + (counter > 1));
+				   		//Log.i("counter > 1", ":" + (counter > 1));
 						for (int checkNN = 1; checkNN < counter; checkNN++) {
 							if (!"nn".equals(typeList.get(j + checkNN).getGrammarRelation())) {
 								isInverseAllNN = false;
@@ -1201,8 +1201,8 @@ public class Translator {
 								break;
 							}
 						}
-						Log.i("counter", ":" + counter);
-						Log.i("isInverseAllNN", ":" + isInverseAllNN);
+						//Log.i("counter", ":" + counter);
+						//Log.i("isInverseAllNN", ":" + isInverseAllNN);
 						if (counter >= 0) {
 						
 						if (isInverseAllNN) {
@@ -1243,8 +1243,8 @@ public class Translator {
 							switchEndTagSign(removeWI, wordList.get(wordInfo1Order + counter - 1));
 							// ?
 //							changeSign(wordList.get(wordInfo1.getOrder() + counter - 1), removeWI, false);
-							Log.i("3. current wordInfo:", wordInfo1 +" changed order between " + wordInfo1 + " and " + removeWI);
-							Log.i("4. current wordList: [{0}]", wordList.toString());
+							//Log.i("3. current wordInfo:", wordInfo1 +" changed order between " + wordInfo1 + " and " + removeWI);
+							//Log.i("4. current wordList: [{0}]", wordList.toString());
 							i += counter;
 						}
 						if (typeDep1DepWord.endsWith("'s")) {		// John's cousin // typeDep1: nn(cousin-5, John's-4)
@@ -1382,7 +1382,7 @@ public class Translator {
 	
 	private static void putToBeforeLast(GrammarTypedDependency typeDep,
 			List<WordInfo> wordList, Map<WordInfo, Integer> wiChangedMap) {
-		Log.i("before putToBeforeLast: ", Util.collectionToSlashString(wordList));
+		//Log.i("before putToBeforeLast: ", Util.collectionToSlashString(wordList));
 		Integer temp = 0;
 		Integer depWordInfoPos = 
 			(((temp = wiChangedMap.get(new WordInfo(typeDep.getDepPos(), typeDep.getDepWord(), "", "", ""))) == null) ?
@@ -1411,12 +1411,12 @@ public class Translator {
 			toTitleCase(wordList.get(depWordInfoPos.intValue()));
 			toLowerCase(depWIRemoved);
 		}
-		Log.i("after putToBeforeLast: ", Util.collectionToSlashString(wordList));
+		//Log.i("after putToBeforeLast: ", Util.collectionToSlashString(wordList));
 	}
 
 	private static void insertBefore(GrammarTypedDependency typeDep,
 			List<WordInfo> wordList, Map<WordInfo, Integer> wiChangedMap) {
-		Log.i("before insertBefore: ", Util.collectionToSlashString(wordList));
+		//Log.i("before insertBefore: ", Util.collectionToSlashString(wordList));
 		Integer temp = 0;
 		Integer depWordInfoPos = 
 			((temp = wiChangedMap.get(new WordInfo(typeDep.getDepPos(), typeDep.getDepWord(), "", "", ""))) == null) ?
@@ -1440,12 +1440,12 @@ public class Translator {
 			toTitleCase(removed);
 			toLowerCase(increaseIndexWI);
 		}
-		Log.i("after insertBefore: ", Util.collectionToSlashString(wordList));
+		//Log.i("after insertBefore: ", Util.collectionToSlashString(wordList));
 	}
 	
 	private static void moveToBefore(WordInfo wordInfo, int destPos,
 			List<WordInfo> wordList, Map<WordInfo, Integer> wiChangedMap) {
-		Log.i("before moveTo: ", Util.collectionToSlashString(wordList));
+		//Log.i("before moveTo: ", Util.collectionToSlashString(wordList));
 		Integer temp = 0;
 		Integer wordInfoPos = ((temp = wiChangedMap.get(wordInfo)) == null) ? (wordInfo.getOrder() - 1) : (temp - 1);
 		// typeDep2: nn(subject-12, meditation-11)
@@ -1468,12 +1468,12 @@ public class Translator {
 		if (destPos == 0 && !increaseIndexWI.isDefinitionEmpty()) {
 			toLowerCase(increaseIndexWI);
 		}
-		Log.i("after moveTo: ", Util.collectionToSlashString(wordList));
+		//Log.i("after moveTo: ", Util.collectionToSlashString(wordList));
 	}
 	
 	private static void moveToAfter(WordInfo wordInfo, int destPos,
 			List<WordInfo> wordList, Map<WordInfo, Integer> wiChangedMap) {
-		Log.i("before moveTo: ", Util.collectionToSlashString(wordList));
+		//Log.i("before moveTo: ", Util.collectionToSlashString(wordList));
 		Integer temp = 0;
 		Integer wordInfoPos = ((temp = wiChangedMap.get(wordInfo)) == null) ? (wordInfo.getOrder() - 1) : (temp - 1);
 		// typeDep2: nn(subject-12, meditation-11)
@@ -1497,7 +1497,7 @@ public class Translator {
 			toTitleCase(wordList.get(0));
 			toLowerCase(removed);
 		}
-		Log.i("after moveTo: ", Util.collectionToSlashString(wordList));
+		//Log.i("after moveTo: ", Util.collectionToSlashString(wordList));
 	}
 
 	static void insertAfter(GrammarTypedDependency typeDep,
@@ -1537,11 +1537,14 @@ public class Translator {
 			String combinedStr2 = wordInfoCombined2.toString();
 			String combinedStr3 = wordInfoCombined3.toString();
 
+			//Log.i("combinedStr2:", combinedStr2 + " wordDefinition2: " + wordInfoCombined2);
 			ComplexWordDef wordDefinition2 = GEN_DICT.getComplexWordDef(combinedStr2);
-			//Log.i("combinedStr2:", combinedStr2 + " wordDefinition2: " + wordDefinition2);
 
-			ComplexWordDef wordDefinition3 = GEN_DICT.getComplexWordDef(combinedStr3);
-			//Log.i("combinedStr3:", combinedStr3 + " wordDefinition3: " + wordDefinition3);
+			ComplexWordDef wordDefinition3 = null;
+			if (combinedStr3.length() > 0) {
+				//Log.i("combinedStr3:", combinedStr3 + " wordDefinition3: " + wordInfoCombined3);
+				wordDefinition3 = GEN_DICT.getComplexWordDef(combinedStr3);
+			}
 
 			if (wordDefinition3 != null) {
 				wordInfo1.clear();
@@ -1642,7 +1645,7 @@ public class Translator {
 
 	static NumberFormat nf = NumberFormat.getInstance();
 	public static int currentPercent = 0;
-	private static String translateParsedWords(Object[] paragraphs, String htmlFileName) { //}, final MainFragment searchFragment) {
+	private static boolean translateParsedWords(Object[] paragraphs, String htmlFileName, final MainFragment searchFragment) {
 		List<String> sentencesList;
 		List<WordInfo> wordInfoList;
 		StringBuilder translatedBuffer = new StringBuilder();
@@ -1656,7 +1659,8 @@ public class Translator {
 		for (Object paragraph : paragraphs) {
 			//System.out.println(paragraph);
 			if (TranslationSession.stopTranslate) {
-				break;
+				TranslationSession.stopTranslate = false;
+				return CANCEL;
 			}
 			read += paragraph.toString().length();
 			currentPercent = (100 * read) / fileSize;
@@ -1668,7 +1672,10 @@ public class Translator {
 			createColumnHeader(translatedBuffer);
 			for (String sentence : sentencesList) {
 				//System.out.println(sentence);
-				TranslationSession.bytesRead += sentence.getBytes().length;
+				if (searchFragment.translateTask.isCancelled()) {
+					return CANCEL;
+				} else {
+					TranslationSession.bytesRead += sentence.getBytes().length;
 //				final String sen = "File " + TranslationSession.curFileNo + "/" + searchFragment.getSourceFileTask.convertedFileList.size() + ": " + nf.format((double)TranslationSession.bytesRead * 100/searchFragment.getSourceFileTask.totalSelectedSize) + "% (" + (TranslationSession.bytesRead + "/" + searchFragment.getSourceFileTask.totalSelectedSize) + "): " + sentence;
 //				searchFragment.statusView.postDelayed(new  Runnable() {
 //														  @Override
@@ -1676,17 +1683,17 @@ public class Translator {
 //															  searchFragment.statusView.setText(sen);
 //														  }
 //				}, 1);
-				List<String> sentenceParts = readSentenceParts(sentence);
-				for (String sentencePart : sentenceParts) {
-					wordInfoList = readWordsInSentencePart(sentencePart);
-					try {
-						translatedBuffer.append(reorderPhrases(wordInfoList));
-					} catch (Throwable e) {
-						Log.e("translateParsedWords", e.getMessage(), e);
-						translatedBuffer.append(wordInfoList.toString());
+					List<String> sentenceParts = readSentenceParts(sentence);
+					for (String sentencePart : sentenceParts) {
+						wordInfoList = readWordsInSentencePart(sentencePart);//sentence
+						try {
+							translatedBuffer.append(reorderPhrases(wordInfoList));
+						} catch (Throwable e) {
+							Log.e("translateParsedWords", e.getMessage(), e);
+							translatedBuffer.append(wordInfoList.toString());
+						}
 					}
 				}
-				
 			}
 			createColumnEnder(translatedBuffer);
 			createRowEnder(translatedBuffer);
@@ -1724,10 +1731,13 @@ public class Translator {
 		}
 		createTableEnder(translatedBuffer);
 		createHTMLEnder(translatedBuffer);
-		return translatedBuffer.toString();
+		return OK;
 	}
 
-	private static String translateWordByWord(String[] paragraphs) throws IOException {
+	private static final boolean OK = true;
+	private static final boolean CANCEL = false;
+	
+	private static String translateWordByWord(String[] paragraphs) {
 		List<String> sentenceList;
 		List<WordInfo> wordsList;
 		String definition;
@@ -1871,7 +1881,7 @@ public class Translator {
 	private static List<String> readSentenceParts(String sentence) {
 		Matcher mat = SENTENCE_PART_PATTERN.matcher(sentence);
 		List<String> sentencePartsList = new LinkedList<String>();
-		Log.i("readSentenceParts is processing", sentence);
+		//Log.i("readSentenceParts is processing", sentence);
 		
 		StringBuilder sb = null;
 		while (mat.find()) {
@@ -1882,7 +1892,7 @@ public class Translator {
 		return sentencePartsList;
 	}
 
-	private static final Pattern WORDS_PATTERN = Pattern.compile(
+	private static final Pattern WORDS_PATTERN = Pattern.compile(//"");
 			"([ \\.?!,:;\"“”()\\r\\n\\t\\f]*)([^ \\.?!,:;\"“”()\\r\\n\\t\\f]+)([ \\.?!,:;\"“”()\\r\\n\\t\\f]*)([^ \\.?!,:;\"“”()\\r\\n\\t\\f]*)");
 	private static List<WordInfo> readWordsInSentencePart(String sentence) {
 		Matcher mat = WORDS_PATTERN.matcher(sentence);
@@ -1955,41 +1965,44 @@ public class Translator {
 //	static List<String> newWords;
 	private static int fileSize = 0;
 
-	public static void translateFromSimpleWordFile(File wordFileName, String htmlFileName) throws IOException { //}, MainFragment searchFragment) throws IOException {
+	public static boolean translateFromSimpleWordFile(File wordFileName, String htmlFileName, MainFragment searchFragment) throws IOException {
 		long start = System.currentTimeMillis();
 //		newWords = new LinkedList<String>();
 		String[] paragraphs = FileUtil.readWordFileToParagraphs(wordFileName.getAbsolutePath());
 		for (String st : paragraphs) {
 			fileSize += st.length();
 		}
-		String translateParseWords = translateParsedWords(paragraphs, htmlFileName); //, searchFragment);
-		FileUtil.writeContentToFile(htmlFileName, translateParseWords);
 		Log.i("Translated file ", wordFileName + ": " + (System.currentTimeMillis() - start) + " milliseconds");
+		boolean translateParseWords = translateParsedWords(paragraphs, htmlFileName, searchFragment);
+		//FileUtil.writeContentToFile(htmlFileName, translateParseWords);
+		return translateParseWords;
 	}
 
-	public static String translateFromPlainTextFile(File fileName, String htmlFileName) throws IOException { //}, MainFragment searchFragment) throws IOException {
+	public static boolean translateFromPlainTextFile(File fileName, String htmlFileName, MainFragment searchFragment) throws IOException {
 		Log.i("translateFromPlainTextFile", fileName + ": " + fileName + ", " + htmlFileName);
 		long start = System.currentTimeMillis();
 //		newWords = new LinkedList<String>();
 		String fileContent = FileUtil.readFileWithCheckEncode(fileName.getAbsolutePath());
 		fileSize += fileContent.length();
 		List<String> paragraphs = readParagraphs(fileContent);
-		String translateParseWords = translateParsedWords(paragraphs.toArray(), htmlFileName); //, searchFragment);
+		
 //		FileUtil.writeContentToFile(htmlFileName, translateParseWords);
 		Log.i("Translated file ", fileName + ": " + (System.currentTimeMillis() - start) + " milliseconds");
+		boolean translateParseWords = translateParsedWords(paragraphs.toArray(), htmlFileName, searchFragment);
 		return translateParseWords;
 	}
 
-	public static String translateFromParagraphList(List<String> paragraphs, String htmlFileName) throws IOException { //}, MainFragment searchFragment) throws IOException {
+	public static boolean translateFromParagraphList(List<String> paragraphs, String htmlFileName, MainFragment searchFragment) throws IOException {
 		long start = System.currentTimeMillis();
 //		newWords = new LinkedList<String>();
 		for (String st : paragraphs) {
 			fileSize += st.length();
 		}
 		new  File(htmlFileName).getParentFile().mkdirs();
-		String translateParseWords = translateParsedWords(paragraphs.toArray(), htmlFileName); //}, searchFragment);
-		FileUtil.writeContentToFile(htmlFileName, translateParseWords);
+		
+		//FileUtil.writeContentToFile(htmlFileName, translateParseWords);
 		Log.i("Translated took: ", (System.currentTimeMillis() - start) + " milliseconds");
+		boolean translateParseWords = translateParsedWords(paragraphs.toArray(), htmlFileName, searchFragment);
 		return translateParseWords;
 	}
 
@@ -2046,7 +2059,7 @@ public class Translator {
 //				wordMLPackage = WordprocessingMLPackage.load(sourceFile);
 //				exporter.html(wordMLPackage, result, newFullFileName + "_files");
 			} else if (sourceFile.getAbsolutePath().toLowerCase().endsWith("doc")) {
-				Translator.translateFromSimpleWordFile(sourceFile, newFullFileName); //, null);
+				Translator.translateFromSimpleWordFile(sourceFile, newFullFileName, null);
 			}
 		} catch (IOException e) {
 //			JOptionPane.showMessageDialog(null, "I/O Error");

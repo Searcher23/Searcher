@@ -6,6 +6,7 @@ import android.util.Log;
 import java.io.*;
 import java.util.*;
 import java.util.regex.*;
+import com.free.searcher.*;
 
 /**
  * <code>Andro7za</code> provided the 7za JNI interface.
@@ -44,9 +45,9 @@ public final class Andro7za {
 	public native String stringFromJNI(String outfile, String infile);
 	public native void closeStreamJNI();
 	
-	private static final String mOutfile = "/sdcard/.com.free.searcher" + "/7zaOut.txt";
-	private static final String mInfile = "/sdcard/.com.free.searcher" + "/7zaIn.txt";
-	private static final String listFile = "/sdcard/.com.free.searcher" + "/7zaFileList.txt";
+	private static final String mOutfile = MainFragment.PRIVATE_DIR + "/7zaOut.txt";
+	private static final String mInfile = MainFragment.PRIVATE_DIR + "/7zaIn.txt";
+	private static final String listFile = MainFragment.PRIVATE_DIR + "/7zaFileList.txt";
 	
 	public void initStream() throws IOException {
 		resetFile(mOutfile);
@@ -58,7 +59,7 @@ public final class Andro7za {
 	private void resetFile(String f) throws IOException {
 		File file = new File(f);
 		file.delete();
-		// file.getParentFile().mkdirs();
+		//file.getParentFile().mkdirs();
 		file.createNewFile();
 	}
 	

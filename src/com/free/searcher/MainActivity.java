@@ -22,8 +22,8 @@ public class MainActivity extends Activity implements OnFragmentInteractionListe
 	
     private int mStackLevel = 0;
 	private ClipboardManager mClipboard;
-	private ActionBar actionBar;
-	private SplitMergeFragment mDialog;
+	ActionBar actionBar;
+	private SplitMergeFragment splitMergeFrag;
 	ReplaceAllFragment replaceFrag;
 	CompareFragment compFrag;
 	static final String TAG = "MainActivity";
@@ -174,6 +174,8 @@ public class MainActivity extends Activity implements OnFragmentInteractionListe
 
 					} // end for
 					if ("Search".equals(curFrag.load)) {
+						Log.d("MainActivity", "reload selectedFiles");
+						curFrag.showList = false;
 						curFrag.getSourceFileTask = new GetSourceFileTask(curFrag);
 						curFrag.getSourceFileTask.execute();
 					}
@@ -226,7 +228,7 @@ public class MainActivity extends Activity implements OnFragmentInteractionListe
     }
 	
 	
-	private void showToast(String st) {
+	void showToast(String st) {
 		Toast.makeText(this, st, Toast.LENGTH_SHORT).show();
 	}
 	
@@ -250,16 +252,16 @@ public class MainActivity extends Activity implements OnFragmentInteractionListe
 
 	private void saveAppStatus() {
 		try {
-			if (mDialog != null && mDialog.fileET != null) {
-				mDialog.files = mDialog.fileET.getText().toString();
-				mDialog.saveTo = mDialog.saveToET.getText().toString();
-				mDialog.parts = mDialog.partsET.getText().toString();
-				mDialog.partSize = mDialog.partSizeET.getText().toString();
+			if (splitMergeFrag != null && splitMergeFrag.fileET != null) {
+				splitMergeFrag.files = splitMergeFrag.fileET.getText().toString();
+				splitMergeFrag.saveTo = splitMergeFrag.saveToET.getText().toString();
+				splitMergeFrag.parts = splitMergeFrag.partsET.getText().toString();
+				splitMergeFrag.partSize = splitMergeFrag.partSizeET.getText().toString();
 
 				FileOutputStream fos = new FileOutputStream(MainFragment.PRIVATE_PATH + "/SplitMergeFragment.ser");
 				BufferedOutputStream bos = new BufferedOutputStream(fos);
 				ObjectOutputStream oos = new ObjectOutputStream(bos);
-				oos.writeObject(mDialog);
+				oos.writeObject(splitMergeFrag);
 				bos.flush();
 				bos.close();
 				fos.close();
@@ -267,6 +269,7 @@ public class MainActivity extends Activity implements OnFragmentInteractionListe
 			if (replaceFrag != null && replaceFrag.fileET != null) {
 				replaceFrag.files = replaceFrag.fileET.getText().toString();
 				replaceFrag.saveTo = replaceFrag.saveToET.getText().toString();
+				replaceFrag.stardict = replaceFrag.stardictET.getText().toString();
 				replaceFrag.replace = replaceFrag.replaceET.getText().toString();
 				replaceFrag.by = replaceFrag.byET.getText().toString();
 				replaceFrag.isRegex = replaceFrag.isRegexCB.isChecked();
@@ -410,7 +413,7 @@ public class MainActivity extends Activity implements OnFragmentInteractionListe
 	private long mBackPressed;
 	@Override
 	public void onBackPressed(){
-		if (mBackPressed +TIME_INTERVAL <System.currentTimeMillis()){
+		if (mBackPressed + TIME_INTERVAL <System.currentTimeMillis()){
 			//super.onBackPressed();
 			//return;
 			WebView webView = curFrag.webView;
@@ -576,9 +579,9 @@ public class MainActivity extends Activity implements OnFragmentInteractionListe
 	public void onOk(DialogFragment fra) {
 		Log.i(TAG, "onOk " + fra);
 		if (fra instanceof SplitMergeFragment) {
-			mDialog = (SplitMergeFragment)fra;
-			String p = mDialog.partsET.getText().toString();
-			String s = mDialog.partSizeET.getText().toString();
+			splitMergeFrag = (SplitMergeFragment)fra;
+			String p = splitMergeFrag.partsET.getText().toString();
+			String s = splitMergeFrag.partSizeET.getText().toString();
 			if (p.length() == 0 && s.length() == 0 || "0".equals(p) && "0".equals(s) || "1".equals(p)) {
 				showToast("Invalid number");
 				return;
@@ -591,9 +594,9 @@ public class MainActivity extends Activity implements OnFragmentInteractionListe
 				showToast("Invalid size number");
 				return;
 			}
-			MergeSplitTask ms = new MergeSplitTask(this, 
-												   Util.stringToList(mDialog.fileET.getText() + "", "|"), 
-												   mDialog.saveToET.getText() + "", 
+			SplitMergeTask ms = new SplitMergeTask(this, 
+												   Util.stringToList(splitMergeFrag.fileET.getText() + "", "|"), 
+												   splitMergeFrag.saveToET.getText() + "", 
 												   Util.toNumberWithDefault(Util.toNumberWithDefault(p, "0"), 0), 
 												   Util.toNumberWithDefault(Util.toNumberWithDefault(s, "0"), 0));
 			
@@ -604,25 +607,41 @@ public class MainActivity extends Activity implements OnFragmentInteractionListe
 			Log.d("REPLACE_REQUEST_CODE.selectedFiles", stringExtra[0]);
 			replaceFrag.files = replaceFrag.fileET.getText().toString();
 			replaceFrag.saveTo = replaceFrag.saveToET.getText().toString();
+			replaceFrag.stardict = replaceFrag.stardictET.getText().toString();
 			replaceFrag.replace = replaceFrag.replaceET.getText().toString();
 			replaceFrag.by = replaceFrag.byET.getText().toString();
 			replaceFrag.isRegex = replaceFrag.isRegexCB.isChecked();
 			replaceFrag.caseSensitive = replaceFrag.caseSensitiveCB.isChecked();
 			replaceFrag.includeEnter = replaceFrag.includeEnterCB.isChecked();
+			if (replaceFrag.saveTo.length() > 0 && !new File(replaceFrag.saveTo).exists()) {
+				showToast("Invalid \"Save to\" folder");
+				return;
+			}
+			if (replaceFrag.stardict.length() > 0 && !new File(replaceFrag.stardict).exists()) {
+				showToast("Invalid \"Stardict text\" folder");
+				return;
+			}
 			List<File> lf = FileUtil.getFiles(stringExtra);
 			if (replaceFrag.includeEnter) { // multiline
-				new ReplaceAllTask(this, lf, replaceFrag.saveTo, replaceFrag.isRegex, replaceFrag.caseSensitive, new String[]{replaceFrag.replace}, new String[]{replaceFrag.by}).execute();
+				new ReplaceAllTask(this, lf, replaceFrag.saveTo, replaceFrag.stardict, replaceFrag.isRegex, replaceFrag.caseSensitive, new String[]{replaceFrag.replace}, new String[]{replaceFrag.by}).execute();
 			} else {
 				String[] replaces = replaceFrag.replaceET.getText().toString().split("\r?\n");
 				String[] bys = replaceFrag.byET.getText().toString().split("\r?\n");
 				Log.d("bys.length ", bys.length + ".");
 				if (replaces.length == bys.length) {
-					new ReplaceAllTask(this, lf, replaceFrag.saveTo, replaceFrag.isRegex, replaceFrag.caseSensitive, replaces, bys).execute();
+					new ReplaceAllTask(this, lf, replaceFrag.saveTo, replaceFrag.stardict, replaceFrag.isRegex, replaceFrag.caseSensitive, replaces, bys).execute();
 				} else {
 					showToast("The number of lines of replace and by are not equal");
 				}
 			}
+			stringExtra = new String[lf.size()];
+			int i = 0;
+			for (File f : lf) {
+				stringExtra[i++] = replaceFrag.saveTo + f.getAbsolutePath();
+			}
 			curFrag.selectedFiles = stringExtra;
+			curFrag.load = "Search";
+			curFrag.currentZipFileName = "";
 			GetSourceFileTask getSourceFileTask = new GetSourceFileTask(curFrag);
 			getSourceFileTask.execute();
 		} else if (fra instanceof CompareFragment) {
@@ -652,14 +671,6 @@ public class MainActivity extends Activity implements OnFragmentInteractionListe
 		showToast("Nothing to do");
 	}
 
-	public boolean splitMerge(MenuItem item) {
-		Log.i(TAG, "splitMerge");
-//		initDialog(null);
-		currentDialog = SPLIT;
-		mDialog.show(getFragmentManager(), "SplitMerge");
-		return true;
-	}
-
 	private void initDialog(String clazz) {
 		
 		File fi = new File(MainFragment.PRIVATE_PATH + "/" + clazz + ".ser");//"/SplitMergeFragment.ser");
@@ -670,7 +681,7 @@ public class MainActivity extends Activity implements OnFragmentInteractionListe
 				BufferedInputStream bis = new BufferedInputStream(fis);
 				ObjectInputStream ois = new ObjectInputStream(bis);
 				if (SPLIT.equals(clazz)) {
-					mDialog = (SplitMergeFragment) ois.readObject();
+					splitMergeFrag = (SplitMergeFragment) ois.readObject();
 				} else if (REPLACE.equals(clazz)) {
 					replaceFrag = (ReplaceAllFragment) ois.readObject();
 				} else if (COMPARE.equals(clazz)) {
@@ -686,13 +697,21 @@ public class MainActivity extends Activity implements OnFragmentInteractionListe
 				e.printStackTrace();
 			}
 		} else if (SPLIT.equals(clazz)) {
-			mDialog = SplitMergeFragment.newInstance("", "");
+			splitMergeFrag = SplitMergeFragment.newInstance("", "");
 		} else if (REPLACE.equals(clazz)) {
 			replaceFrag = ReplaceAllFragment.newInstance("", "");
 		} else if (COMPARE.equals(clazz)) {
 			compFrag = CompareFragment.newInstance("", "");
 		}
 
+	}
+	
+	public boolean splitMerge(MenuItem item) {
+		Log.i(TAG, "splitMerge");
+//		initDialog(null);
+		currentDialog = SPLIT;
+		splitMergeFrag.show(getFragmentManager(), "SplitMerge");
+		return true;
 	}
 	
 	public boolean compare(MenuItem item) {
@@ -703,7 +722,7 @@ public class MainActivity extends Activity implements OnFragmentInteractionListe
 	
 	public boolean replace(MenuItem item) {
 		currentDialog = REPLACE;
-		replaceFrag.show(getFragmentManager(), "SplitMerge");
+		replaceFrag.show(getFragmentManager(), "Replace");
 		return true;
 	}
 	
@@ -880,8 +899,8 @@ public class MainActivity extends Activity implements OnFragmentInteractionListe
 			if (resultCode == Activity.RESULT_OK) {
 				String[] stringExtra = data.getStringArrayExtra(FolderChooserActivity.SELECTED_DIR);
 				if (SPLIT.equals(currentDialog)) {
-					mDialog.files =  Util.arrayToString(stringExtra, false, "|");
-					mDialog.show(getFragmentManager(), "SplitMerge");
+					splitMergeFrag.files =  Util.arrayToString(stringExtra, false, "|");
+					splitMergeFrag.show(getFragmentManager(), "SplitMerge");
 				} else if (REPLACE.equals(currentDialog)) {
 					replaceFrag.files = Util.arrayToString(stringExtra, false, "|");
 					replaceFrag.show(getFragmentManager(), "ReplaceAll");
@@ -891,6 +910,13 @@ public class MainActivity extends Activity implements OnFragmentInteractionListe
 				}
 			} else { // RESULT_CANCEL
 				showToast("No file selected");
+				if (SPLIT.equals(currentDialog)) {
+					splitMergeFrag.show(getFragmentManager(), "SplitMerge");
+				} else if (REPLACE.equals(currentDialog)) {
+					replaceFrag.show(getFragmentManager(), "ReplaceAll");
+				} else if (COMPARE.equals(currentDialog)) {
+					compFrag.show(getFragmentManager(), "Compare");
+				}
 			}
 			
 		} else if (requestCode == MainFragment.SAVETO_REQUEST_CODE) {
@@ -899,8 +925,8 @@ public class MainActivity extends Activity implements OnFragmentInteractionListe
 			if (resultCode == Activity.RESULT_OK) {
 				String[] stringExtra = data.getStringArrayExtra(FolderChooserActivity.SELECTED_DIR);
 				if (SPLIT.equals(currentDialog)) {
-					mDialog.saveTo =  stringExtra[0];
-					mDialog.show(getFragmentManager(), "SplitMerge");
+					splitMergeFrag.saveTo =  stringExtra[0];
+					splitMergeFrag.show(getFragmentManager(), "SplitMerge");
 				} else if (REPLACE.equals(currentDialog)) {
 					replaceFrag.saveTo = stringExtra[0];
 					replaceFrag.show(getFragmentManager(), "ReplaceAll");
@@ -910,6 +936,29 @@ public class MainActivity extends Activity implements OnFragmentInteractionListe
 				}
 			} else { // RESULT_CANCEL
 				showToast("No folder selected");
+				if (SPLIT.equals(currentDialog)) {
+					splitMergeFrag.show(getFragmentManager(), "SplitMerge");
+				} else if (REPLACE.equals(currentDialog)) {
+					replaceFrag.show(getFragmentManager(), "ReplaceAll");
+				} else if (COMPARE.equals(currentDialog)) {
+					compFrag.show(getFragmentManager(), "Compare");
+				}
+			}
+		} else if (requestCode == MainFragment.STARDICT_REQUEST_CODE) {
+			initDialog(currentDialog);
+
+			if (resultCode == Activity.RESULT_OK) {
+				String[] stringExtra = data.getStringArrayExtra(FolderChooserActivity.SELECTED_DIR);
+				
+				if (REPLACE.equals(currentDialog)) {
+					replaceFrag.stardict = stringExtra[0];
+					replaceFrag.show(getFragmentManager(), "ReplaceAll");
+				} 
+			} else { // RESULT_CANCEL
+				showToast("No folder selected");
+				if (REPLACE.equals(currentDialog)) {
+					replaceFrag.show(getFragmentManager(), "ReplaceAll");
+				} 
 			}
 			
 		} else if (requestCode == MainFragment.REPLACE_REQUEST_CODE) {
@@ -983,8 +1032,12 @@ class TabListener implements ActionBar.TabListener {
 	}
 
 	public void onTabReselected(Tab tab, FragmentTransaction ft) {
-
-		PopupMenu popup = new PopupMenu(mFragment.statusView.getContext(), mFragment.statusView);
+		PopupMenu popup;
+		if (mFragment.findBox != null) {
+			popup = new PopupMenu(mFragment.findBox.getContext(), mFragment.findBox);
+		} else {
+			popup = new PopupMenu(mFragment.statusView.getContext(), mFragment.statusView);
+		}
         popup.getMenuInflater().inflate(R.menu.popup, popup.getMenu());
 
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -994,7 +1047,11 @@ class TabListener implements ActionBar.TabListener {
 				} else if ("Close Others".equals(item.getTitle())) {
 					mActivity.closeOthers(item);
 				} else if ("New Tab".equals(item.getTitle())) {
-					mActivity.add(item);
+					if (mActivity.actionBar.getTabCount() < 8) {
+						mActivity.add(item);
+					} else {
+						mActivity.showToast("Reached maximum number of tabs");
+					}
 				}
 				return true;
 			}

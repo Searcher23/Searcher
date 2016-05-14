@@ -15,6 +15,9 @@ import java.util.logging.SimpleFormatter;
 import java.util.logging.StreamHandler;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import android.os.*;
+import android.util.*;
+import com.free.searcher.*;
 
 public final class Constants {
 
@@ -28,9 +31,78 @@ public final class Constants {
 //	public static final Logger LOGGER = Logger.getLogger(Constants.class.getName());
 	
 	public static final String DOCTYPE_WITH_DTD = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"data/xhtml1-transitional.dtd\">\r\n";//RB.getString("doctype");
-	public static final String PRIVATE_PATH = "/sdcard" + //Environment.getExternalStorageDirectory().getAbsolutePath() + 
-	"/.com.free.translation";
 	public static final String ZIP_SUFFIX = "";
+	public static String PRIVATE_PATH = MainFragment.PRIVATE_DIR.getParent() + //"/sdcard" + //Environment.getExternalStorageDirectory().getAbsolutePath() + 
+	"/.com.free.translation";
+	//private static File PRIVATE_DIR;
+//	private static void init() {
+//		PRIVATE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/.com.free.translation";
+//		PRIVATE_DIR = new File(PRIVATE_PATH);
+//		PRIVATE_DIR.mkdirs();
+//	}
+
+//	static {
+//		String sdCardPath = System.getenv("SECONDARY_STORAGE");
+//		File tmp = null;
+//		if (sdCardPath == null) {
+//			init();
+//			Log.d("sdCardPath = null", "SearchFragment.PRIVATE_PATH = " + PRIVATE_PATH);
+//		} else if (!sdCardPath.contains(":")) {
+//			PRIVATE_PATH = sdCardPath + "/.com.free.translation";
+//			PRIVATE_DIR = new File(PRIVATE_PATH);
+//			tmp = new File(PRIVATE_PATH + "/xxx" + System.currentTimeMillis());
+//			try {
+//				if (PRIVATE_DIR.mkdirs() || tmp.createNewFile()) {
+//					if (tmp != null) {
+//						Log.d("delete 1", tmp + ": " + tmp.delete());
+//					}
+//					Log.d(sdCardPath, PRIVATE_DIR.getTotalSpace() + " bytes");
+//				} else {
+//					init();
+//				}
+//			} catch (IOException e) {
+//				//e.printStackTrace();
+//				Log.e("tmp", tmp + ".");
+//				Log.e("SearchFragment.PRIVATE_DIR", PRIVATE_DIR + ".");
+//				init();
+//				Log.d("sdCardPath 1", "SearchFragment.PRIVATE_PATH = " + PRIVATE_PATH);
+//			}
+//		} else if (sdCardPath.contains(":")) {
+//			//Multiple Sdcards show root folder and remove the Internal storage from that.
+//			File storage = new File("/storage");
+//			File[] fs = storage.listFiles();
+//			init();
+//			if (fs != null) {
+//				File maxPrev = PRIVATE_DIR;
+//				long maxTotal = PRIVATE_DIR.getTotalSpace();
+//				for (File f : fs) {
+//					String absolutePath = f.getAbsolutePath();
+//					long totalSpace = f.getTotalSpace();
+//					Log.d(absolutePath, totalSpace + " bytes, can write " + f.canWrite());
+//					try {
+//						String comPath = absolutePath + "/.com.free.translation";
+//						if (totalSpace > maxTotal && f.canWrite() && (new File(comPath).mkdirs() || (tmp = new File(comPath + "/xxx" + System.currentTimeMillis())).createNewFile())) {
+//							PRIVATE_PATH = comPath;
+//							PRIVATE_DIR = new File(PRIVATE_PATH);
+//							Log.d("sdCard ok", PRIVATE_DIR + ", tmp = " + tmp);
+//							maxTotal = totalSpace;
+//							// max old
+//							Log.d("delete ", maxPrev + ": " + maxPrev.delete());
+//							maxPrev = f;
+//							if (tmp != null) {
+//								Log.d("delete 2", tmp + ": " + tmp.delete());
+//								tmp = null;
+//							}
+//						}
+//					} catch (IOException e) {
+//						Log.e("tmp", tmp + ".");
+//						Log.e("SearchFragment.PRIVATE_DIR", PRIVATE_DIR + ".");
+//						Log.d("sdCardPath 2", "SearchFragment.PRIVATE_PATH = " + PRIVATE_PATH);
+//					}
+//				}
+//			}
+//		}
+//	}
 	
 //	public static final String ORI_WORD_FILE_NAME = Constants.RB.getString("oriWordFile");
 //	public static final String ORI_TEXT_FILE_NAME = Constants.RB.getString("oriTextFile");

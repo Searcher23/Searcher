@@ -41,7 +41,7 @@ public class TranslationSession {
 		curFileNo = 0;
 	}
 	
-	public void translate(String sourcePath, MainFragment searchFragment) {
+	public boolean translate(String sourcePath, MainFragment searchFragment) {
 		curFileNo++;
 		long start = System.currentTimeMillis();
 		File sourceFile = new File(sourcePath);
@@ -53,10 +53,10 @@ public class TranslationSession {
 			translatedFile.getParentFile().mkdirs();
 			if (sourceLower.endsWith(".txt")) {
 				extractWords(sourceFile);
-				Translator.translateFromPlainTextFile(sourceFile, translatedPath); //}, searchFragment);
+				return Translator.translateFromPlainTextFile(sourceFile, translatedPath, searchFragment);
 			} else if (sourceLower.endsWith(".html") || sourceLower.endsWith(".htm")) {
 				extractWords(sourceFile);
-				HtmlSAXHandler.translateFromHTML(sourceFile, translatedFile);
+				return HtmlSAXHandler.translateFromHTML(sourceFile, translatedFile);
 //			} else if (sourceLower.endsWith(".pdf")) {
 //				String tempFileName = Constants.PRIVATE_PATH + sourcePath + ".converted.txt";
 //				ItextPdfToHtml.parsePdfToText(sourcePath, tempFileName);
@@ -71,6 +71,7 @@ public class TranslationSession {
 			Log.e("translate", t.getMessage(), t);
 		}
 		Log.d("translate took", "" + (System.currentTimeMillis() - start));
+		return false;
 	}
 
 	private void addNewWords(TreeSet<String> notYetDefined, String fPath, String sheetName, boolean addOri) throws IOException, ClassNotFoundException {
