@@ -77,9 +77,9 @@ public class MainActivity extends Activity implements OnFragmentInteractionListe
 		Log.i("actionBar.getTabCount()", actionBar.getTabCount() + "");
 		Log.i("onPostCreate getSelectedNavigationIndex()", actionBar.getSelectedNavigationIndex() + "");
 		
-		Log.i("System.getenv(\"SECONDARY_STORAGE\")", System.getenv("SECONDARY_STORAGE"));
-		Log.i("getDataDirectory", Environment.getDataDirectory().toString());
-		Log.i("ExternalStorageDirectory", Environment.getExternalStorageDirectory().toString());
+		Log.i("System.getenv(\"SECONDARY_STORAGE\")", "SECONDARY_STORAGE " + System.getenv("SECONDARY_STORAGE"));
+		Log.i("getDataDirectory", "getDataDirectory " + Environment.getDataDirectory().toString());
+		Log.i("ExternalStorageDirectory", "getExternalStorageDirectory " + Environment.getExternalStorageDirectory().toString());
 		
 		//FileUtil.copyAssetToDir(this, Constants.PRIVATE_PATH, "data/lic.html");
 //		FileUtil.copyAssetToDir(this, Constants.PRIVATE_PATH, "data/List of English Irregular Verbs.xls");

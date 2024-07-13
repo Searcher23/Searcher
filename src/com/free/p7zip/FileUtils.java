@@ -103,14 +103,19 @@ public final class FileUtils {
 	 */
 	@TargetApi(Build.VERSION_CODES.KITKAT)
 	public static String getExtSdCardFolder(@NonNull final File file) {
-		String[] extSdPaths = getExtSdCardPaths();
 		try {
+			String[] extSdPaths = getExtSdCardPaths();
+			if (extSdPaths != null) {
 			for (String extSdPath : extSdPaths) {
 				if (file.getCanonicalPath().startsWith(extSdPath)) {
 					return extSdPath;
 				}
 			}
+			} else {
+				Log.d("FileUtils", "extSdPaths == null");
+			}
 		} catch (IOException e) {
+			Log.d("FileUtils", "extSdPaths == IOException");
 			return null;
 		}
 		return null;

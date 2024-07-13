@@ -20,7 +20,7 @@ package junrar.rarfile;
 
 import junrar.io.Raw;
 
-import org.apache.commons.logging.Log;
+//import org.apache.commons.logging.Log;
 
 
 public class SubBlockHeader 

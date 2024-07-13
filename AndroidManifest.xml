@@ -8,7 +8,7 @@
         android:minSdkVersion="12"
         android:targetSdkVersion="21" />
 
-    <!--uses-permission android:name="android.permission.ACTION_OPEN_DOCUMENT_TREE" /-->
+    <uses-permission android:name="android.permission.ACTION_OPEN_DOCUMENT_TREE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!--uses-permission android:name="android.permission.WAKE_LOCK" /--> 
 	<uses-permission android:name="android.permission.INTERNET" />
@@ -30,7 +30,8 @@
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.DEFAULT" />
+				<category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 

@@ -159,12 +159,12 @@ public final class ByteArrayBuffer implements Serializable {
      * range, {@code len} is negative, or
      * {@code off} + {@code len} is out of range.
      */
-    public void append(final CharArrayBuffer b, final int off, final int len) {
-        if (b == null) {
-            return;
-        }
-        append(b.buffer(), off, len);
-    }
+//    public void append(final CharArrayBuffer b, final int off, final int len) {
+//        if (b == null) {
+//            return;
+//        }
+//        append(b.buffer(), off, len);
+//    }
 
     /**
      * Clears content of the buffer. The underlying byte array is not resized.

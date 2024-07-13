@@ -1,10 +1,13 @@
 package com.free.searcher;
+
 import android.os.*;
-import java.util.*;
-import java.io.*;
-import com.free.p7zip.*;
 import android.util.*;
+import com.free.p7zip.*;
+import java.io.*;
 import java.net.*;
+import java.util.*;
+
+import com.free.p7zip.FileUtils;
 
 class DupFinderTask extends AsyncTask<Void, String, String> {
 

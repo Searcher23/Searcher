@@ -1,5 +1,6 @@
 package com.free.searcher;
 
+import android.annotation.*;
 import android.app.*;
 import android.content.*;
 import android.graphics.*;
@@ -8,34 +9,18 @@ import android.os.*;
 import android.os.AsyncTask.*;
 import android.util.*;
 import android.view.*;
+import android.view.View.*;
 import android.webkit.*;
 import android.widget.*;
-
+import com.free.p7zip.*;
+import com.free.translation.*;
 import java.io.*;
 import java.net.*;
 import java.text.*;
 import java.util.*;
-import java.util.regex.*;
-
-import org.apache.poi.hdgf.extractor.*;
-import org.apache.poi.hpbf.extractor.*;
-import org.apache.poi.hslf.extractor.*;
-import org.apache.poi.hssf.extractor.*;
-import org.apache.poi.poifs.filesystem.*;
-
-import org.apache.tika.metadata.*;
-import org.apache.tika.parser.rtf.*;
-import org.apache.tika.sax.*;
-import org.xml.sax.*;
-import android.view.View.*;
 import junrar.exception.*;
 
-import android.support.annotation.*;
-
-import android.annotation.*;
-import android.support.v4.provider.*;
-import com.free.p7zip.*;
-import com.free.translation.*;
+import com.free.p7zip.FileUtils;
 
 //import com.netcompss.loader.*;
 //import com.netcompss.ffmpeg4android.*;

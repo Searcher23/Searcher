@@ -17,11 +17,11 @@ import java.lang.reflect.*;
 import com.itextpdf.text.pdf.*;
 import com.itextpdf.text.pdf.parser.*;
 import org.apache.http.*;
-import org.apache.http.message.*;
-import org.apache.http.client.*;
-import org.apache.http.client.methods.*;
-import org.apache.http.impl.client.*;
-import org.apache.http.client.entity.*;
+//import org.apache.http.message.*;
+//import org.apache.http.client.*;
+//import org.apache.http.client.methods.*;
+//import org.apache.http.impl.client.*;
+//import org.apache.http.client.entity.*;
 
 public class Util {
 	public static final String LEEDS_BIT_PALI_TRANSLIT = "LeedsBit PaliTranslit";
@@ -1414,43 +1414,43 @@ public class Util {
 		return wholeFile;
 	}
 	// ---Connects using HTTP GET---
-	public static InputStream OpenHttpGETConnection(String url) {
-		InputStream inputStream = null;
-		try {
-			HttpClient httpclient = CustomHttpClient.getHttpClient(); //new DefaultHttpClient();
-			HttpResponse httpResponse = httpclient.execute(new HttpGet(url));
-			inputStream = httpResponse.getEntity().getContent();
-		} catch (Exception e) {
-			Log.d("", e.getLocalizedMessage());
-		}
-		return inputStream;
-	}
+//	public static InputStream OpenHttpGETConnection(String url) {
+//		InputStream inputStream = null;
+//		try {
+//			HttpClient httpclient = CustomHttpClient.getHttpClient(); //new DefaultHttpClient();
+//			HttpResponse httpResponse = httpclient.execute(new HttpGet(url));
+//			inputStream = httpResponse.getEntity().getContent();
+//		} catch (Exception e) {
+//			Log.d("", e.getLocalizedMessage());
+//		}
+//		return inputStream;
+//	}
 
 	//---Connects using HTTP POST---
-	public InputStream OpenHttpPOSTConnection(String url) {
-		InputStream inputStream = null;
-		try {
-			HttpClient httpclient = CustomHttpClient.getHttpClient(); //new DefaultHttpClient();
-			HttpPost httpPost = new HttpPost(url);
-
-			//---set the headers---
-			httpPost.addHeader("Host", "www.webservicex.net");
-			httpPost.addHeader("Content-Type",
-							   "application/x-www-form-urlencoded");
-
-			//---the key/value pairs to post to the server---
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-			nameValuePairs.add(new BasicNameValuePair("FromCurrency", "EUR"));
-			nameValuePairs.add(new BasicNameValuePair("ToCurrency", "USD"));
-			httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
-			HttpResponse httpResponse = httpclient.execute(httpPost);
-			inputStream = httpResponse.getEntity().getContent();
-		} catch (Exception e) {
-			Log.d("OpenHttpPOSTConnection", e.getLocalizedMessage());
-		}
-		return inputStream;
-	}
+//	public InputStream OpenHttpPOSTConnection(String url) {
+//		InputStream inputStream = null;
+//		try {
+//			HttpClient httpclient = CustomHttpClient.getHttpClient(); //new DefaultHttpClient();
+//			HttpPost httpPost = new HttpPost(url);
+//
+//			//---set the headers---
+//			httpPost.addHeader("Host", "www.webservicex.net");
+//			httpPost.addHeader("Content-Type",
+//							   "application/x-www-form-urlencoded");
+//
+//			//---the key/value pairs to post to the server---
+//			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
+//			nameValuePairs.add(new BasicNameValuePair("FromCurrency", "EUR"));
+//			nameValuePairs.add(new BasicNameValuePair("ToCurrency", "USD"));
+//			httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+//
+//			HttpResponse httpResponse = httpclient.execute(httpPost);
+//			inputStream = httpResponse.getEntity().getContent();
+//		} catch (Exception e) {
+//			Log.d("OpenHttpPOSTConnection", e.getLocalizedMessage());
+//		}
+//		return inputStream;
+//	}
 	public static final String SPECIAL_CHAR_PATTERNSTR = "([{}^$.\\[\\]|*+?()\\\\])";
 	public static final String replaceRegexAll(String fileContent, String from, String to, boolean isRegex, boolean caseSensitive) {
 		if (!isRegex) {
